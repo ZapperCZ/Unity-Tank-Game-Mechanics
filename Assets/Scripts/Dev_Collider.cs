@@ -9,12 +9,11 @@ public class Dev_Collider : MonoBehaviour
     public bool devMode = true;
     public bool isActive = false;
 
-    public GameObject CollidersParent;
-    public GameObject DevStuff;
+    public GameObject[] IgnoredParents;
 
+    List<GameObject> SceneObjectsWithColliders;
     List<GameObject> SceneObjects;
-
-    //public Type[] ColliderArray = {BoxCollider, typeof(MeshCollider)};
+    Collider[] Colliders = {new BoxCollider(), new SphereCollider(), new CapsuleCollider(), new MeshCollider()};
 
     //TODO: Handle collider view when new objects are created
     void Start()
@@ -22,52 +21,34 @@ public class Dev_Collider : MonoBehaviour
         Debug.Log("Colliders - Started");
         if (devMode)
         {
-            /*
-            foreach(Type collider in ColliderArray)
-            {
-                Debug.Log(collider.GetType());
-            }
-            */
-
             Debug.Log("Colliders - Started Loading");
+            SceneObjectsWithColliders = new List<GameObject>();
             SceneObjects = new List<GameObject>();
 
-            //FIX: Currently only gets root objects in the scene, find a way to get the children as well
             foreach(GameObject sObject in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
             {
                 //Add object to the list if it has a collider
-                if (sObject.GetComponent<Transform>()!=CollidersParent.GetComponent<Transform>() || sObject.GetComponent<Transform>() != DevStuff.GetComponent<Transform>())
+                if (!IgnoredParents.Contains(sObject))
                 {
+                    /*
                     Debug.Log("----Parent----");
                     Debug.Log(sObject.name);
                     Debug.Log("----Children----");
+                    */
                     foreach (Transform child in sObject.GetComponentsInChildren<Transform>(true))
                     {
-                        Debug.Log(child.name);
+                        SceneObjects.Add(child.gameObject);
+                        //Debug.Log(child.name + " - " + HasComponent<Collider>(child.gameObject));
+                        if (HasComponent<Collider>(child.gameObject))
+                        {
+                            Debug.Log(child.GetComponent<Collider>().GetType());
+                            SceneObjectsWithColliders.Add(child.gameObject);
+                        }
                     }
                 }
-
-
-                /*
-                Component[] objectComponents = sObject.GetComponents<Component>();
-                foreach(Component c in objectComponents)
-                {
-                    Debug.Log(sObject.name + " - " + c.GetType());
-                    if (ColliderArray.Contains(c.GetType()))
-                    {
-                        Debug.Log(sObject.name + " - Has Collider");
-                        break;
-                    }
-                }
-
-                //TODO: Create an array of colliders to check and then iterate through them checking which one the object has
-                if (HasComponent<BoxCollider>(sObject))
-                {
-                    Debug.Log(sObject.name + " - Box Collider");
-                }
-                */
             }
             Debug.Log("Colliders - Finished Loading");
+            Debug.Log("Colliders - Started Assigning Models");
         }
     }
 
