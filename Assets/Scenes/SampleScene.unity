@@ -3334,6 +3334,12 @@ MonoBehaviour:
   IgnoredParents:
   - {fileID: 124503953}
   - {fileID: 712759189}
+  Materials:
+  - {fileID: 2100000, guid: ba7a6a41a972cdf46b89b9084fa8a4a7, type: 2}
+  - {fileID: 2100000, guid: 06c5b9aefceffc348bdc67f6eae30637, type: 2}
+  - {fileID: 2100000, guid: 00c11775a7a7eea4185a7875083adf12, type: 2}
+  - {fileID: 2100000, guid: 1a38726785cc90d40859f96dcc5d4c24, type: 2}
+  - {fileID: 2100000, guid: a6debc015482a9647bc1fb9068378926, type: 2}
   ColliderMeshParent: {fileID: 270086833}
 --- !u!1 &1983652541
 GameObject:

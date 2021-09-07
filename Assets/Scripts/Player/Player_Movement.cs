@@ -50,6 +50,7 @@ public class Player_Movement : MonoBehaviour
         Vector3 Direction = transform.right*x + transform.forward*z;
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
 
+        //TODO: Slow down when not grounded
         if(Input.GetButtonDown("Jump") && isGrounded)
         {
             //currentSpeed = defaultSpeed;  Doesn't feel good and doesn't make much sense either
