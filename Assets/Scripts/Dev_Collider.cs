@@ -7,9 +7,18 @@ using UnityEngine;
 public class Dev_Collider : MonoBehaviour
 {
     public bool devMode = true;
+    public bool IsActive
+    {
+        get { return IsActive; }
+        set 
+        {
+            isActive = value; 
+        }
+    }
     public bool isActive = false;
 
     public GameObject[] IgnoredParents;
+    public Material[] Materials;
     public GameObject ColliderMeshParent;
 
     List<GameObject> SceneObjectsWithCollider;
@@ -19,6 +28,7 @@ public class Dev_Collider : MonoBehaviour
     //TODO: Handle collider view when new objects are created
     void Start()
     {
+        System.Random rand = new System.Random();
         Debug.Log("Colliders - Started");
         if (devMode)
         {
@@ -51,7 +61,7 @@ public class Dev_Collider : MonoBehaviour
             Debug.Log("Colliders - Started Assigning Models");
             foreach (GameObject colliderParent in SceneObjectsWithCollider)
             {
-                GameObject newVisibleCollider = new GameObject();
+                GameObject newVisibleCollider = null;
                 bool isValid = true;
                 switch (Array.FindIndex(Colliders, c => c.GetType() == colliderParent.GetComponent<Collider>().GetType()))
                 {
@@ -65,6 +75,10 @@ public class Dev_Collider : MonoBehaviour
                         newVisibleCollider = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                         break;
                     case 3:             //MeshCollider
+                        newVisibleCollider = new GameObject();
+                        //MeshFilter parentMesh = colliderParent.GetComponent<MeshFilter>().mesh;
+                        newVisibleCollider.AddComponent<MeshFilter>();
+                        newVisibleCollider.GetComponent<MeshFilter>().mesh = colliderParent.GetComponent<MeshCollider>().sharedMesh;
                         newVisibleCollider.AddComponent<MeshRenderer>();
                         break;
                     default:
@@ -74,6 +88,12 @@ public class Dev_Collider : MonoBehaviour
                 }
                 if (isValid)
                 {
+                    newVisibleCollider.name = colliderParent.name;
+                    newVisibleCollider.transform.position = colliderParent.transform.position;
+                    newVisibleCollider.transform.localScale = colliderParent.transform.localScale;
+                    newVisibleCollider.transform.rotation = colliderParent.transform.rotation;
+                    newVisibleCollider.GetComponent<MeshRenderer>().material = Materials[rand.Next(Materials.Length)];
+                    newVisibleCollider.GetComponent<MeshRenderer>().enabled = false;
                     Destroy(newVisibleCollider.GetComponent<Collider>());
                     newVisibleCollider.transform.SetParent(ColliderMeshParent.transform);
                 }
@@ -92,13 +112,17 @@ public class Dev_Collider : MonoBehaviour
         }
         
     }
-    void SwitchViewModels(bool targetMode)  //0 = normal, 1 = colliders
+    void SwitchViewModels(bool targetMode)  //0 = normal view, 1 = collider view
     {
         Debug.Log("Collider view - " + targetMode);
-        //Disables all mesh renderers in scene
+
         foreach(GameObject gObj in SceneObjectsWithRenderer)
         {
             gObj.GetComponent<MeshRenderer>().enabled = !targetMode;
+        }
+        foreach(Transform gObj in ColliderMeshParent.GetComponentInChildren<Transform>(true))
+        {
+            gObj.gameObject.GetComponent<MeshRenderer>().enabled = targetMode;
         }
     }
     bool HasComponent <T>(GameObject inputObject) where T:Component
