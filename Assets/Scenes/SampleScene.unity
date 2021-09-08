@@ -1632,7 +1632,7 @@ GameObject:
   - component: {fileID: 912798231}
   - component: {fileID: 912798232}
   - component: {fileID: 912798233}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1691,6 +1691,7 @@ MonoBehaviour:
   GroundMask:
     serializedVersion: 2
     m_Bits: 1
+  groundCheckPrecision: 10
   groundDistance: 0.24
   defaultSpeed: 7
   sprintMultiplier: 1.5
@@ -2501,7 +2502,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1626346664}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2533,7 +2534,7 @@ GameObject:
   - component: {fileID: 1673569304}
   - component: {fileID: 1673569307}
   - component: {fileID: 1673569306}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Graphics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2617,7 +2618,7 @@ GameObject:
   - component: {fileID: 1687258582}
   - component: {fileID: 1687258586}
   - component: {fileID: 1687258583}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -2644,7 +2645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb381b89987aefa469c3f7258471b85d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Sensitivity: 400
+  Sensitivity: 200
   Player: {fileID: 912798231}
 --- !u!20 &1687258584
 Camera:
