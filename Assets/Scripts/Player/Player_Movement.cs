@@ -11,6 +11,8 @@ public class Player_Movement : MonoBehaviour
 
     [Range(1, 100)]
     [SerializeField] int groundCheckPrecision = 10;
+    [SerializeField] float groundCheckThickness = 0.1f;
+    [SerializeField] float groundCheckDiameter = 5f;
     [SerializeField] float groundDistance = 0.3f;
     [SerializeField] float defaultSpeed = 12f;
     [SerializeField] float sprintMultiplier = 1.6f;
@@ -28,6 +30,10 @@ public class Player_Movement : MonoBehaviour
         CreateGroundCheckColliders();
         currentSpeed = defaultSpeed;
         Debug.Log("Player Movement - Initialized");
+    }
+    private void OnValidate()
+    {
+        CreateGroundCheckColliders();
     }
     void Update()
     {
@@ -67,6 +73,7 @@ public class Player_Movement : MonoBehaviour
     }
     void CreateGroundCheckColliders()
     {
+        //TODO: Delete the colliders before creating them.
         for(int i = 0; i < groundCheckPrecision; i++)
         {
             GameObject collider = new GameObject();
@@ -74,7 +81,12 @@ public class Player_Movement : MonoBehaviour
             collider.name = "GroundCheckPart";
             collider.AddComponent<BoxCollider>().isTrigger = true;
             collider.transform.SetParent(GroundCheck);
-            collider.transform.localPosition = new Vector3(0,0,0);
+            collider.transform.localPosition = new Vector3(0,0,0); 
+            float rotationY = i * 180 / groundCheckPrecision;
+            float edgeLength = 0.2f;
+
+            collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);
+            collider.transform.localScale = new Vector3(0.5f,groundCheckThickness,1);
         }
     }
 }

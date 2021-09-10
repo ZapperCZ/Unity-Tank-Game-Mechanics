@@ -62,7 +62,6 @@ public class Dev_Collider : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetButtonDown("Debug") && devMode)
@@ -97,7 +96,7 @@ public class Dev_Collider : MonoBehaviour
     {
         GameObject newVisibleCollider = null;
         bool isValid = true;
-        switch (Array.FindIndex(Colliders, c => c.GetType() == colliderParent.GetComponent<Collider>().GetType()))
+        switch (Array.FindIndex(Colliders, c => c.GetType() == colliderParent.GetComponent<Collider>().GetType()))  //Gets the ID of the current collider type
         {
             case 0:             //BoxCollider
                 newVisibleCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -110,7 +109,6 @@ public class Dev_Collider : MonoBehaviour
                 break;
             case 3:             //MeshCollider
                 newVisibleCollider = new GameObject();
-                //MeshFilter parentMesh = colliderParent.GetComponent<MeshFilter>().mesh;
                 newVisibleCollider.AddComponent<MeshFilter>();
                 newVisibleCollider.GetComponent<MeshFilter>().mesh = colliderParent.GetComponent<MeshCollider>().sharedMesh;
                 newVisibleCollider.AddComponent<MeshRenderer>();
@@ -129,8 +127,8 @@ public class Dev_Collider : MonoBehaviour
             newVisibleCollider.GetComponent<MeshRenderer>().material = Materials[rand.Next(Materials.Length)];
             newVisibleCollider.GetComponent<MeshRenderer>().enabled = false;
             Destroy(newVisibleCollider.GetComponent<Collider>());
-            Debug.Log(colliderParent.name + " - " + colliderParent.layer);
-            if (colliderParent.layer == 7)
+
+            if (colliderParent.layer == 7)  //Original object is non-static
             {
                 NonStaticColliderModels.Add(newVisibleCollider);
                 newVisibleCollider.transform.SetParent(colliderParent.transform);
