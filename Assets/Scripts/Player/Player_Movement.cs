@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
 {
-    public CharacterController Controller;
-    public Transform GroundCheck;
+    [SerializeField] CharacterController Controller;
+    [SerializeField] Transform GroundCheck;
 
-    public LayerMask GroundMask;
+    [SerializeField] LayerMask GroundMask;
 
-    public float groundDistance = 0.3f;
-    public float defaultSpeed = 12f;
-    public float sprintMultiplier = 1.6f;
-    public float crouchMultiplier = 0.4f;
-    public float airMultiplier = 0.4f;
-    public float gravity = -9.81f;
-    public float jumpHeight = 3f;
+    [Range(1, 100)]
+    [SerializeField] int groundCheckPrecision = 10;
+    [SerializeField] float groundCheckThickness = 0.1f;
+    [SerializeField] float groundCheckDiameter = 5f;
+    [SerializeField] float groundDistance = 0.3f;
+    [SerializeField] float defaultSpeed = 12f;
+    [SerializeField] float sprintMultiplier = 1.6f;
+    [SerializeField] float crouchMultiplier = 0.4f;
+    [SerializeField] float airMultiplier = 0.4f;
+    [SerializeField] float gravity = -9.81f;
+    [SerializeField] float jumpHeight = 3f;
 
     Vector3 velocity;
     float currentSpeed;
@@ -23,7 +27,13 @@ public class Player_Movement : MonoBehaviour
 
     void Start()
     {
+        CreateGroundCheckColliders();
         currentSpeed = defaultSpeed;
+        Debug.Log("Player Movement - Initialized");
+    }
+    private void OnValidate()
+    {
+        CreateGroundCheckColliders();
     }
     void Update()
     {
@@ -60,5 +70,23 @@ public class Player_Movement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
 
         Controller.Move(velocity * Time.deltaTime);
+    }
+    void CreateGroundCheckColliders()
+    {
+        //TODO: Delete the colliders before creating them.
+        for(int i = 0; i < groundCheckPrecision; i++)
+        {
+            GameObject collider = new GameObject();
+            collider.layer = 7; //Non-Static layer
+            collider.name = "GroundCheckPart";
+            collider.AddComponent<BoxCollider>().isTrigger = true;
+            collider.transform.SetParent(GroundCheck);
+            collider.transform.localPosition = new Vector3(0,0,0); 
+            float rotationY = i * 180 / groundCheckPrecision;
+            float edgeLength = 0.2f;
+
+            collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);
+            collider.transform.localScale = new Vector3(0.5f,groundCheckThickness,1);
+        }
     }
 }
