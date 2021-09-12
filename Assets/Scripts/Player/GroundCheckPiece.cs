@@ -8,19 +8,19 @@ public class GroundCheckPiece : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Enter - " + other.name);
+        //Debug.Log("Enter - " + other.name);
         if (other.gameObject.layer == 0)     //Ground
         {
-            Debug.Log("Grounded");
+            //Debug.Log("Grounded");
             Grounded = true;
         }
     }
     public void OnTriggerExit(Collider other)
     {
-        Debug.Log("Exit - " + other.name);
+        //Debug.Log("Exit - " + other.name);
         if (other.gameObject.layer == 0)     //Ground
         {
-            Debug.Log("Not Grounded");
+            //Debug.Log("Not Grounded");
             Grounded = false;
         }
     }
