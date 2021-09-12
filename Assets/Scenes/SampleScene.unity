@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2138677392}
-  m_IndirectSpecularColor: {r: 0.12914996, g: 0.12914996, b: 0.12914996, a: 1}
+  m_IndirectSpecularColor: {r: 0.12939486, g: 0.12939486, b: 0.12939486, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1692,10 +1692,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   groundCheckSides: 20
-  groundCheckSideWidth: 0.15838444
-  sideWidthLocked: 1
-  groundCheckDiameter: 1.0083066
-  diameterLocked: 0
+  groundCheckSideWidth: 0.15707964
+  sideWidthLocked: 0
+  groundCheckDiameter: 1
+  diameterLocked: 1
   groundCheckThickness: 0.1
   groundDistance: 0.24
   defaultSpeed: 7

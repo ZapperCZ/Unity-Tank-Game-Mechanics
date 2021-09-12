@@ -85,13 +85,13 @@ public class Player_Movement : MonoBehaviour
 
         if (sideWidthLocked)
         {
-            prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
-            //prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI/groundCheckSides);
+            //prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
+            prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI/groundCheckSides);
         }
         if (diameterLocked)
         {
-            prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
-            //prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
+            //prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
+            prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
         }
 
         regenerate = true;
