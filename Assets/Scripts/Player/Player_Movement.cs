@@ -49,6 +49,8 @@ public class Player_Movement : MonoBehaviour
     }
     private void OnValidate()
     {
+        //TODO: Only regenerate when number of sides is changed, otherwise change the transform of existing colliders as that is less resource intensive
+
         //Only even numbers
         if(groundCheckSides % 2 == 1)
         {
@@ -83,8 +85,11 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
+        //TODO: Maybe switch the complex equation for my approximation once the n-gon gets complex
+
         if (sideWidthLocked)
         {
+<<<<<<< HEAD
             //prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
             prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI/groundCheckSides);
         }
@@ -92,12 +97,24 @@ public class Player_Movement : MonoBehaviour
         {
             //prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
             prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
+=======
+            prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
+
+            //prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI/groundCheckSides);
+        }
+        if (diameterLocked)
+        {
+            prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
+
+            //prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
+>>>>>>> f774bb5e85e27049ef1efd75d4dc0157494be8e6
         }
 
         regenerate = true;
     }
     void Update()
     {
+        isGrounded = false;
         if (regenerate)
         {
             regenerate = false;
@@ -106,10 +123,14 @@ public class Player_Movement : MonoBehaviour
 
         foreach(Transform groundCheckPart in GroundCheckParent.GetComponentInChildren<Transform>())
         {
-
+            if (groundCheckPart.GetComponent<GroundCheckPiece>().Grounded)
+            {
+                isGrounded = true;
+                break;
+            }
         }
         
-        isGrounded = Physics.CheckSphere(GroundCheckParent.position, groundDistance, GroundMask);
+        //isGrounded = Physics.CheckSphere(GroundCheckParent.position, groundDistance, GroundMask);
 
         if(isGrounded && velocity.y < 0)    //TODO: Improve this by recreating the ground check from LP
         {
@@ -143,6 +164,7 @@ public class Player_Movement : MonoBehaviour
 
         Controller.Move(velocity * Time.deltaTime);
     }
+    #region GroundCheck Colliders
     void DestroyGroundCheckColliders()
     {
         foreach (Transform prevCollider in GroundCheckParent.GetComponentInChildren<Transform>())
@@ -170,4 +192,5 @@ public class Player_Movement : MonoBehaviour
             collider.transform.localScale = new Vector3(groundCheckSideWidth,groundCheckThickness, groundCheckDiameter);    //Set it's size according to parameters
         }
     }
+    #endregion
 }
