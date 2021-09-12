@@ -1,19 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
 {
     [SerializeField] CharacterController Controller;
-    [SerializeField] Transform GroundCheck;
+    [SerializeField] Transform GroundCheckParent;
 
     [SerializeField] LayerMask GroundMask;
 
-    [Range(1, 100)]
-    [SerializeField] int groundCheckPrecision = 10;
+    [Header("Ground Check")]
+    [Range(6, 50)]
+    [SerializeField] int groundCheckSides = 10;
+    [Range(0.1f, 10)]
+    [SerializeField] float groundCheckSideWidth = 10;
+    [SerializeField] bool sideWidthLocked = true;
+    [Range(0.1f, 5)]
+    [SerializeField] float groundCheckDiameter = 10;
+    [SerializeField] bool diameterLocked = true;
     [SerializeField] float groundCheckThickness = 0.1f;
-    [SerializeField] float groundCheckDiameter = 5f;
     [SerializeField] float groundDistance = 0.3f;
+    [Header("Movement")]
     [SerializeField] float defaultSpeed = 12f;
     [SerializeField] float sprintMultiplier = 1.6f;
     [SerializeField] float crouchMultiplier = 0.4f;
@@ -23,21 +28,88 @@ public class Player_Movement : MonoBehaviour
 
     Vector3 velocity;
     float currentSpeed;
+    bool prevSideWidthLocked;
+    bool prevDiameterLocked;
+    //float prevSides;
+    float prevSideWidth;
+    float prevDiameter;
+    bool regenerate = false;
     bool isGrounded;
 
     void Start()
     {
+        //prevSides = groundCheckSides;
+        prevSideWidth = groundCheckSideWidth;
+        prevDiameter = groundCheckDiameter;
+        prevSideWidthLocked = sideWidthLocked;
+        prevDiameterLocked = diameterLocked;
         CreateGroundCheckColliders();
         currentSpeed = defaultSpeed;
         Debug.Log("Player Movement - Initialized");
     }
     private void OnValidate()
     {
-        CreateGroundCheckColliders();
+        //Only even numbers
+        if(groundCheckSides % 2 == 1)
+        {
+            groundCheckSides -= 1;
+        }
+
+        //Locks the currently changing variable
+        //Has to be an else if otherwise they would affect each other
+        if(prevSideWidth != groundCheckSideWidth)
+        {
+            prevSideWidth = groundCheckSideWidth;
+            sideWidthLocked = true;
+        }
+        else if(prevDiameter != groundCheckDiameter)
+        {
+            prevDiameter = groundCheckDiameter;
+            diameterLocked = true;
+        }
+
+        //Only 1 can be checked at the same time, but both can be unchecked
+        if (sideWidthLocked && diameterLocked)
+        {
+            if (sideWidthLocked != prevSideWidthLocked)
+            {
+                prevSideWidthLocked = sideWidthLocked;
+                diameterLocked = prevDiameterLocked = !sideWidthLocked;
+            }
+            if (diameterLocked != prevDiameterLocked)
+            {
+                prevDiameterLocked = diameterLocked;
+                sideWidthLocked = prevSideWidthLocked = !diameterLocked;
+            }
+        }
+
+        if (sideWidthLocked)
+        {
+            prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
+            //prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI/groundCheckSides);
+        }
+        if (diameterLocked)
+        {
+            prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
+            //prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
+        }
+
+        regenerate = true;
     }
     void Update()
     {
-        isGrounded = Physics.CheckSphere(GroundCheck.position, groundDistance, GroundMask);
+        if (regenerate)
+        {
+            regenerate = false;
+            CreateGroundCheckColliders();
+        }
+
+        foreach(Transform groundCheckPart in GroundCheckParent.GetComponentInChildren<Transform>())
+        {
+
+        }
+        
+        isGrounded = Physics.CheckSphere(GroundCheckParent.position, groundDistance, GroundMask);
 
         if(isGrounded && velocity.y < 0)    //TODO: Improve this by recreating the ground check from LP
         {
@@ -71,22 +143,31 @@ public class Player_Movement : MonoBehaviour
 
         Controller.Move(velocity * Time.deltaTime);
     }
+    void DestroyGroundCheckColliders()
+    {
+        foreach (Transform prevCollider in GroundCheckParent.GetComponentInChildren<Transform>())
+        {
+            Destroy(prevCollider.gameObject);
+        }
+    }
     void CreateGroundCheckColliders()
     {
-        //TODO: Delete the colliders before creating them.
-        for(int i = 0; i < groundCheckPrecision; i++)
+        DestroyGroundCheckColliders();
+        Debug.Log("Creating Ground Check");
+        for(int i = 0; i < groundCheckSides/2; i++)
         {
             GameObject collider = new GameObject();
-            collider.layer = 7; //Non-Static layer
+            collider.layer = 7;                                             //Non-Static layer
             collider.name = "GroundCheckPart";
             collider.AddComponent<BoxCollider>().isTrigger = true;
-            collider.transform.SetParent(GroundCheck);
-            collider.transform.localPosition = new Vector3(0,0,0); 
-            float rotationY = i * 180 / groundCheckPrecision;
-            float edgeLength = 0.2f;
+            collider.AddComponent<Rigidbody>().useGravity=false;            //Required for trigger to work properly
+            collider.AddComponent<GroundCheckPiece>();                      //Script that handles collision detection
+            collider.transform.SetParent(GroundCheckParent);
+            collider.transform.localPosition = new Vector3(0,0,0);          //Set it at the position of it's parent
+            float rotationY = (float)i * 180 / (float)groundCheckSides * 2; 
 
-            collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);
-            collider.transform.localScale = new Vector3(0.5f,groundCheckThickness,1);
+            collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
+            collider.transform.localScale = new Vector3(groundCheckSideWidth,groundCheckThickness, groundCheckDiameter);    //Set it's size according to parameters
         }
     }
 }
