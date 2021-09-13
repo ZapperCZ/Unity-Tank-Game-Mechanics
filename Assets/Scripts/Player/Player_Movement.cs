@@ -8,7 +8,7 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] LayerMask GroundMask;
 
     [Header("Ground Check")]
-    [Range(6, 50)]
+    [Range(6, 500)]
     [SerializeField] int groundCheckSides = 10;
     [Range(0.1f, 10)]
     [SerializeField] float groundCheckSideWidth = 10;
@@ -52,19 +52,19 @@ public class Player_Movement : MonoBehaviour
         //TODO: Only regenerate when number of sides is changed, otherwise change the transform of existing colliders as that is less resource intensive
 
         //Only even numbers
-        if(groundCheckSides % 2 == 1)
+        if (groundCheckSides % 2 == 1)
         {
             groundCheckSides -= 1;
         }
 
         //Locks the currently changing variable
         //Has to be an else if otherwise they would affect each other
-        if(prevSideWidth != groundCheckSideWidth)
+        if (prevSideWidth != groundCheckSideWidth)
         {
             prevSideWidth = groundCheckSideWidth;
             sideWidthLocked = true;
         }
-        else if(prevDiameter != groundCheckDiameter)
+        else if (prevDiameter != groundCheckDiameter)
         {
             prevDiameter = groundCheckDiameter;
             diameterLocked = true;
@@ -89,27 +89,14 @@ public class Player_Movement : MonoBehaviour
 
         if (sideWidthLocked)
         {
-<<<<<<< HEAD
-            //prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
-            prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI/groundCheckSides);
-        }
-        if (diameterLocked)
-        {
-            //prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
-            prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
-=======
             prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
-
-            //prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI/groundCheckSides);
+            //prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI / groundCheckSides);
         }
         if (diameterLocked)
         {
             prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
-
             //prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
->>>>>>> f774bb5e85e27049ef1efd75d4dc0157494be8e6
         }
-
         regenerate = true;
     }
     void Update()
@@ -121,7 +108,7 @@ public class Player_Movement : MonoBehaviour
             CreateGroundCheckColliders();
         }
 
-        foreach(Transform groundCheckPart in GroundCheckParent.GetComponentInChildren<Transform>())
+        foreach (Transform groundCheckPart in GroundCheckParent.GetComponentInChildren<Transform>())
         {
             if (groundCheckPart.GetComponent<GroundCheckPiece>().Grounded)
             {
@@ -129,10 +116,8 @@ public class Player_Movement : MonoBehaviour
                 break;
             }
         }
-        
-        //isGrounded = Physics.CheckSphere(GroundCheckParent.position, groundDistance, GroundMask);
 
-        if(isGrounded && velocity.y < 0)    //TODO: Improve this by recreating the ground check from LP
+        if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
         }
@@ -140,7 +125,7 @@ public class Player_Movement : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        if(Input.GetButton("Sprint") && isGrounded)
+        if (Input.GetButton("Sprint") && isGrounded)
         {
             //TODO: Maybe increase camera FOV slightly when sprinting
             currentSpeed = defaultSpeed * sprintMultiplier;
@@ -150,11 +135,11 @@ public class Player_Movement : MonoBehaviour
             currentSpeed = defaultSpeed;
         }
 
-        Vector3 Direction = transform.right*x + transform.forward*z;
+        Vector3 Direction = transform.right * x + transform.forward * z;
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
 
         //TODO: Slow down when not grounded
-        if(Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
             //currentSpeed = defaultSpeed;  Doesn't feel good and doesn't make much sense either
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -176,21 +161,22 @@ public class Player_Movement : MonoBehaviour
     {
         DestroyGroundCheckColliders();
         Debug.Log("Creating Ground Check");
-        for(int i = 0; i < groundCheckSides/2; i++)
+        for (int i = 0; i < groundCheckSides / 2; i++)
         {
             GameObject collider = new GameObject();
             collider.layer = 7;                                             //Non-Static layer
             collider.name = "GroundCheckPart";
             collider.AddComponent<BoxCollider>().isTrigger = true;
-            collider.AddComponent<Rigidbody>().useGravity=false;            //Required for trigger to work properly
+            collider.AddComponent<Rigidbody>().useGravity = false;            //Required for trigger to work properly
             collider.AddComponent<GroundCheckPiece>();                      //Script that handles collision detection
             collider.transform.SetParent(GroundCheckParent);
-            collider.transform.localPosition = new Vector3(0,0,0);          //Set it at the position of it's parent
-            float rotationY = (float)i * 180 / (float)groundCheckSides * 2; 
+            collider.transform.localPosition = new Vector3(0, 0, 0);          //Set it at the position of it's parent
+            float rotationY = (float)i * 180 / (float)groundCheckSides * 2;
 
             collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
-            collider.transform.localScale = new Vector3(groundCheckSideWidth,groundCheckThickness, groundCheckDiameter);    //Set it's size according to parameters
+            collider.transform.localScale = new Vector3(groundCheckSideWidth, groundCheckThickness, groundCheckDiameter);    //Set it's size according to parameters
         }
     }
-    #endregion
+        #endregion
 }
+

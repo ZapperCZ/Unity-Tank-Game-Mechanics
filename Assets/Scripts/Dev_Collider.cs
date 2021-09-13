@@ -69,7 +69,6 @@ public class Dev_Collider : MonoBehaviour
             isActive = !isActive;
             SwitchViewModels(isActive);
         }
-        //TODO: Make the script respond to the changes of isActive value in the inspector
     }
     private void OnValidate()
     {
