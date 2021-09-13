@@ -8,7 +8,7 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] LayerMask GroundMask;
 
     [Header("Ground Check")]
-    [Range(6, 500)]
+    [Range(6, 50)]
     [SerializeField] int groundCheckSides = 10;
     [Range(0.1f, 10)]
     [SerializeField] float groundCheckSideWidth = 10;
@@ -28,6 +28,7 @@ public class Player_Movement : MonoBehaviour
 
     Vector3 velocity;
     float currentSpeed;
+
     bool prevSideWidthLocked;
     bool prevDiameterLocked;
     //float prevSides;
@@ -39,13 +40,13 @@ public class Player_Movement : MonoBehaviour
     void Start()
     {
         //prevSides = groundCheckSides;
-        prevSideWidth = groundCheckSideWidth;
-        prevDiameter = groundCheckDiameter;
-        prevSideWidthLocked = sideWidthLocked;
-        prevDiameterLocked = diameterLocked;
-        CreateGroundCheckColliders();
-        currentSpeed = defaultSpeed;
-        Debug.Log("Player Movement - Initialized");
+            prevSideWidth = groundCheckSideWidth;
+            prevDiameter = groundCheckDiameter;
+            prevSideWidthLocked = sideWidthLocked;
+            prevDiameterLocked = diameterLocked;
+            CreateGroundCheckColliders();
+            currentSpeed = defaultSpeed;
+            Debug.Log("Player Movement - Initialized");
     }
     private void OnValidate()
     {
@@ -89,13 +90,13 @@ public class Player_Movement : MonoBehaviour
 
         if (sideWidthLocked)
         {
-            prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
-            //prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI / groundCheckSides);
+            //prevDiameter = groundCheckDiameter = groundCheckSides * groundCheckSideWidth / Mathf.PI;
+            prevDiameter = groundCheckDiameter = groundCheckSideWidth / Mathf.Tan(Mathf.PI / groundCheckSides);
         }
         if (diameterLocked)
         {
-            prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
-            //prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
+            //prevSideWidth = groundCheckSideWidth = Mathf.PI * groundCheckDiameter / groundCheckSides;
+            prevSideWidth = groundCheckSideWidth = groundCheckDiameter * Mathf.Tan(Mathf.PI / groundCheckSides);
         }
         regenerate = true;
     }
@@ -105,6 +106,7 @@ public class Player_Movement : MonoBehaviour
         if (regenerate)
         {
             regenerate = false;
+            //TODO: Don't re-create the colliders, but instead change their values accordingly
             CreateGroundCheckColliders();
         }
 
@@ -167,10 +169,10 @@ public class Player_Movement : MonoBehaviour
             collider.layer = 7;                                             //Non-Static layer
             collider.name = "GroundCheckPart";
             collider.AddComponent<BoxCollider>().isTrigger = true;
-            collider.AddComponent<Rigidbody>().useGravity = false;            //Required for trigger to work properly
+            collider.AddComponent<Rigidbody>().useGravity = false;          //Required for trigger to work properly
             collider.AddComponent<GroundCheckPiece>();                      //Script that handles collision detection
             collider.transform.SetParent(GroundCheckParent);
-            collider.transform.localPosition = new Vector3(0, 0, 0);          //Set it at the position of it's parent
+            collider.transform.localPosition = new Vector3(0, 0, 0);        //Set it at the position of it's parent
             float rotationY = (float)i * 180 / (float)groundCheckSides * 2;
 
             collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
