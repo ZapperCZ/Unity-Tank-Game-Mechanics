@@ -41,13 +41,13 @@ public class Player_Movement : MonoBehaviour
     void Start()
     {
         //prevSides = groundCheckSides;
-            prevSideWidth = groundCheckSideWidth;
-            prevDiameter = groundCheckDiameter;
-            prevSideWidthLocked = sideWidthLocked;
-            prevDiameterLocked = diameterLocked;
-            CreateGroundCheckColliders();
-            currentSpeed = defaultSpeed;
-            Debug.Log("Player Movement - Initialized");
+        prevSideWidth = groundCheckSideWidth;
+        prevDiameter = groundCheckDiameter;
+        prevSideWidthLocked = sideWidthLocked;
+        prevDiameterLocked = diameterLocked;
+        CreateGroundCheckColliders();
+        currentSpeed = defaultSpeed;
+        Debug.Log("Player Movement - Initialized");
     }
     private void OnValidate()
     {
@@ -103,6 +103,14 @@ public class Player_Movement : MonoBehaviour
     }
     void Update()
     {
+        if (WallCheckParent.GetComponent<CylinderCollider>().changed)
+        {
+            foreach (Transform child in WallCheckParent)
+            {
+                child.gameObject.AddComponent<GroundCheckPiece>();
+            }
+            WallCheckParent.GetComponent<CylinderCollider>().changed = false;
+        }
         isGrounded = false;
         if (regenerate)
         {

@@ -15,6 +15,7 @@ public class CylinderCollider : MonoBehaviour
     [SerializeField] float cylinderHeight = 1;
     [SerializeField] bool isTrigger = false;
     [SerializeField] bool deleteColliders = false;
+    public bool changed = false;                        //A bool other scripts can reference to detect when the collider has been changed by user
 
     Transform Parent;
     bool prevSideWidthLocked;
@@ -151,7 +152,6 @@ public class CylinderCollider : MonoBehaviour
             collider.name = "CyllinderColliderPart";
             collider.AddComponent<BoxCollider>().isTrigger = isTrigger;
             collider.AddComponent<Rigidbody>().useGravity = false;          //Required for trigger to work properly
-            collider.AddComponent<GroundCheckPiece>();                      //Script that handles collision detection
             collider.transform.SetParent(Parent);
             collider.transform.localPosition = new Vector3(0, 0, 0);        //Set it at the position of it's parent
             float rotationY = (float)i * 180 / (float)cylinderSides * 2;
@@ -160,6 +160,7 @@ public class CylinderCollider : MonoBehaviour
             collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
             collider.transform.localScale = new Vector3(cylinderSideWidth, cylinderHeight, cylinderDiameter);    //Set it's size according to parameters
         }
+        changed = true;
         Debug.Log($"Cyllinder Collider - {Parent.name} - Done");
     }
 }
