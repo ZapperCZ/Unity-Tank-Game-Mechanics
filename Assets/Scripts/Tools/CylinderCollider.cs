@@ -13,6 +13,7 @@ public class CylinderCollider : MonoBehaviour
     [SerializeField] float cylinderDiameter = 1;
     [SerializeField] bool diameterLocked = true;
     [SerializeField] float cylinderHeight = 1;
+    [SerializeField] bool isTrigger = false;
     [SerializeField] bool deleteColliders = false;
 
     Transform Parent;
@@ -116,7 +117,6 @@ public class CylinderCollider : MonoBehaviour
 
         for(int i = 0; i < childCount; i++)
         {
-            Debug.Log(i);
             Transform colliderToDelete = null;
             if (Application.isPlaying)
             {
@@ -149,7 +149,7 @@ public class CylinderCollider : MonoBehaviour
             GameObject collider = new GameObject();
             collider.layer = 7;                                             //Non-Static layer
             collider.name = "CyllinderColliderPart";
-            collider.AddComponent<BoxCollider>().isTrigger = true;
+            collider.AddComponent<BoxCollider>().isTrigger = isTrigger;
             collider.AddComponent<Rigidbody>().useGravity = false;          //Required for trigger to work properly
             collider.AddComponent<GroundCheckPiece>();                      //Script that handles collision detection
             collider.transform.SetParent(Parent);

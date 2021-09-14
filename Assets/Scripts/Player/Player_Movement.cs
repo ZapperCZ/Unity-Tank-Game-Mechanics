@@ -4,6 +4,7 @@ public class Player_Movement : MonoBehaviour
 {
     [SerializeField] CharacterController Controller;
     [SerializeField] Transform GroundCheckParent;
+    [SerializeField] Transform WallCheckParent;
 
     [SerializeField] LayerMask GroundMask;
 
@@ -106,7 +107,6 @@ public class Player_Movement : MonoBehaviour
         if (regenerate)
         {
             regenerate = false;
-            //TODO: Don't re-create the colliders, but instead change their values accordingly
             CreateGroundCheckColliders();
         }
 
@@ -166,17 +166,17 @@ public class Player_Movement : MonoBehaviour
         for (int i = 0; i < groundCheckSides / 2; i++)
         {
             GameObject collider = new GameObject();
-            collider.layer = 7;                                             //Non-Static layer
+            collider.layer = 7;
             collider.name = "GroundCheckPart";
             collider.AddComponent<BoxCollider>().isTrigger = true;
-            collider.AddComponent<Rigidbody>().useGravity = false;          //Required for trigger to work properly
-            collider.AddComponent<GroundCheckPiece>();                      //Script that handles collision detection
+            collider.AddComponent<Rigidbody>().useGravity = false;
+            collider.AddComponent<GroundCheckPiece>();
             collider.transform.SetParent(GroundCheckParent);
-            collider.transform.localPosition = new Vector3(0, 0, 0);        //Set it at the position of it's parent
+            collider.transform.localPosition = new Vector3(0, 0, 0);
             float rotationY = (float)i * 180 / (float)groundCheckSides * 2;
 
-            collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
-            collider.transform.localScale = new Vector3(groundCheckSideWidth, groundCheckThickness, groundCheckDiameter);    //Set it's size according to parameters
+            collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);
+            collider.transform.localScale = new Vector3(groundCheckSideWidth, groundCheckThickness, groundCheckDiameter);
         }
     }
         #endregion
