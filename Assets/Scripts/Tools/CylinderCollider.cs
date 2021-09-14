@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 
 [ExecuteInEditMode]
 public class CylinderCollider : MonoBehaviour
@@ -12,6 +13,7 @@ public class CylinderCollider : MonoBehaviour
     [SerializeField] float cylinderDiameter = 1;
     [SerializeField] bool diameterLocked = true;
     [SerializeField] float cylinderHeight = 1;
+    [SerializeField] bool deleteColliders = false;
 
     Transform Parent;
     bool prevSideWidthLocked;
@@ -20,9 +22,12 @@ public class CylinderCollider : MonoBehaviour
     float prevSideWidth;
     float prevDiameter;
     bool regenerate = false;
+    bool destroy = false;
+    bool prevDeleteColliders;
 
     void Start()
     {
+        prevDeleteColliders = deleteColliders;
         Parent = this.transform;
         prevSideWidth = cylinderSideWidth;
         prevDiameter = cylinderDiameter;
@@ -52,38 +57,51 @@ public class CylinderCollider : MonoBehaviour
             diameterLocked = true;
         }
 
-        //Only 1 can be checked at the same time, but both can be unchecked
-        if (sideWidthLocked && diameterLocked)
+        if(prevDeleteColliders != deleteColliders)
         {
-            if (sideWidthLocked != prevSideWidthLocked)
+            prevDeleteColliders = deleteColliders = false;
+            destroy = true;
+        }
+        else
+        {
+            //Only 1 can be checked at the same time, but both can be unchecked
+            if (sideWidthLocked && diameterLocked)
             {
-                prevSideWidthLocked = sideWidthLocked;
-                diameterLocked = prevDiameterLocked = !sideWidthLocked;
+                if (sideWidthLocked != prevSideWidthLocked)
+                {
+                    prevSideWidthLocked = sideWidthLocked;
+                    diameterLocked = prevDiameterLocked = !sideWidthLocked;
+                }
+                if (diameterLocked != prevDiameterLocked)
+                {
+                    prevDiameterLocked = diameterLocked;
+                    sideWidthLocked = prevSideWidthLocked = !diameterLocked;
+                }
             }
-            if (diameterLocked != prevDiameterLocked)
+
+            //TODO: Maybe switch the complex equation for my approximation once the n-gon gets complex
+
+            if (sideWidthLocked)
             {
-                prevDiameterLocked = diameterLocked;
-                sideWidthLocked = prevSideWidthLocked = !diameterLocked;
+                //prevDiameter = cylinderDiameter = cylinderSides * cylinderSideWidth / Mathf.PI;               //My approximation
+                prevDiameter = cylinderDiameter = cylinderSideWidth / Mathf.Tan(Mathf.PI / cylinderSides);      //Precise equation
             }
+            if (diameterLocked)
+            {
+                //prevSideWidth = cylinderSideWidth = Mathf.PI * cylinderDiameter / cylinderSides;              //My approximation
+                prevSideWidth = cylinderSideWidth = cylinderDiameter * Mathf.Tan(Mathf.PI / cylinderSides);     //Precise equation
+            }
+            regenerate = true;
         }
-
-        //TODO: Maybe switch the complex equation for my approximation once the n-gon gets complex
-
-        if (sideWidthLocked)
-        {
-            //prevDiameter = cylinderDiameter = cylinderSides * cylinderSideWidth / Mathf.PI;               //My approximation
-            prevDiameter = cylinderDiameter = cylinderSideWidth / Mathf.Tan(Mathf.PI / cylinderSides);      //Precise equation
-        }
-        if (diameterLocked)
-        {
-            //prevSideWidth = cylinderSideWidth = Mathf.PI * cylinderDiameter / cylinderSides;              //My approximation
-            prevSideWidth = cylinderSideWidth = cylinderDiameter * Mathf.Tan(Mathf.PI / cylinderSides);     //Precise equation
-        }
-        regenerate = true;
     }
     // Update is called once per frame
     void Update()
     {
+        if (destroy)
+        {
+            DestroyCylinderCollider();
+            destroy = false;
+        }
         if (regenerate)
         {
             Debug.Log($"Cylinder Collider - {Parent.name} - Regenerating");
@@ -94,31 +112,38 @@ public class CylinderCollider : MonoBehaviour
     }
     void DestroyCylinderCollider()
     {
-        //TODO: Leaves behind some colliders in Editor mode, but works perfectly in Play mode
-        Debug.Log($"Cylinder Collider - {Parent.name} - Collider to delete amount: {Parent.GetComponentInChildren<Transform>().childCount}");
-        foreach (Transform colliderToDelete in Parent.GetComponentInChildren<Transform>())
+        int childCount = Parent.childCount;
+
+        for(int i = 0; i < childCount; i++)
         {
-            Debug.Log($"Cylinder Collider - {Parent.name} - Preparing To Delete Collider");
+            Debug.Log(i);
+            Transform colliderToDelete = null;
+            if (Application.isPlaying)
+            {
+                colliderToDelete = Parent.GetChild(i);
+            }
+            else if (Application.isEditor)
+            {
+                colliderToDelete = Parent.GetChild(0);
+            }
             if (colliderToDelete.name == "CyllinderColliderPart")
             {
-                Debug.Log($"Cylinder Collider - {Parent.name} - Collider identified");
                 if (Application.isPlaying)
                 {
-                    Debug.Log($"Cylinder Collider - {Parent.name} - Collider deleted in play mode");
                     Destroy(colliderToDelete.gameObject);
                 }
                 else if (Application.isEditor)
                 {
-                    Debug.Log($"Cylinder Collider - {Parent.name} - Collider deleted in editor mode");
                     DestroyImmediate(colliderToDelete.gameObject);
                 }
             }
         }
+        
     }
     void CreateCylinderCollider()
     {
         DestroyCylinderCollider();
-        Debug.Log("Creating Ground Check");
+        Debug.Log($"Cyllinder Collider - {Parent.name} - Creating collider...");
         for (int i = 0; i < cylinderSides / 2; i++)
         {
             GameObject collider = new GameObject();
@@ -135,5 +160,6 @@ public class CylinderCollider : MonoBehaviour
             collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
             collider.transform.localScale = new Vector3(cylinderSideWidth, cylinderHeight, cylinderDiameter);    //Set it's size according to parameters
         }
+        Debug.Log($"Cyllinder Collider - {Parent.name} - Done");
     }
 }
