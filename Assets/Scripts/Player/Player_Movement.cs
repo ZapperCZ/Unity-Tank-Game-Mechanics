@@ -4,7 +4,7 @@ public class Player_Movement : MonoBehaviour
 {
     [SerializeField] CharacterController Controller;
     [SerializeField] Transform GroundCheckParent;
-    [SerializeField] Transform WallCheckParent;
+    [SerializeField] Transform CeilingChechParent;
 
     [SerializeField] LayerMask GroundMask;
 
@@ -30,6 +30,7 @@ public class Player_Movement : MonoBehaviour
     Vector3 velocity;
     float currentSpeed;
 
+    float defaultStepOffset;
     bool prevSideWidthLocked;
     bool prevDiameterLocked;
     //float prevSides;
@@ -41,6 +42,7 @@ public class Player_Movement : MonoBehaviour
     void Start()
     {
         //prevSides = groundCheckSides;
+        defaultStepOffset = Controller.stepOffset;
         prevSideWidth = groundCheckSideWidth;
         prevDiameter = groundCheckDiameter;
         prevSideWidthLocked = sideWidthLocked;
@@ -103,14 +105,6 @@ public class Player_Movement : MonoBehaviour
     }
     void Update()
     {
-        if (WallCheckParent.GetComponent<CylinderCollider>().changed)
-        {
-            foreach (Transform child in WallCheckParent)
-            {
-                child.gameObject.AddComponent<GroundCheckPiece>();
-            }
-            WallCheckParent.GetComponent<CylinderCollider>().changed = false;
-        }
         isGrounded = false;
         if (regenerate)
         {
@@ -153,6 +147,14 @@ public class Player_Movement : MonoBehaviour
         {
             //currentSpeed = defaultSpeed;  Doesn't feel good and doesn't make much sense either
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+        if (isGrounded)
+        {
+            Controller.stepOffset = defaultStepOffset;
+        }
+        else
+        {
+            Controller.stepOffset = 0f;
         }
 
         velocity.y += gravity * Time.deltaTime;
