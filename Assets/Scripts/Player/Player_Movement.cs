@@ -18,7 +18,6 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] float groundCheckDiameter = 10;
     [SerializeField] bool diameterLocked = true;
     [SerializeField] float groundCheckThickness = 0.1f;
-    [SerializeField] float groundDistance = 0.3f;
     [Header("Movement")]
     [SerializeField] float defaultSpeed = 12f;
     [SerializeField] float sprintMultiplier = 1.6f;
@@ -26,11 +25,16 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] float airMultiplier = 0.4f;
     [SerializeField] float gravity = -9.81f;
     [SerializeField] float jumpHeight = 3f;
+    [SerializeField] float crouchHeight = 1.4f;
+    [SerializeField] float crouchDurationMultiplier = 0.01f;
 
     Vector3 velocity;
     float currentSpeed;
 
+    float resultHeight;
+    float crouchInterpolationValue;
     float defaultStepOffset;
+    float defaultHeight;
     bool prevSideWidthLocked;
     bool prevDiameterLocked;
     //float prevSides;
@@ -42,6 +46,8 @@ public class Player_Movement : MonoBehaviour
     void Start()
     {
         //prevSides = groundCheckSides;
+        crouchInterpolationValue = 0;
+        defaultHeight = Controller.height;
         defaultStepOffset = Controller.stepOffset;
         prevSideWidth = groundCheckSideWidth;
         prevDiameter = groundCheckDiameter;
@@ -49,13 +55,18 @@ public class Player_Movement : MonoBehaviour
         prevDiameterLocked = diameterLocked;
         CreateGroundCheckColliders();
         currentSpeed = defaultSpeed;
+        resultHeight = defaultHeight;
+        
         Debug.Log("Player Movement - Initialized");
     }
     private void OnValidate()
     {
-        //TODO: Only regenerate when number of sides is changed, otherwise change the transform of existing colliders as that is less resource intensive
+        /*
+         * TODO: Only regenerate when number of sides is changed, otherwise change the transform of existing colliders 
+         * as that is less resource intensive
+        */
 
-        //Only even numbers
+        //Allows only even numbers
         if (groundCheckSides % 2 == 1)
         {
             groundCheckSides -= 1;
@@ -139,15 +150,39 @@ public class Player_Movement : MonoBehaviour
             currentSpeed = defaultSpeed;
         }
 
+        //TODO: Move the player up when getting up from the crouch as currently the controller moves down the stairs when standing up
+        if(Input.GetButton("Crouch"))
+        {
+            if(crouchInterpolationValue < 1)
+            {
+                crouchInterpolationValue += crouchDurationMultiplier * Time.deltaTime;
+            }
+        }
+        else
+        {
+            if (crouchInterpolationValue > 0)
+            {
+                crouchInterpolationValue -= crouchDurationMultiplier * Time.deltaTime;
+            }
+            //Controller.Move(new Vector3(0, resultHeight - defaultHeight, 0));
+        }
+
+        resultHeight = Mathf.SmoothStep(defaultHeight, crouchHeight, crouchInterpolationValue);
+        Debug.Log(resultHeight + " - " + crouchInterpolationValue);
+        Controller.height = resultHeight;
+
+
+
         Vector3 Direction = transform.right * x + transform.forward * z;
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
 
         //TODO: Slow down when not grounded
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            //currentSpeed = defaultSpeed;  Doesn't feel good and doesn't make much sense either
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+
+        //Takes care of the player getting glitched into the ground when trying to jump onto a ledge
         if (isGrounded)
         {
             Controller.stepOffset = defaultStepOffset;
@@ -156,7 +191,7 @@ public class Player_Movement : MonoBehaviour
         {
             Controller.stepOffset = 0f;
         }
-
+        
         velocity.y += gravity * Time.deltaTime;
 
         Controller.Move(velocity * Time.deltaTime);
@@ -191,4 +226,3 @@ public class Player_Movement : MonoBehaviour
     }
         #endregion
 }
-

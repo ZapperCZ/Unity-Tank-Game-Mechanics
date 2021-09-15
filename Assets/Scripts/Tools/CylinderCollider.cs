@@ -15,7 +15,7 @@ public class CylinderCollider : MonoBehaviour
     [SerializeField] float cylinderHeight = 1;
     [SerializeField] bool isTrigger = false;
     [SerializeField] bool deleteColliders = false;
-    public bool changed = false;                        //A bool other scripts can reference to detect when the collider has been changed by user
+    public bool changed = false;                                //A bool other scripts can reference to detect when the collider has been changed by user
 
     Transform Parent;
     bool prevSideWidthLocked;
