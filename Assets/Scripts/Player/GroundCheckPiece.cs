@@ -6,6 +6,7 @@ public class GroundCheckPiece : MonoBehaviour
 {
     public bool Grounded = false;
 
+    //TODO: Add the ability to use a layermask
     public void OnTriggerEnter(Collider other)
     {
         //Debug.Log("Enter - " + other.name);

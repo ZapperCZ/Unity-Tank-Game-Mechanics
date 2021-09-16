@@ -19,7 +19,7 @@ public class Dev_Collider : MonoBehaviour
     List<GameObject> SceneObjectsWithRenderer;          //List of all valid objects with a renderer
     Collider[] Colliders = {new BoxCollider(), new SphereCollider(), new CapsuleCollider(), new MeshCollider()};    //Array of collider definitions
 
-    //TODO: Handle collider view when new objects are created
+    //TODO: Handle collider view when new objects are created (maybe create a custom EventHandler)
     void Start()
     {
         Debug.Log("Colliders - Started");
@@ -99,12 +99,15 @@ public class Dev_Collider : MonoBehaviour
         {
             case 0:             //BoxCollider
                 newVisibleCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Destroy(newVisibleCollider.GetComponent<Collider>());
                 break;
             case 1:             //SphereCollider
                 newVisibleCollider = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Destroy(newVisibleCollider.GetComponent<Collider>());
                 break;
             case 2:             //CapsuleCollider
                 newVisibleCollider = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                Destroy(newVisibleCollider.GetComponent<Collider>());
                 break;
             case 3:             //MeshCollider
                 newVisibleCollider = new GameObject();
@@ -125,7 +128,6 @@ public class Dev_Collider : MonoBehaviour
             newVisibleCollider.transform.rotation = colliderParent.transform.rotation;
             newVisibleCollider.GetComponent<MeshRenderer>().material = Materials[rand.Next(Materials.Length)];
             newVisibleCollider.GetComponent<MeshRenderer>().enabled = false;
-            Destroy(newVisibleCollider.GetComponent<Collider>());
 
             if (colliderParent.layer == 7)  //Original object is non-static
             {

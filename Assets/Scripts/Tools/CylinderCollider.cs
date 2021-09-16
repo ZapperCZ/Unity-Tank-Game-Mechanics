@@ -12,7 +12,7 @@ public class CylinderCollider : MonoBehaviour
     [Range(0.1f, 5)]
     [SerializeField] float cylinderDiameter = 1;
     [SerializeField] bool diameterLocked = true;
-    [SerializeField] float cylinderHeight = 1;
+    public float cylinderHeight = 1;
     [SerializeField] bool isTrigger = false;
     [SerializeField] bool deleteColliders = false;
     public bool changed = false;                                //A bool other scripts can reference to detect when the collider has been changed by user
@@ -24,19 +24,21 @@ public class CylinderCollider : MonoBehaviour
     float prevSideWidth;
     float prevDiameter;
     bool regenerate = false;
-    bool destroy = false;
+    bool destroyColliders = false;
+    bool destroyManager = false;
+    bool addManager = false;
     bool prevDeleteColliders;
 
     void Start()
     {
         prevDeleteColliders = deleteColliders;
         Parent = this.transform;
+        Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
         prevSideWidth = cylinderSideWidth;
         prevDiameter = cylinderDiameter;
         prevSideWidthLocked = sideWidthLocked;
         prevDiameterLocked = diameterLocked;
         CreateCylinderCollider();
-        Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
     }
     void OnValidate()
     {
@@ -44,6 +46,15 @@ public class CylinderCollider : MonoBehaviour
         if (cylinderSides % 2 == 1)
         {
             cylinderSides -= 1;
+        }
+
+        if(isTrigger && !HasComponent<TriggerChildManager>(this.gameObject))    //Trigger changed to true
+        {
+            addManager = true;
+        }
+        else if(!isTrigger && HasComponent<TriggerChildManager>(this.gameObject))
+        {
+            destroyManager = true;
         }
 
         //Locks the currently changing variable
@@ -62,7 +73,7 @@ public class CylinderCollider : MonoBehaviour
         if(prevDeleteColliders != deleteColliders)
         {
             prevDeleteColliders = deleteColliders = false;
-            destroy = true;
+            destroyColliders = true;
         }
         else
         {
@@ -99,10 +110,26 @@ public class CylinderCollider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (destroy)
+        if (destroyColliders)
         {
             DestroyCylinderCollider();
-            destroy = false;
+            destroyColliders = false;
+        }
+        if (addManager)
+        {
+            Parent.gameObject.AddComponent<TriggerChildManager>();
+        }
+        if (destroyManager)
+        {
+            if (Application.isPlaying)
+            {
+                Destroy(Parent.GetComponent<TriggerChildManager>());
+            }
+            else if (Application.isEditor)
+            {
+                DestroyImmediate(Parent.GetComponent<TriggerChildManager>());
+            }
+            destroyManager = false;
         }
         if (regenerate)
         {
@@ -139,7 +166,7 @@ public class CylinderCollider : MonoBehaviour
                 }
             }
         }
-        
+
     }
     void CreateCylinderCollider()
     {
@@ -151,7 +178,11 @@ public class CylinderCollider : MonoBehaviour
             collider.layer = 7;                                             //Non-Static layer
             collider.name = "CyllinderColliderPart";
             collider.AddComponent<BoxCollider>().isTrigger = isTrigger;
-            collider.AddComponent<Rigidbody>().useGravity = false;          //Required for trigger to work properly
+            if (isTrigger)
+            {
+                collider.AddComponent<Rigidbody>().useGravity = false;          //Trigger needs a Rigidbody to detect collisions properly
+                collider.AddComponent<TriggerChild>();                          //TODO: Pass a layermask into this
+            }
             collider.transform.SetParent(Parent);
             collider.transform.localPosition = new Vector3(0, 0, 0);        //Set it at the position of it's parent
             float rotationY = (float)i * 180 / (float)cylinderSides * 2;
@@ -160,7 +191,15 @@ public class CylinderCollider : MonoBehaviour
             collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
             collider.transform.localScale = new Vector3(cylinderSideWidth, cylinderHeight, cylinderDiameter);    //Set it's size according to parameters
         }
+        if (isTrigger)
+        {
+            transform.GetComponent<TriggerChildManager>().isTriggered = false;
+        }
         changed = true;
         Debug.Log($"Cyllinder Collider - {Parent.name} - Done");
+    }
+    bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a collider or not
+    {
+        return inputObject.GetComponent<T>() != null;
     }
 }

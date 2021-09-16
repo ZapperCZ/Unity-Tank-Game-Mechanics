@@ -43,9 +43,11 @@ public class Player_Movement : MonoBehaviour
     bool regenerate = false;
     bool isGrounded;
 
+
+    //TODO: Use the Cyllinder Collider for ground check
+
     void Start()
     {
-        //prevSides = groundCheckSides;
         crouchInterpolationValue = 0;
         defaultHeight = Controller.height;
         defaultStepOffset = Controller.stepOffset;
@@ -56,7 +58,12 @@ public class Player_Movement : MonoBehaviour
         CreateGroundCheckColliders();
         currentSpeed = defaultSpeed;
         resultHeight = defaultHeight;
-        
+
+        float difference = defaultHeight - crouchHeight;
+        CeilingChechParent.localPosition = new Vector3(0,(defaultHeight-((difference)/2))/2,0);
+        CeilingChechParent.GetComponent<CylinderCollider>().cylinderHeight = difference;
+
+
         Debug.Log("Player Movement - Initialized");
     }
     private void OnValidate()
@@ -160,18 +167,19 @@ public class Player_Movement : MonoBehaviour
         }
         else
         {
-            if (crouchInterpolationValue > 0)
+            if (!CeilingChechParent.GetComponent<TriggerChildManager>().isTriggered)
             {
-                crouchInterpolationValue -= crouchDurationMultiplier * Time.deltaTime;
+                if (crouchInterpolationValue > 0)
+                {
+                    crouchInterpolationValue -= crouchDurationMultiplier * Time.deltaTime;
+                }
             }
             //Controller.Move(new Vector3(0, resultHeight - defaultHeight, 0));
         }
 
         resultHeight = Mathf.SmoothStep(defaultHeight, crouchHeight, crouchInterpolationValue);
-        Debug.Log(resultHeight + " - " + crouchInterpolationValue);
+        //Debug.Log(resultHeight + " - " + crouchInterpolationValue);
         Controller.height = resultHeight;
-
-
 
         Vector3 Direction = transform.right * x + transform.forward * z;
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
@@ -192,7 +200,7 @@ public class Player_Movement : MonoBehaviour
             Controller.stepOffset = 0f;
         }
         
-        velocity.y += gravity * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime;         //Simulates gravity
 
         Controller.Move(velocity * Time.deltaTime);
     }
