@@ -178,10 +178,13 @@ public class Player_Movement : MonoBehaviour
         }
 
         resultHeight = Mathf.SmoothStep(defaultHeight, crouchHeight, crouchInterpolationValue);
-        //Debug.Log(resultHeight + " - " + crouchInterpolationValue);
         Controller.height = resultHeight;
 
         Vector3 Direction = transform.right * x + transform.forward * z;
+
+        if (Direction.magnitude > 1)
+            Direction /= Direction.magnitude;       //Solves the diagonal movement being faster
+
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
 
         //TODO: Slow down when not grounded
