@@ -23,6 +23,7 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] float sprintMultiplier = 1.6f;
     [SerializeField] float crouchMultiplier = 0.4f;
     [SerializeField] float airMultiplier = 0.4f;
+    [SerializeField] float airDecreaseSpeedMultiplier = 0.2f;
     [SerializeField] float gravity = -9.81f;
     [SerializeField] float jumpHeight = 3f;
     [SerializeField] float crouchHeight = 1.4f;
@@ -33,6 +34,7 @@ public class Player_Movement : MonoBehaviour
 
     float resultHeight;
     float crouchInterpolationValue;
+    float airDecreaseInterpolationValue;
     float defaultStepOffset;
     float defaultHeight;
     bool prevSideWidthLocked;
@@ -49,6 +51,7 @@ public class Player_Movement : MonoBehaviour
     void Start()
     {
         crouchInterpolationValue = 0;
+        airDecreaseInterpolationValue = 0;
         defaultHeight = Controller.height;
         defaultStepOffset = Controller.stepOffset;
         prevSideWidth = groundCheckSideWidth;
@@ -124,6 +127,7 @@ public class Player_Movement : MonoBehaviour
     void Update()
     {
         isGrounded = false;
+
         if (regenerate)
         {
             regenerate = false;
@@ -139,23 +143,47 @@ public class Player_Movement : MonoBehaviour
             }
         }
 
-        if (isGrounded && velocity.y < 0)
+        if (isGrounded)
         {
-            velocity.y = -2f;
+            airDecreaseInterpolationValue = 0f;
+            //Takes care of the player getting glitched into the ground when trying to jump onto a ledge
+            Controller.stepOffset = defaultStepOffset;
+
+            if (Controller.height == defaultHeight)    //not crouching
+            {
+                if (Input.GetButtonDown("Jump"))
+                {
+                    velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                }
+
+                if (Input.GetButton("Sprint") && Controller.height == defaultHeight)
+                {
+                    //TODO: Maybe increase camera FOV slightly when sprinting
+                    currentSpeed = defaultSpeed * sprintMultiplier;
+                }
+                else
+                {
+                    currentSpeed = defaultSpeed;
+                }
+            }
+
+            if (velocity.y < 0)
+            {
+                velocity.y = -2f;
+            }
+        }
+        else
+        {
+            if(airDecreaseInterpolationValue < 0)
+            {
+                airDecreaseInterpolationValue += airDecreaseSpeedMultiplier * Time.deltaTime;
+            }
+            currentSpeed = Mathf.SmoothStep(defaultSpeed, defaultSpeed * airMultiplier, airDecreaseInterpolationValue);
+            Controller.stepOffset = 0f;
         }
 
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
-
-        if (Input.GetButton("Sprint") && isGrounded)
-        {
-            //TODO: Maybe increase camera FOV slightly when sprinting
-            currentSpeed = defaultSpeed * sprintMultiplier;
-        }
-        else
-        {
-            currentSpeed = defaultSpeed;
-        }
 
         //TODO: Move the player up when getting up from the crouch as currently the controller moves down the stairs when standing up
         if(Input.GetButton("Crouch"))
@@ -164,6 +192,7 @@ public class Player_Movement : MonoBehaviour
             {
                 crouchInterpolationValue += crouchDurationMultiplier * Time.deltaTime;
             }
+            currentSpeed = defaultSpeed * crouchMultiplier;     //Do this using interpolation
         }
         else
         {
@@ -185,23 +214,9 @@ public class Player_Movement : MonoBehaviour
         if (Direction.magnitude > 1)
             Direction /= Direction.magnitude;       //Solves the diagonal movement being faster
 
+        Debug.Log(Direction);
+
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
-
-        //TODO: Slow down when not grounded
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
-
-        //Takes care of the player getting glitched into the ground when trying to jump onto a ledge
-        if (isGrounded)
-        {
-            Controller.stepOffset = defaultStepOffset;
-        }
-        else
-        {
-            Controller.stepOffset = 0f;
-        }
         
         velocity.y += gravity * Time.deltaTime;         //Simulates gravity
 
