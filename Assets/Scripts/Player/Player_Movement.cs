@@ -214,7 +214,7 @@ public class Player_Movement : MonoBehaviour
         if (Direction.magnitude > 1)
             Direction /= Direction.magnitude;       //Solves the diagonal movement being faster
 
-        Debug.Log(Direction);
+        //Debug.Log(Direction);
 
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
         

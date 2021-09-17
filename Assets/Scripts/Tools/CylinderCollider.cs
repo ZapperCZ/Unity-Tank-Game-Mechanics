@@ -118,6 +118,7 @@ public class CylinderCollider : MonoBehaviour
         if (addManager)
         {
             Parent.gameObject.AddComponent<TriggerChildManager>();
+            addManager = false;
         }
         if (destroyManager)
         {
