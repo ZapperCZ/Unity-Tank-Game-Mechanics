@@ -42,7 +42,12 @@ public class CylinderCollider : MonoBehaviour
     }
     void OnValidate()
     {
-        //Only even numbers
+        /*
+         * TODO: Only regenerate when number of sides is changed, otherwise change the transform of existing colliders 
+         * as that is less resource intensive
+        */
+
+        //Allows only even numbers
         if (cylinderSides % 2 == 1)
         {
             cylinderSides -= 1;
@@ -118,6 +123,7 @@ public class CylinderCollider : MonoBehaviour
         if (addManager)
         {
             Parent.gameObject.AddComponent<TriggerChildManager>();
+            addManager = false;
         }
         if (destroyManager)
         {
