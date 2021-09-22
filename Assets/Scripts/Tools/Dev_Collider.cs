@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,6 +17,18 @@ public class Dev_Collider : MonoBehaviour
     List<GameObject> SceneObjectsWithCollider;          //List of all valid objects with a collider
     List<GameObject> SceneObjectsWithRenderer;          //List of all valid objects with a renderer
     Collider[] Colliders = {new BoxCollider(), new SphereCollider(), new CapsuleCollider(), new MeshCollider()};    //Array of collider definitions
+
+    private void OnEnable()
+    {
+        Events.instance.AddListener<GameObjectCreated>(OnGameObjectCreated);
+        Events.instance.AddListener<GameObjectDeleted>(OnGameObjectDeleted);
+    }
+    private void OnDisable()
+    {
+        Events.instance.RemoveListener<GameObjectCreated>(OnGameObjectCreated);
+        Events.instance.RemoveListener<GameObjectDeleted>(OnGameObjectDeleted);
+
+    }
 
     //TODO: Handle collider view when new objects are created (maybe create a custom EventHandler)
     void Start()
@@ -70,6 +81,17 @@ public class Dev_Collider : MonoBehaviour
             SwitchViewModels(isActive);
         }
     }
+
+    void OnGameObjectCreated(GameObjectCreated e)
+    {
+        Debug.Log("Game Object Created");
+    }
+
+    void OnGameObjectDeleted(GameObjectDeleted e)
+    {
+        Debug.Log("Game Object Deleted");
+    }
+
     private void OnValidate()
     {
         SwitchViewModels(isActive);

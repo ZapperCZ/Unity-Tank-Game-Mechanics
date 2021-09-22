@@ -171,6 +171,7 @@ public class CylinderCollider : MonoBehaviour
                     DestroyImmediate(colliderToDelete.gameObject);
                 }
             }
+            Events.instance.Raise(new GameObjectDeleted());
         }
 
     }
@@ -196,6 +197,7 @@ public class CylinderCollider : MonoBehaviour
             //TODO: Set the variables to be global and not local
             collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
             collider.transform.localScale = new Vector3(cylinderSideWidth, cylinderHeight, cylinderDiameter);    //Set it's size according to parameters
+            Events.instance.Raise(new GameObjectCreated());
         }
         if (isTrigger)
         {
