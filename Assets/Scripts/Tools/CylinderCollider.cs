@@ -164,14 +164,15 @@ public class CylinderCollider : MonoBehaviour
             {
                 if (Application.isPlaying)
                 {
-                    Destroy(colliderToDelete.gameObject);
+                    //Sends an event to DevCollider where the object is removed from lists and then destroyed
+                    Events.instance.Raise(new GameObjectDeleted(colliderToDelete.gameObject));
+                    //Destroy(colliderToDelete.gameObject);     
                 }
                 else if (Application.isEditor)
                 {
                     DestroyImmediate(colliderToDelete.gameObject);
                 }
             }
-            Events.instance.Raise(new GameObjectDeleted());
         }
 
     }
@@ -188,6 +189,7 @@ public class CylinderCollider : MonoBehaviour
             if (isTrigger)
             {
                 collider.AddComponent<Rigidbody>().useGravity = false;          //Trigger needs a Rigidbody to detect collisions properly
+                collider.GetComponent<Rigidbody>().isKinematic = true;
                 collider.AddComponent<TriggerChild>();                          //TODO: Pass a layermask into this
             }
             collider.transform.SetParent(Parent);
@@ -197,7 +199,7 @@ public class CylinderCollider : MonoBehaviour
             //TODO: Set the variables to be global and not local
             collider.transform.localRotation = Quaternion.Euler(0, rotationY, 0);   //Rotate it so the final shape forms an n-gon
             collider.transform.localScale = new Vector3(cylinderSideWidth, cylinderHeight, cylinderDiameter);    //Set it's size according to parameters
-            Events.instance.Raise(new GameObjectCreated());
+            Events.instance.Raise(new GameObjectCreated(collider));
         }
         if (isTrigger)
         {

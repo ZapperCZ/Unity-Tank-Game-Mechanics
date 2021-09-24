@@ -18,6 +18,8 @@ public class Dev_Collider : MonoBehaviour
     List<GameObject> SceneObjectsWithRenderer;          //List of all valid objects with a renderer
     Collider[] Colliders = {new BoxCollider(), new SphereCollider(), new CapsuleCollider(), new MeshCollider()};    //Array of collider definitions
 
+
+    //Listeners to handle changing of objects at runtime
     private void OnEnable()
     {
         Events.instance.AddListener<GameObjectCreated>(OnGameObjectCreated);
@@ -27,7 +29,6 @@ public class Dev_Collider : MonoBehaviour
     {
         Events.instance.RemoveListener<GameObjectCreated>(OnGameObjectCreated);
         Events.instance.RemoveListener<GameObjectDeleted>(OnGameObjectDeleted);
-
     }
 
     //TODO: Handle collider view when new objects are created (maybe create a custom EventHandler)
@@ -84,12 +85,53 @@ public class Dev_Collider : MonoBehaviour
 
     void OnGameObjectCreated(GameObjectCreated e)
     {
-        Debug.Log("Game Object Created");
+        GameObject CreatedGameObject = e.CreatedGameObject;
+        Debug.Log("Game Object Created - " + CreatedGameObject.name);
+        if (HasComponent<MeshRenderer>(CreatedGameObject) && !SceneObjectsWithRenderer.Contains(CreatedGameObject))
+        {
+            SceneObjectsWithRenderer.Add(CreatedGameObject);
+        }
+        CreateCollider(CreatedGameObject);
     }
 
     void OnGameObjectDeleted(GameObjectDeleted e)
     {
-        Debug.Log("Game Object Deleted");
+        GameObject DeletedGameObject = e.DeletedGameObject;
+
+        if (HasComponent<Collider>(DeletedGameObject))
+        {
+            if (DeletedGameObject.layer == 7)    //Non-static
+            {
+                foreach (GameObject colliderObject in NonStaticColliderModels)
+                {
+                    //MeshFilter
+                    Debug.Log("-");
+                    Debug.Log(colliderObject.transform.position + " - " + DeletedGameObject.transform.position);
+                    Debug.Log(colliderObject.transform.rotation + " - " + DeletedGameObject.transform.rotation);
+                    Debug.Log(colliderObject.transform.localScale + " - " + DeletedGameObject.transform.localScale);
+                    if (colliderObject.transform.position == DeletedGameObject.transform.position    
+                       && colliderObject.transform.rotation == DeletedGameObject.transform.rotation
+                       && colliderObject.transform.lossyScale == DeletedGameObject.transform.lossyScale)
+                    {
+                        Debug.Log("--------------------------------------------------");
+                        NonStaticColliderModels.Remove(colliderObject);
+                        if (SceneObjectsWithRenderer.Contains(DeletedGameObject))
+                        {
+                            SceneObjectsWithRenderer.Remove(DeletedGameObject);
+                        }
+                        Destroy(DeletedGameObject);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (Transform colliderObject in ColliderMeshParent.GetComponentInChildren<Transform>())
+                {
+
+                }
+            }
+        }
     }
 
     private void OnValidate()
@@ -138,7 +180,7 @@ public class Dev_Collider : MonoBehaviour
                 newVisibleCollider.AddComponent<MeshRenderer>();
                 break;
             default:
-                Debug.Log("Colliders - Unrecognized collider in: " + colliderParent.name);
+                Debug.Log("Collider view - Unrecognized collider in: " + colliderParent.name);
                 isValid = false;
                 break;
         }
@@ -162,6 +204,28 @@ public class Dev_Collider : MonoBehaviour
             }
         }
     }
+    /*
+    Mesh GetColliderMesh(GameObject objectWithCollider)
+    {
+        Mesh outputMesh = null;
+        switch(Array.FindIndex(Colliders, c => c.GetType() == objectWithCollider.GetComponent<Collider>().GetType()))
+        {
+            case 0:
+                outputMesh = objectWithCollider.GetComponent<BoxCollider>();
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                Debug.LogError("Unrecognized collider");
+                break;
+        }
+        return outputMesh;
+    }
+    */
     bool HasComponent <T>(GameObject inputObject) where T:Component //Returns whether the input object has a collider or not
     {
         return inputObject.GetComponent<T>()!=null;
