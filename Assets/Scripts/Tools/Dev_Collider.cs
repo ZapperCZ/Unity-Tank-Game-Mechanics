@@ -92,6 +92,10 @@ public class Dev_Collider : MonoBehaviour
             SceneObjectsWithRenderer.Add(CreatedGameObject);
         }
         CreateCollider(CreatedGameObject);
+
+        //Temporary solution, write a more efficient solution that would just update the colliders;
+        SwitchViewModels(!isActive);
+        SwitchViewModels(isActive);
     }
 
     void OnGameObjectDeleted(GameObjectDeleted e)
@@ -104,11 +108,10 @@ public class Dev_Collider : MonoBehaviour
             {
                 foreach (GameObject colliderObject in NonStaticColliderModels)
                 {
-                    //MeshFilter
-                    Debug.Log("-");
-                    Debug.Log(colliderObject.transform.position + " - " + DeletedGameObject.transform.position);
-                    Debug.Log(colliderObject.transform.rotation + " - " + DeletedGameObject.transform.rotation);
-                    Debug.Log(colliderObject.transform.localScale + " - " + DeletedGameObject.transform.localScale);
+                    //Debug.Log("-");
+                    //Debug.Log(colliderObject.transform.position + " - " + DeletedGameObject.transform.position);
+                    //Debug.Log(colliderObject.transform.rotation + " - " + DeletedGameObject.transform.rotation);
+                    //Debug.Log(colliderObject.transform.localScale + " - " + DeletedGameObject.transform.localScale);
                     if (colliderObject.transform.position == DeletedGameObject.transform.position    
                        && colliderObject.transform.rotation == DeletedGameObject.transform.rotation
                        && colliderObject.transform.lossyScale == DeletedGameObject.transform.lossyScale)
@@ -126,17 +129,21 @@ public class Dev_Collider : MonoBehaviour
             }
             else
             {
-                foreach (Transform colliderObject in ColliderMeshParent.GetComponentInChildren<Transform>())
-                {
-
-                }
+                Destroy(DeletedGameObject);
             }
         }
+
+        //Temporary solution, write a more efficient solution that would just update the colliders;
+        SwitchViewModels(!isActive);
+        SwitchViewModels(isActive);
     }
 
     private void OnValidate()
     {
-        SwitchViewModels(isActive);
+        if (Application.isPlaying)
+        {
+            SwitchViewModels(isActive);
+        }
     }
     void SwitchViewModels(bool targetMode)  //0 = normal view, 1 = collider view
     {
@@ -204,28 +211,6 @@ public class Dev_Collider : MonoBehaviour
             }
         }
     }
-    /*
-    Mesh GetColliderMesh(GameObject objectWithCollider)
-    {
-        Mesh outputMesh = null;
-        switch(Array.FindIndex(Colliders, c => c.GetType() == objectWithCollider.GetComponent<Collider>().GetType()))
-        {
-            case 0:
-                outputMesh = objectWithCollider.GetComponent<BoxCollider>();
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            default:
-                Debug.LogError("Unrecognized collider");
-                break;
-        }
-        return outputMesh;
-    }
-    */
     bool HasComponent <T>(GameObject inputObject) where T:Component //Returns whether the input object has a collider or not
     {
         return inputObject.GetComponent<T>()!=null;

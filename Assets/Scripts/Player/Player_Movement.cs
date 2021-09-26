@@ -10,10 +10,10 @@ public class Player_Movement : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] float defaultSpeed = 12f;
-    [SerializeField] float sprintMultiplier = 1.6f;
-    [SerializeField] float crouchMultiplier = 0.4f;
-    [SerializeField] float airMultiplier = 0.4f;
-    [SerializeField] float airDecreaseSpeedMultiplier = 0.2f;
+    [SerializeField] float sprintMultiplier = 1.6f;                 //Multiplier of default speed used when sprinting
+    [SerializeField] float crouchMultiplier = 0.4f;                 //Multiplier of default speed used when crouching
+    [SerializeField] float airMultiplier = 0.4f;                    //Multiplier of default speed used when in air
+    [SerializeField] float airDecreaseSpeedMultiplier = 0.2f;       //How fast the speed bleeds of when in air
     [SerializeField] float gravity = -9.81f;
     [SerializeField] float jumpHeight = 3f;
     [SerializeField] float crouchHeight = 1.4f;
@@ -27,15 +27,7 @@ public class Player_Movement : MonoBehaviour
     float airDecreaseInterpolationValue;
     float defaultStepOffset;
     float defaultHeight;
-    bool prevSideWidthLocked;
-    bool prevDiameterLocked;
-    //float prevSides;
-    float prevSideWidth;
-    float prevDiameter;
-    bool regenerate = false;
     bool isGrounded;
-
-    //TODO: Use the Cyllinder Collider for ground check
 
     void Start()
     {
@@ -43,7 +35,6 @@ public class Player_Movement : MonoBehaviour
         airDecreaseInterpolationValue = 0;
         defaultHeight = Controller.height;
         defaultStepOffset = Controller.stepOffset;
-        //CreateGroundCheckColliders();
         currentSpeed = defaultSpeed;
         resultHeight = defaultHeight;
 
