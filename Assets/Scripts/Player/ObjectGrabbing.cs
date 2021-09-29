@@ -13,14 +13,7 @@ public class ObjectGrabbing : MonoBehaviour
     [SerializeField] Camera Camera;
 
     GameObject CurrentlyGrabbedObject = null;
-    //[SerializeField] - grabbableTags;
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetButtonDown("Grab Object"))
@@ -30,19 +23,28 @@ public class ObjectGrabbing : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, grabbingDistance, grabbingMask))
                 {
-                    Debug.Log("Grabbing");
                     if (hit.transform.tag == "Grabbable")
                     {
                         CurrentlyGrabbedObject = hit.transform.gameObject;
                         Debug.Log("Grabbed - " + CurrentlyGrabbedObject.name);
+                        CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = false;
                     }
                 }
             }
             else
             {
                 Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
+                CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = true;
                 CurrentlyGrabbedObject = null;
             }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if(CurrentlyGrabbedObject != null)
+        {
+            CurrentlyGrabbedObject.transform.position = Camera.transform.forward * distanceFromCamera + Camera.transform.position;
         }
     }
 }
