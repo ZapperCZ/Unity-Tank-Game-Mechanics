@@ -27,14 +27,14 @@ public class ObjectGrabbing : MonoBehaviour
                     {
                         CurrentlyGrabbedObject = hit.transform.gameObject;
                         Debug.Log("Grabbed - " + CurrentlyGrabbedObject.name);
-                        CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = false;
+                        //CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = false;
                     }
                 }
             }
             else
             {
                 Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
-                CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = true;
+                //CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = true;
                 CurrentlyGrabbedObject = null;
             }
         }
@@ -42,9 +42,14 @@ public class ObjectGrabbing : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(CurrentlyGrabbedObject != null)
+        if (CurrentlyGrabbedObject != null)
         {
-            CurrentlyGrabbedObject.transform.position = Camera.transform.forward * distanceFromCamera + Camera.transform.position;
+            Vector3 DesiredPosition = Camera.transform.forward * distanceFromCamera + Camera.transform.position;
+            Vector3 CurrentPosition = CurrentlyGrabbedObject.transform.position;
+            Vector3 Direction = (DesiredPosition - CurrentPosition) / (DesiredPosition - CurrentPosition).magnitude;
+
+            CurrentlyGrabbedObject.transform.GetComponent<Rigidbody>().AddForce(Direction * grabStrength);
+            //CurrentlyGrabbedObject.transform.position = 
         }
     }
 }
