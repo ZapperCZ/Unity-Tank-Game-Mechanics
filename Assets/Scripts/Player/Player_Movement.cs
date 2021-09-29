@@ -54,6 +54,8 @@ public class Player_Movement : MonoBehaviour
             //Takes care of the player getting glitched into the ground when trying to jump onto a ledge
             Controller.stepOffset = defaultStepOffset;
 
+            currentSpeed = defaultSpeed;
+
             if (Controller.height == defaultHeight)    //not crouching
             {
                 if (Input.GetButtonDown("Jump"))
@@ -64,10 +66,6 @@ public class Player_Movement : MonoBehaviour
                 {
                     //TODO: Maybe increase camera FOV slightly when sprinting
                     currentSpeed = defaultSpeed * sprintMultiplier;
-                }
-                else
-                {
-                    currentSpeed = defaultSpeed;
                 }
             }
             if (velocity.y < 0)
@@ -95,7 +93,7 @@ public class Player_Movement : MonoBehaviour
             {
                 crouchInterpolationValue += crouchDurationMultiplier * Time.deltaTime;
             }
-            currentSpeed = defaultSpeed * crouchMultiplier;     //Do this using interpolation
+            currentSpeed = defaultSpeed * crouchMultiplier;     //TODO: Do this using interpolation
         }
         else
         {
@@ -116,8 +114,6 @@ public class Player_Movement : MonoBehaviour
 
         if (Direction.magnitude > 1)
             Direction /= Direction.magnitude;           //Solves the diagonal movement being faster
-
-        //Debug.Log(Direction);
 
         Controller.Move(Direction * currentSpeed * Time.deltaTime);
         
