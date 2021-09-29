@@ -16,7 +16,7 @@ public class Dev_Collider : MonoBehaviour
     List<GameObject> NonStaticColliderModels;           //List of all the non-static collider models
     List<GameObject> SceneObjectsWithCollider;          //List of all valid objects with a collider
     List<GameObject> SceneObjectsWithRenderer;          //List of all valid objects with a renderer
-    Collider[] Colliders = {new BoxCollider(), new SphereCollider(), new CapsuleCollider(), new MeshCollider()};    //Array of collider definitions
+    readonly Collider[] Colliders = {new BoxCollider(), new SphereCollider(), new CapsuleCollider(), new MeshCollider()};    //Array of collider definitions
 
 
     //Listeners to handle changing of objects at runtime
@@ -155,11 +155,11 @@ public class Dev_Collider : MonoBehaviour
         }
         foreach(Transform gObj in ColliderMeshParent.GetComponentInChildren<Transform>(true))
         {
-            gObj.gameObject.GetComponent<MeshRenderer>().enabled = targetMode;
+            gObj.GetComponent<MeshRenderer>().enabled = targetMode;
         }
         foreach(GameObject gObj in NonStaticColliderModels)
         {
-            gObj.gameObject.GetComponent<MeshRenderer>().enabled = targetMode;
+            gObj.GetComponent<MeshRenderer>().enabled = targetMode;
         }
     }
     void CreateCollider(GameObject colliderParent)  //Creates the collider based on the input object
