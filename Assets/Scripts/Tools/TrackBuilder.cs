@@ -23,7 +23,7 @@ public class TrackBuilder : MonoBehaviour
         TrackLink = this.gameObject;    //Uses the object it is assigned to as a track link
         if(!HasComponent<MeshRenderer>(TrackLink) || !HasComponent<Collider>(TrackLink) || !HasComponent<Rigidbody>(TrackLink))
         {
-            Debug.LogError("Track Builder - " + TrackLink.name + " - Required components not found, disabling script");
+            Debug.LogError("Track Builder - " + TrackLink.name + " - Required components not found, disabling script. Make sure that the object has a MeshRenderer, a Collider and a Rigidbody");
             this.enabled = false;
         }
     }
