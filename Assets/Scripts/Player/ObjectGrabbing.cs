@@ -57,6 +57,8 @@ public class ObjectGrabbing : MonoBehaviour
 
             if (distance > distanceLimit)
             {
+                Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
+                CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = originalDrag;
                 CurrentlyGrabbedObject = null;
                 return;
             }
