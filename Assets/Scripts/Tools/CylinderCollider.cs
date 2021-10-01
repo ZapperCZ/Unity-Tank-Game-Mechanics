@@ -27,11 +27,9 @@ public class CylinderCollider : MonoBehaviour
     bool destroyColliders = false;
     bool destroyManager = false;
     bool addManager = false;
-    bool prevDeleteColliders;
 
     void Start()
     {
-        prevDeleteColliders = deleteColliders;
         Parent = this.transform;
         Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
         prevSideWidth = cylinderSideWidth;
@@ -47,17 +45,17 @@ public class CylinderCollider : MonoBehaviour
          * as that is less resource intensive
         */
 
-        //Allows only even numbers
+        //Allows only even numbers of sides
         if (cylinderSides % 2 == 1)
         {
             cylinderSides -= 1;
         }
 
-        if(isTrigger && !HasComponent<TriggerChildManager>(this.gameObject))    //Trigger changed to true
+        if (isTrigger && !HasComponent<TriggerChildManager>(this.gameObject))    //Collider changed to trigger
         {
             addManager = true;
         }
-        else if(!isTrigger && HasComponent<TriggerChildManager>(this.gameObject))
+        else if (!isTrigger && HasComponent<TriggerChildManager>(this.gameObject))   //Collider changed from trigger
         {
             destroyManager = true;
         }
@@ -75,42 +73,41 @@ public class CylinderCollider : MonoBehaviour
             diameterLocked = true;
         }
 
-        if(prevDeleteColliders != deleteColliders)
+        if (deleteColliders == true)
         {
-            prevDeleteColliders = deleteColliders = false;
+            deleteColliders = false;
             destroyColliders = true;
+            return;
         }
-        else
+
+        //Only 1 can be checked at the same time, but both can be unchecked
+        if (sideWidthLocked && diameterLocked)
         {
-            //Only 1 can be checked at the same time, but both can be unchecked
-            if (sideWidthLocked && diameterLocked)
+            if (sideWidthLocked != prevSideWidthLocked)
             {
-                if (sideWidthLocked != prevSideWidthLocked)
-                {
-                    prevSideWidthLocked = sideWidthLocked;
-                    diameterLocked = prevDiameterLocked = !sideWidthLocked;
-                }
-                if (diameterLocked != prevDiameterLocked)
-                {
-                    prevDiameterLocked = diameterLocked;
-                    sideWidthLocked = prevSideWidthLocked = !diameterLocked;
-                }
+                prevSideWidthLocked = sideWidthLocked;
+                diameterLocked = prevDiameterLocked = !sideWidthLocked;
             }
-
-            //TODO: Maybe switch the complex equation for my approximation once the n-gon gets complex
-
-            if (sideWidthLocked)
+            if (diameterLocked != prevDiameterLocked)
             {
-                //prevDiameter = cylinderDiameter = cylinderSides * cylinderSideWidth / Mathf.PI;               //My approximation
-                prevDiameter = cylinderDiameter = cylinderSideWidth / Mathf.Tan(Mathf.PI / cylinderSides);      //Precise equation
+                prevDiameterLocked = diameterLocked;
+                sideWidthLocked = prevSideWidthLocked = !diameterLocked;
             }
-            if (diameterLocked)
-            {
-                //prevSideWidth = cylinderSideWidth = Mathf.PI * cylinderDiameter / cylinderSides;              //My approximation
-                prevSideWidth = cylinderSideWidth = cylinderDiameter * Mathf.Tan(Mathf.PI / cylinderSides);     //Precise equation
-            }
-            regenerate = true;
         }
+
+        //TODO: Maybe switch the complex equation for my approximation once the n-gon gets complex
+
+        if (sideWidthLocked)
+        {
+            //prevDiameter = cylinderDiameter = cylinderSides * cylinderSideWidth / Mathf.PI;               //My approximation
+            prevDiameter = cylinderDiameter = cylinderSideWidth / Mathf.Tan(Mathf.PI / cylinderSides);      //Precise equation
+        }
+        if (diameterLocked)
+        {
+            //prevSideWidth = cylinderSideWidth = Mathf.PI * cylinderDiameter / cylinderSides;              //My approximation
+            prevSideWidth = cylinderSideWidth = cylinderDiameter * Mathf.Tan(Mathf.PI / cylinderSides);     //Precise equation
+        }
+        regenerate = true;
     }
     // Update is called once per frame
     void Update()
@@ -139,7 +136,7 @@ public class CylinderCollider : MonoBehaviour
         }
         if (regenerate)
         {
-            Debug.Log($"Cylinder Collider - {Parent.name} - Regenerating");
+            //Debug.Log($"Cylinder Collider - {Parent.name} - Regenerating");
             regenerate = false;
             //TODO: Don't re-create the colliders, but instead change their values since that is less resource intensive
             CreateCylinderCollider();
@@ -179,7 +176,7 @@ public class CylinderCollider : MonoBehaviour
     void CreateCylinderCollider()
     {
         DestroyCylinderCollider();
-        Debug.Log($"Cyllinder Collider - {Parent.name} - Creating collider...");
+        //Debug.Log($"Cyllinder Collider - {Parent.name} - Creating collider...");
         for (int i = 0; i < cylinderSides / 2; i++)
         {
             GameObject collider = new GameObject();
@@ -206,9 +203,9 @@ public class CylinderCollider : MonoBehaviour
             transform.GetComponent<TriggerChildManager>().isTriggered = false;
         }
         changed = true;
-        Debug.Log($"Cyllinder Collider - {Parent.name} - Done");
+        //Debug.Log($"Cyllinder Collider - {Parent.name} - Done");
     }
-    bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a collider or not
+    bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a component or not
     {
         return inputObject.GetComponent<T>() != null;
     }

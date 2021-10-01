@@ -211,7 +211,7 @@ public class Dev_Collider : MonoBehaviour
             }
         }
     }
-    bool HasComponent <T>(GameObject inputObject) where T:Component //Returns whether the input object has a collider or not
+    bool HasComponent <T>(GameObject inputObject) where T:Component //Returns whether the input object has a component or not
     {
         return inputObject.GetComponent<T>()!=null;
     }
