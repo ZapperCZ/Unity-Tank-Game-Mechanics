@@ -26,7 +26,7 @@ public class ObjectGrabbing : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, grabbingDistance, grabbingMask, QueryTriggerInteraction.Ignore))
                 {
-                    if (hit.transform.CompareTag("Grabbable"))
+                    if (hit.transform.CompareTag("Grabbable") && hit.transform.GetComponent<Rigidbody>().mass < weightLimit)
                     {
                         CurrentlyGrabbedObject = hit.transform.gameObject;
                         originalDrag = CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag;
