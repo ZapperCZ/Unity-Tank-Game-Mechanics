@@ -22,6 +22,7 @@ public class TrackBuilder : MonoBehaviour
     [SerializeField] bool generateTracks = false;
     [SerializeField] bool createParent = true;              //Whether a parent for the track links should be created or not
     [SerializeField] string parentName = "Track";           //The name of the track parent
+    [SerializeField] bool generateOnChange = true;
     [SerializeField] bool deleteTracks = false;
 
     List<GameObject> TrackLinks = new List<GameObject>();
@@ -55,6 +56,11 @@ public class TrackBuilder : MonoBehaviour
     }
     void OnValidate()
     {
+        if (generateOnChange)
+        {
+            generateTracks = false;
+            createTracks = true;
+        }
         if (generateTracks == true)
         {
             generateTracks = false;
@@ -107,6 +113,7 @@ public class TrackBuilder : MonoBehaviour
         for(int i = 1; i <  linkAmount; i++)
         {
             GameObject newTrackLink = Instantiate(TrackLink);
+            Vector3 direction = TrackLink.transform.forward;
             Vector3 offset;
             if(trackDirection == 0)
             {
