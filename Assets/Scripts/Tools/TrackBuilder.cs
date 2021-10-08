@@ -33,6 +33,11 @@ public class TrackBuilder : MonoBehaviour
 
     void Update()
     {
+        if (transform.hasChanged)
+        {
+            createTracks = true;
+            transform.hasChanged = false;
+        }
         if (createTracks)
         {
             createTracks = false;
@@ -54,28 +59,34 @@ public class TrackBuilder : MonoBehaviour
             return;
         }
     }
+    void OnDisable()
+    {
+        DestroyTracks();
+    }
     void OnValidate()
     {
-        if (generateOnChange)
-        {
-            generateTracks = false;
-            createTracks = true;
-        }
         if (generateTracks == true)
         {
             generateTracks = false;
             createTracks = true;
             return;
         }
+
         if(deleteTracks == true) 
         {
             deleteTracks = false;
             destroyTracks = true;
             return;
         }
+
+        if (generateOnChange)
+        {
+            createTracks = true;
+        }
     }
     void GenerateTracks()
     {
+        //FIX: Tracks get generated twice when the game is in play mode
         DestroyTracks();
         if (createParent)
         {
@@ -98,30 +109,32 @@ public class TrackBuilder : MonoBehaviour
         }
         float linkLength;
         float linkAmount;
+        Vector3 direction;
         int trackDirection = 0;             //0 - X, 1 - Z
         if(TrackLink.transform.lossyScale.x > TrackLink.transform.lossyScale.z)     //x is track width, z is track direction
         {
             linkLength = TrackLink.transform.lossyScale.z;
+            direction = TrackLink.transform.forward;
             trackDirection = 1;
         }
-        else
+        else                                                                        //z is track width, x is track direction
         {
             linkLength = TrackLink.transform.lossyScale.x;
+            direction = Quaternion.Euler(0 ,90 ,0) * TrackLink.transform.forward;  //Rotates the Z direction by 90 degrees to achieve X direction
         }
+
         linkAmount = Mathf.Round(trackLength/(linkLength+linkSpacing));
-        Debug.Log(linkAmount);
         for(int i = 1; i <  linkAmount; i++)
         {
             GameObject newTrackLink = Instantiate(TrackLink);
-            Vector3 direction = TrackLink.transform.forward;
             Vector3 offset;
             if(trackDirection == 0)
             {
-                offset = new Vector3(i*(TrackLink.transform.lossyScale.x + linkSpacing), 0, 0);
+                offset = direction * i * (TrackLink.transform.lossyScale.x + linkSpacing);
             }
             else
             {
-                offset = new Vector3(0, 0, i*(TrackLink.transform.lossyScale.z + linkSpacing));
+                offset = direction * i * (TrackLink.transform.lossyScale.z + linkSpacing);
             }
             newTrackLink.transform.position += offset;
             newTrackLink.name = TrackLink.name + " " + i.ToString();
