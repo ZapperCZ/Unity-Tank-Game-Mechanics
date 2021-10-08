@@ -104,17 +104,17 @@ public class TrackBuilder : MonoBehaviour
         }
         linkAmount = Mathf.Round(trackLength/(linkLength+linkSpacing));
         Debug.Log(linkAmount);
-        for(int i = 0; i <  linkAmount; i++)
+        for(int i = 1; i <  linkAmount; i++)
         {
             GameObject newTrackLink = Instantiate(TrackLink);
             Vector3 offset;
             if(trackDirection == 0)
             {
-                offset = new Vector3(TrackLink.transform.lossyScale.x + linkSpacing, 0, 0);
+                offset = new Vector3(i*(TrackLink.transform.lossyScale.x + linkSpacing), 0, 0);
             }
             else
             {
-                offset = new Vector3(0, 0, TrackLink.transform.lossyScale.z + linkSpacing);
+                offset = new Vector3(0, 0, i*(TrackLink.transform.lossyScale.z + linkSpacing));
             }
             newTrackLink.transform.position += offset;
             newTrackLink.name = TrackLink.name + " " + i.ToString();
