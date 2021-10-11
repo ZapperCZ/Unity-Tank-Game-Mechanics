@@ -118,6 +118,7 @@ public class TrackBuilder : MonoBehaviour
         }
 
         linkAmount = Mathf.Round(trackLength/(linkLength+linkSpacing));
+        GameObject previousTrackLink = TrackLink;
         for(int i = 1; i <  linkAmount; i++)
         {
             GameObject newTrackLink = Instantiate(TrackLink);
@@ -133,8 +134,20 @@ public class TrackBuilder : MonoBehaviour
             newTrackLink.transform.position += offset;
             newTrackLink.name = TrackLink.name + " " + i.ToString();
             newTrackLink.transform.parent = TrackLink.transform.parent;
+            newTrackLink.AddComponent<HingeJoint>().connectedBody = previousTrackLink.GetComponent<Rigidbody>();
+            Vector3 hingeAxis;
+            if(trackDirection == 1)
+            {
+                hingeAxis = new Vector3(1, 0, 0);
+            }
+            else
+            {
+                hingeAxis = new Vector3(0, 0, 1);
+            }
+            newTrackLink.GetComponent<HingeJoint>().axis = hingeAxis;
             DestroyObjectSafely(newTrackLink.GetComponent<TrackBuilder>());
             Events.instance.Raise(new GameObjectCreated(newTrackLink));
+            previousTrackLink = newTrackLink;
         }
     }
     void DestroyTracks()
