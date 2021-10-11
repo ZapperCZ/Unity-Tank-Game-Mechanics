@@ -108,7 +108,6 @@ public class CylinderCollider : MonoBehaviour
         }
         regenerate = true;
     }
-    // Update is called once per frame
     void Update()
     {
         if (destroyColliders)

@@ -134,8 +134,11 @@ public class Dev_Collider : MonoBehaviour
         }
 
         //Temporary solution, write a more efficient solution that would just update the colliders;
-        SwitchViewModels(!isActive);
-        SwitchViewModels(isActive);
+        if (isActive)
+        {
+            SwitchViewModels(!isActive);
+            SwitchViewModels(isActive);
+        }
     }
 
     private void OnValidate()

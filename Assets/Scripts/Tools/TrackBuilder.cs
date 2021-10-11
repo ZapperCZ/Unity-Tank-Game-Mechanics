@@ -1,18 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class TrackBuilder : MonoBehaviour
 {
-    /*
-    enum TrackType
-    {
-        Flat,
-        Loop
-    }
-    */
-    //[SerializeField] TrackType TypeOfTrack = new TrackType();
     [Range(1,20)]
     [SerializeField] float trackLength = 10f;               //The length of a track
     [Range(0,0.5f)]
@@ -20,20 +11,21 @@ public class TrackBuilder : MonoBehaviour
     [Range(1,180)]
     [SerializeField] float linkJointAngleLimit = 120;       //The maximum angle between the track links
     [SerializeField] bool generateTracks = false;
-    [SerializeField] bool createParent = true;              //Whether a parent for the track links should be created or not
     [SerializeField] string parentName = "Track";           //The name of the track parent
     [SerializeField] bool generateOnChange = true;
     [SerializeField] bool deleteTracks = false;
 
-    List<GameObject> TrackLinks = new List<GameObject>();
     GameObject TrackLink;
     GameObject TrackParent;
+    bool createParent = true;                               //Whether a parent for the track links should be created or not
     bool createTracks = false;
     bool destroyTracks = false;
 
+    //FIX: Script loses track of the track parent, disabling the generation of parent doesn't work once this happens
+
     void Update()
     {
-        if (transform.hasChanged)
+        if (transform.hasChanged && !Application.isPlaying) //Only generate tracks on moving the track link when the game is in editor mode
         {
             createTracks = true;
             transform.hasChanged = false;
@@ -59,12 +51,14 @@ public class TrackBuilder : MonoBehaviour
             return;
         }
     }
-    void OnDisable()
-    {
-        DestroyTracks();
-    }
     void OnValidate()
     {
+        if(parentName == "")
+        {
+            parentName = "Track";
+            return;
+        }
+
         if (generateTracks == true)
         {
             generateTracks = false;
@@ -86,8 +80,9 @@ public class TrackBuilder : MonoBehaviour
     }
     void GenerateTracks()
     {
-        //FIX: Tracks get generated twice when the game is in play mode
+        //FIX: Tracks sometimes get generated twice when the script is unloaded and loaded (maybe change the deletion method)
         DestroyTracks();
+        Debug.Log("Track Builder - Generating Tracks");
         if (createParent)
         {
             if(TrackLink.transform.parent.gameObject.name != parentName)        //Parent doesn't exist yet
@@ -103,14 +98,13 @@ public class TrackBuilder : MonoBehaviour
             if(TrackLink.transform.parent.gameObject.name == parentName)
             {
                 TrackLink.transform.parent = TrackParent.transform.parent;
-
                 DestroyObjectSafely(TrackParent);
             }
         }
-        float linkLength;
-        float linkAmount;
-        Vector3 direction;
-        int trackDirection = 0;             //0 - X, 1 - Z
+        float linkLength;                   //Length of a link in the direction of the track
+        float linkAmount;                   //Amount of links in one track
+        Vector3 direction;                  //The direction of the track
+        int trackDirection = 0;             //Track direction in relation to the main link axis, 0 - X, 1 - Z
         if(TrackLink.transform.lossyScale.x > TrackLink.transform.lossyScale.z)     //x is track width, z is track direction
         {
             linkLength = TrackLink.transform.lossyScale.z;
@@ -120,7 +114,7 @@ public class TrackBuilder : MonoBehaviour
         else                                                                        //z is track width, x is track direction
         {
             linkLength = TrackLink.transform.lossyScale.x;
-            direction = Quaternion.Euler(0 ,90 ,0) * TrackLink.transform.forward;  //Rotates the Z direction by 90 degrees to achieve X direction
+            direction = Quaternion.Euler(0 ,90 ,0) * TrackLink.transform.forward;   //Rotates the Z direction by 90 degrees on Y axis to achieve X direction
         }
 
         linkAmount = Mathf.Round(trackLength/(linkLength+linkSpacing));
@@ -140,23 +134,56 @@ public class TrackBuilder : MonoBehaviour
             newTrackLink.name = TrackLink.name + " " + i.ToString();
             newTrackLink.transform.parent = TrackLink.transform.parent;
             DestroyObjectSafely(newTrackLink.GetComponent<TrackBuilder>());
-            
-            TrackLinks.Add(newTrackLink);
+            Events.instance.Raise(new GameObjectCreated(newTrackLink));
         }
     }
     void DestroyTracks()
     {
-        for(int i = 0; i < TrackLinks.Count; i++)
+        Debug.Log("Destroying");
+        Transform Parent = transform.parent;
+        int childCount = Parent.childCount-1;           //The parent can't be deleted
+
+        for (int i = 1; i <= childCount; i++)
         {
-            DestroyObjectSafely(TrackLinks[i]);
+            Transform linkToDelete = null;
+            if (Application.isPlaying)
+            {
+                linkToDelete = Parent.GetChild(i);
+            }
+            else if (Application.isEditor)
+            {
+                linkToDelete = Parent.GetChild(1);      //The 0 element will be the parent link
+            }
+            if (linkToDelete.name.Contains(this.name) && !HasComponent<TrackBuilder>(linkToDelete.gameObject))
+            {
+                DestroyObjectSafely(linkToDelete.gameObject);
+            }
         }
-        TrackLinks = new List<GameObject>();
     }
-    void DestroyObjectSafely(Object obj)            //Destroys the object appropriately to the current mode
+    void DestroyObjectSafely(Object obj)
     {
         if (Application.isPlaying)
         {
             Destroy(obj);
+        }
+        else if (Application.isEditor)
+        {
+            DestroyImmediate(obj);
+        }
+    }
+    void DestroyObjectSafely(GameObject obj)            //Destroys the object appropriately to the current mode
+    {
+        if (Application.isPlaying)
+        {
+            if (HasComponent<Collider>(obj))
+            {
+                //Sends an event to DevCollider where the object is removed from lists and then destroyed
+                Events.instance.Raise(new GameObjectDeleted(obj));
+            }
+            else
+            {
+                Destroy(obj);
+            }
         }
         else if (Application.isEditor)
         {
