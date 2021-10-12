@@ -50,6 +50,8 @@ public class TrackBuilder : MonoBehaviour
             this.enabled = false;
             return;
         }
+        TrackLink.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
+        TrackLink.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);
     }
     void OnValidate()
     {
@@ -134,6 +136,8 @@ public class TrackBuilder : MonoBehaviour
             newTrackLink.transform.position += offset;
             newTrackLink.name = TrackLink.name + " " + i.ToString();
             newTrackLink.transform.parent = TrackLink.transform.parent;
+            newTrackLink.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
+            newTrackLink.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);
             newTrackLink.AddComponent<HingeJoint>().connectedBody = previousTrackLink.GetComponent<Rigidbody>();
             Vector3 hingeAxis;
             Vector3 hingeAnchor;

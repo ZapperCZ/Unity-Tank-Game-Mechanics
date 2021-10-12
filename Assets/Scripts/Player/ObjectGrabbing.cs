@@ -73,7 +73,7 @@ public class ObjectGrabbing : MonoBehaviour
             }
 
             CurrentlyGrabbedObject.transform.GetComponent<Rigidbody>().AddForce(direction * grabStrength);
-            Debug.Log((desiredPosition - currentPosition).magnitude);        
+            //Debug.Log((desiredPosition - currentPosition).magnitude);        
         }
     }
 }
