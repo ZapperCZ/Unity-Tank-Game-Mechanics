@@ -136,15 +136,19 @@ public class TrackBuilder : MonoBehaviour
             newTrackLink.transform.parent = TrackLink.transform.parent;
             newTrackLink.AddComponent<HingeJoint>().connectedBody = previousTrackLink.GetComponent<Rigidbody>();
             Vector3 hingeAxis;
+            Vector3 hingeAnchor;
             if(trackDirection == 1)
             {
                 hingeAxis = new Vector3(1, 0, 0);
+                hingeAnchor = new Vector3(0, 0, -0.55f);
             }
             else
             {
                 hingeAxis = new Vector3(0, 0, 1);
+                hingeAnchor = new Vector3(-0.55f, 0, 0);
             }
             newTrackLink.GetComponent<HingeJoint>().axis = hingeAxis;
+            newTrackLink.GetComponent<HingeJoint>().anchor = hingeAnchor;
             DestroyObjectSafely(newTrackLink.GetComponent<TrackBuilder>());
             Events.instance.Raise(new GameObjectCreated(newTrackLink));
             previousTrackLink = newTrackLink;
