@@ -116,7 +116,7 @@ public class Dev_Collider : MonoBehaviour
                        && colliderObject.transform.rotation == DeletedGameObject.transform.rotation
                        && colliderObject.transform.lossyScale == DeletedGameObject.transform.lossyScale)
                     {
-                        Debug.Log("--------------------------------------------------");
+                        //Debug.Log("--------------------------------------------------");
                         NonStaticColliderModels.Remove(colliderObject);
                         if (SceneObjectsWithRenderer.Contains(DeletedGameObject))
                         {
