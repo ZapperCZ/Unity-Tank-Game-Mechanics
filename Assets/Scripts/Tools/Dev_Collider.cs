@@ -94,8 +94,11 @@ public class Dev_Collider : MonoBehaviour
         CreateCollider(CreatedGameObject);
 
         //Temporary solution, write a more efficient solution that would just update the colliders;
-        SwitchViewModels(!isActive);
-        SwitchViewModels(isActive);
+
+        if (isActive)
+        {
+            ReloadColliderView();
+        }
     }
 
     void OnGameObjectDeleted(GameObjectDeleted e)
@@ -136,8 +139,7 @@ public class Dev_Collider : MonoBehaviour
         //Temporary solution, write a more efficient solution that would just update the colliders;
         if (isActive)
         {
-            SwitchViewModels(!isActive);
-            SwitchViewModels(isActive);
+            ReloadColliderView();
         }
     }
 
@@ -164,6 +166,11 @@ public class Dev_Collider : MonoBehaviour
         {
             gObj.GetComponent<MeshRenderer>().enabled = targetMode;
         }
+    }
+    void ReloadColliderView()
+    {
+        SwitchViewModels(!isActive);
+        SwitchViewModels(isActive);
     }
     void CreateCollider(GameObject colliderParent)  //Creates the collider based on the input object
     {
