@@ -124,6 +124,7 @@ public class TrackBuilder : MonoBehaviour
         for(int i = 1; i <  linkAmount; i++)
         {
             GameObject newTrackLink = Instantiate(TrackLink);
+            newTrackLink.transform.parent = TrackLink.transform.parent;
             Vector3 offset;
             if(trackDirection == 0)
             {
@@ -133,9 +134,8 @@ public class TrackBuilder : MonoBehaviour
             {
                 offset = direction * i * (TrackLink.transform.lossyScale.z + linkSpacing);
             }
-            newTrackLink.transform.position += offset;
+            newTrackLink.transform.localPosition = TrackLink.transform.localPosition + offset;
             newTrackLink.name = TrackLink.name + " " + i.ToString();
-            newTrackLink.transform.parent = TrackLink.transform.parent;
             newTrackLink.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
             newTrackLink.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);
             newTrackLink.AddComponent<HingeJoint>().connectedBody = previousTrackLink.GetComponent<Rigidbody>();
