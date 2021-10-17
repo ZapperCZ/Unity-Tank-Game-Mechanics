@@ -119,7 +119,7 @@ public class TrackBuilder : MonoBehaviour
             direction = Quaternion.Euler(0 ,90 ,0) * TrackLink.transform.forward;   //Rotates the Z direction by 90 degrees on Y axis to achieve X direction
         }
 
-        linkAmount = Mathf.Round(trackLength/(linkLength+linkSpacing));
+        linkAmount = Mathf.Round(trackLength/(linkLength+linkSpacing)) - 1;         //Decrease by one to account for the already existing parent link
         GameObject previousTrackLink = TrackLink;
         for(int i = 1; i <  linkAmount; i++)
         {
