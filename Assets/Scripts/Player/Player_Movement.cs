@@ -44,8 +44,13 @@ public class Player_Movement : MonoBehaviour
 
         Debug.Log("Player Movement - Initialized");
     }
+        
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Debug.LogWarning("Penis");
+        }
         isGrounded = GroundCheckParent.GetComponent<TriggerChildManager>().isTriggered;
 
         if (isGrounded)
