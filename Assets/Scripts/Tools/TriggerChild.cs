@@ -3,16 +3,18 @@ using UnityEngine;
 public class TriggerChild : MonoBehaviour
 {
     public bool isTriggered = false;
+    public LayerMask CollisionMask;
 
     Transform Parent;
 
     private void Start()
     {
         Parent = this.transform.parent;
+        CollisionMask = Parent.GetComponent<TriggerChildManager>().CollisionMask;
     }
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == 0)     //Ground
+        if (CollisionMask == (CollisionMask | (1<<other.gameObject.layer)))         //Collided object has a layer contained in the Collision LayerMask
         {
             isTriggered = true;
             this.transform.parent.GetComponent<TriggerChildManager>().isTriggered = true;
@@ -20,7 +22,7 @@ public class TriggerChild : MonoBehaviour
     }
     public void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 0)     //Ground
+        if (CollisionMask == (CollisionMask | (1 << other.gameObject.layer)))
         {
             bool canChange = true;
             isTriggered = false;

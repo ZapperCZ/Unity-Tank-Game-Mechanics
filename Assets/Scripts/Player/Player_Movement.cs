@@ -41,16 +41,14 @@ public class Player_Movement : MonoBehaviour
         float difference = defaultHeight - crouchHeight;
         CeilingChechParent.localPosition = new Vector3(0,(defaultHeight-((difference)/2))/2,0);
         CeilingChechParent.GetComponent<CylinderCollider>().cylinderHeight = difference;
+        GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+        CeilingChechParent.GetComponent<TriggerChild>().CollisionMask = GroundMask;
 
         Debug.Log("Player Movement - Initialized");
     }
         
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Debug.LogWarning("Penis");
-        }
         isGrounded = GroundCheckParent.GetComponent<TriggerChildManager>().isTriggered;
 
         if (isGrounded)
