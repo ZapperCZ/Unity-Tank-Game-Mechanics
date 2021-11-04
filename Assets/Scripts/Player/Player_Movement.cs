@@ -42,13 +42,25 @@ public class Player_Movement : MonoBehaviour
         CeilingChechParent.localPosition = new Vector3(0,(defaultHeight-((difference)/2))/2,0);
         CeilingChechParent.GetComponent<CylinderCollider>().cylinderHeight = difference;
         GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-        CeilingChechParent.GetComponent<TriggerChild>().CollisionMask = GroundMask;
+        CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
 
         Debug.Log("Player Movement - Initialized");
     }
         
     void Update()
     {
+        if(this.GetComponent<ObjectGrabbing>().isGrabbing == true)
+        {
+            RemoveLayerFromMask(ref GroundMask, "Non Static");
+            GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+            CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+        }
+        else
+        {
+            AddLayerToMask(ref GroundMask, "Non Static");
+            GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+            CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+        }
         isGrounded = GroundCheckParent.GetComponent<TriggerChildManager>().isTriggered;
 
         if (isGrounded)
@@ -123,5 +135,19 @@ public class Player_Movement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;         //Simulates gravity
 
         Controller.Move(velocity * Time.deltaTime);
+    }
+    void AddLayerToMask(ref LayerMask layerMask, string layerToAdd)
+    {
+        if (layerMask != (layerMask | (1 << LayerMask.NameToLayer(layerToAdd))))    //If LayerMask doesn't contain the layer to add
+        {
+            layerMask |= (1 << LayerMask.NameToLayer(layerToAdd));                  //Adds the layer to the mask through a bit operation
+        }
+    }
+    void RemoveLayerFromMask(ref LayerMask layerMask, string layerToRemove)
+    {
+        if(layerMask == (layerMask | (1 << LayerMask.NameToLayer(layerToRemove))))  //If LayerMask contains the layer to remove
+        {
+            layerMask ^= 1 << LayerMask.NameToLayer(layerToRemove);                 //Removes the layer from the mask through a bit operation
+        }
     }
 }

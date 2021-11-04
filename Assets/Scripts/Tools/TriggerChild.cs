@@ -10,7 +10,10 @@ public class TriggerChild : MonoBehaviour
     private void Start()
     {
         Parent = this.transform.parent;
-        CollisionMask = Parent.GetComponent<TriggerChildManager>().CollisionMask;
+    }
+    private void Update()
+    {
+        CollisionMask = Parent.GetComponent<TriggerChildManager>().CollisionMask;   //TODO: Find a more efficient way to do this
     }
     public void OnTriggerEnter(Collider other)
     {

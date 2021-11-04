@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ObjectGrabbing : MonoBehaviour
 {
+    public bool isGrabbing = false;
     [SerializeField] float grabStrength = 1;
     [SerializeField] float weightLimit = 20;
     [SerializeField] float distanceFromCamera = 1.2f;
@@ -31,17 +32,17 @@ public class ObjectGrabbing : MonoBehaviour
                         CurrentlyGrabbedObject = hit.transform.gameObject;
                         originalDrag = CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag;
                         CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = grabbedDrag;
-                        Debug.Log("Grabbed - " + CurrentlyGrabbedObject.name);
-                        //CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = false;
+                        isGrabbing = true;
+                        //Debug.Log("Grabbed - " + CurrentlyGrabbedObject.name);
                     }
                 }
             }
             else
             {
-                Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
+                //Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
                 CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = originalDrag;
-                //CurrentlyGrabbedObject.GetComponent<Rigidbody>().useGravity = true;
                 CurrentlyGrabbedObject = null;
+                isGrabbing = false;
             }
         }
     }
@@ -60,6 +61,7 @@ public class ObjectGrabbing : MonoBehaviour
                 Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
                 CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = originalDrag;
                 CurrentlyGrabbedObject = null;
+                isGrabbing = false;
                 return;
             }
 
@@ -73,7 +75,6 @@ public class ObjectGrabbing : MonoBehaviour
             }
 
             CurrentlyGrabbedObject.transform.GetComponent<Rigidbody>().AddForce(direction * grabStrength);
-            //Debug.Log((desiredPosition - currentPosition).magnitude);        
         }
     }
 }
