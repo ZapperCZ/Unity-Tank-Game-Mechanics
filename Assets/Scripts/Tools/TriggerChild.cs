@@ -23,7 +23,7 @@ public class TriggerChild : MonoBehaviour
             this.transform.parent.GetComponent<TriggerChildManager>().isTriggered = true;
         }
     }
-    public void OnTriggerExit(Collider other)
+    public void OnTriggerExit(Collider other)   //TODO: Find out what exactly am I doing here and comment it
     {
         if (CollisionMask == (CollisionMask | (1 << other.gameObject.layer)))
         {
@@ -31,7 +31,7 @@ public class TriggerChild : MonoBehaviour
             isTriggered = false;
             foreach(Transform childTrigger in Parent)
             {
-                if (childTrigger.GetComponent<TriggerChild>())
+                if (HasComponent<TriggerChild>(childTrigger.gameObject))
                 {
                     if (childTrigger.GetComponent<TriggerChild>().isTriggered)
                     {
