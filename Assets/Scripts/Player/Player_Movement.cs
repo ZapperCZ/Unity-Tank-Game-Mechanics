@@ -49,18 +49,6 @@ public class Player_Movement : MonoBehaviour
         
     void Update()
     {
-        if(this.GetComponent<ObjectGrabbing>().isGrabbing == true)
-        {
-            RemoveLayerFromMask(ref GroundMask, "Non Static");
-            GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-            CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-        }
-        else
-        {
-            AddLayerToMask(ref GroundMask, "Non Static");
-            GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-            CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-        }
         isGrounded = GroundCheckParent.GetComponent<TriggerChildManager>().isTriggered;
 
         if (isGrounded)
