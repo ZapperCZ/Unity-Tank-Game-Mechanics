@@ -27,6 +27,8 @@ public class Player_Movement : MonoBehaviour
     float airDecreaseInterpolationValue;
     float defaultStepOffset;
     float defaultHeight;
+    float inverseHeightRange;
+    float clampedHeight;
     bool isGrounded;
 
     void Start()
@@ -57,7 +59,11 @@ public class Player_Movement : MonoBehaviour
             //Takes care of the player getting glitched into the ground when trying to jump onto a ledge
             Controller.stepOffset = defaultStepOffset;
 
-            currentSpeed = defaultSpeed;
+            inverseHeightRange = defaultHeight - crouchHeight;                  //
+            clampedHeight = Controller.height - crouchHeight;                   // 
+            clampedHeight /= inverseHeightRange;                                //Outputs a value between 0 and 1 depending on how much the player is crouching right now
+
+            currentSpeed = Mathf.Lerp(defaultSpeed * crouchMultiplier, defaultSpeed, clampedHeight);    //Clamps the speed depending on how much the player is crouching
 
             if (Controller.height == defaultHeight)    //not crouching
             {
