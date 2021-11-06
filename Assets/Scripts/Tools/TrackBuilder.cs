@@ -165,7 +165,7 @@ public class TrackBuilder : MonoBehaviour
     }
     void DestroyTracks()
     {
-        Debug.Log("Destroying");
+        Debug.Log("Track Builder - Destroying Tracks");
         Transform Parent = transform.parent;
         int childCount = Parent.childCount-1;           //The parent can't be deleted
 
