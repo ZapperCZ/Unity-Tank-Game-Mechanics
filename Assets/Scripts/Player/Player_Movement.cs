@@ -39,10 +39,10 @@ public class Player_Movement : MonoBehaviour
         resultHeight = defaultHeight;
 
         float difference = defaultHeight - crouchHeight;
-        CeilingChechParent.localPosition = new Vector3(0,(defaultHeight-((difference)/2))/2,0);
+        CeilingChechParent.localPosition = new Vector3(0,(defaultHeight-((difference)/2))/2,0);     //Places the cylinder between the maximum and minimum height of the character
         CeilingChechParent.GetComponent<CylinderCollider>().cylinderHeight = difference;
         GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-        CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+        CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = LayerMask.NameToLayer("Default");
 
         Debug.Log("Player Movement - Initialized");
     }
@@ -53,13 +53,13 @@ public class Player_Movement : MonoBehaviour
         {
             RemoveLayerFromMask(ref GroundMask, "Non Static");
             GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-            CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+            //CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
         }
         else
         {
             AddLayerToMask(ref GroundMask, "Non Static");
             GroundCheckParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
-            CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
+            //CeilingChechParent.GetComponent<TriggerChildManager>().CollisionMask = GroundMask;
         }
         isGrounded = GroundCheckParent.GetComponent<TriggerChildManager>().isTriggered;
 
@@ -102,24 +102,24 @@ public class Player_Movement : MonoBehaviour
         float z = Input.GetAxis("Vertical");
 
         //TODO: Move the player up when getting up from the crouch as currently the controller moves down a slope when getting up
-        if(Input.GetButton("Crouch"))
+        if(Input.GetButton("Crouch"))               //Crouching down
         {
-            if(crouchInterpolationValue < 1)
+            if(crouchInterpolationValue < 1)        //Not fully crouched down
             {
                 crouchInterpolationValue += crouchDurationMultiplier * Time.deltaTime;
             }
-            currentSpeed = defaultSpeed * crouchMultiplier;     //TODO: Do this using interpolation
+            currentSpeed = defaultSpeed * crouchMultiplier;     //TODO: Change this into a smooth transition by using interpolation
         }
-        else
+        else                                        //Getting up
         {
-            if (!CeilingChechParent.GetComponent<TriggerChildManager>().isTriggered)
+            if (!CeilingChechParent.GetComponent<TriggerChildManager>().isTriggered)    //No obstruction above
             {
-                if (crouchInterpolationValue > 0)
+                if (crouchInterpolationValue > 0)   //Not fully standing
                 {
                     crouchInterpolationValue -= crouchDurationMultiplier * Time.deltaTime;
                 }
             }
-            //Controller.Move(new Vector3(0, resultHeight - defaultHeight, 0));
+            //Controller.Move(new Vector3(0, resultHeight - defaultHeight, 0));         //Should move the character up when getting up from the crouch
         }
 
         resultHeight = Mathf.SmoothStep(defaultHeight, crouchHeight, crouchInterpolationValue);

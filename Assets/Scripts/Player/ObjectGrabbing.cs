@@ -30,8 +30,8 @@ public class ObjectGrabbing : MonoBehaviour
                     if (hit.transform.CompareTag("Grabbable") && hit.transform.GetComponent<Rigidbody>().mass < weightLimit)
                     {
                         CurrentlyGrabbedObject = hit.transform.gameObject;
-                        originalDrag = CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag;
-                        CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = grabbedDrag;
+                        originalDrag = CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag;   //Save the original drag value
+                        CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = grabbedDrag;    //increase drag to prevent the object flying around the grabPoint
                         isGrabbing = true;
                         //Debug.Log("Grabbed - " + CurrentlyGrabbedObject.name);
                     }
@@ -40,7 +40,7 @@ public class ObjectGrabbing : MonoBehaviour
             else
             {
                 //Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
-                CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = originalDrag;
+                CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = originalDrag;   //set the drag back to it's original value
                 CurrentlyGrabbedObject = null;
                 isGrabbing = false;
             }

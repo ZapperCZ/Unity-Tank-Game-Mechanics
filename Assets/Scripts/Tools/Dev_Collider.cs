@@ -109,25 +109,31 @@ public class Dev_Collider : MonoBehaviour
         {
             if (DeletedGameObject.layer == 7)    //Non-static
             {
+                GameObject objectToDelete = null;
+                bool hasRenderer = false;
                 foreach (GameObject colliderObject in NonStaticColliderModels)
                 {
-                    //Debug.Log("-");
-                    //Debug.Log(colliderObject.transform.position + " - " + DeletedGameObject.transform.position);
-                    //Debug.Log(colliderObject.transform.rotation + " - " + DeletedGameObject.transform.rotation);
-                    //Debug.Log(colliderObject.transform.localScale + " - " + DeletedGameObject.transform.localScale);
-                    if (colliderObject.transform.position == DeletedGameObject.transform.position    
+                    if (colliderObject.transform.position == DeletedGameObject.transform.position
                        && colliderObject.transform.rotation == DeletedGameObject.transform.rotation
                        && colliderObject.transform.lossyScale == DeletedGameObject.transform.lossyScale)
                     {
-                        //Debug.Log("--------------------------------------------------");
-                        NonStaticColliderModels.Remove(colliderObject);
+                        objectToDelete = colliderObject;
                         if (SceneObjectsWithRenderer.Contains(DeletedGameObject))
                         {
-                            SceneObjectsWithRenderer.Remove(DeletedGameObject);
+                            hasRenderer = true;
                         }
-                        Destroy(DeletedGameObject);
                         break;
                     }
+                }
+                if (hasRenderer)
+                {
+                    SceneObjectsWithRenderer.Remove(DeletedGameObject);
+                }
+                if (objectToDelete != null)
+                {
+                    NonStaticColliderModels.Remove(objectToDelete);
+                    Destroy(DeletedGameObject);
+                    //Destroy(objectToDelete);
                 }
             }
             else
