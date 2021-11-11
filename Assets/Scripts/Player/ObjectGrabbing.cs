@@ -22,7 +22,7 @@ public class ObjectGrabbing : MonoBehaviour
     {
         if (Input.GetButtonDown("Grab Object"))
         {
-            if(CurrentlyGrabbedObject == null)
+            if(CurrentlyGrabbedObject == null)      //Pick the item up
             {
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, grabbingDistance, grabbingMask, QueryTriggerInteraction.Ignore))
@@ -37,12 +37,20 @@ public class ObjectGrabbing : MonoBehaviour
                     }
                 }
             }
-            else
+            else            //Drop the item
             {
                 //Debug.Log("Dropped - " + CurrentlyGrabbedObject.name);
                 CurrentlyGrabbedObject.GetComponent<Rigidbody>().drag = originalDrag;   //set the drag back to it's original value
                 CurrentlyGrabbedObject = null;
                 isGrabbing = false;
+            }
+        }
+        if (Application.isEditor)               //Debug feature
+        {
+            if (CurrentlyGrabbedObject != null && Input.GetButtonUp("Right Click"))
+            {
+                //Freeze / Unfreeze the object
+                CurrentlyGrabbedObject.GetComponent<Rigidbody>().isKinematic = !CurrentlyGrabbedObject.GetComponent<Rigidbody>().isKinematic;
             }
         }
     }
