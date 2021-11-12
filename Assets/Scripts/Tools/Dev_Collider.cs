@@ -220,6 +220,7 @@ public class Dev_Collider : MonoBehaviour
             {
                 NonStaticColliderModels.Add(newVisibleCollider);
                 newVisibleCollider.transform.SetParent(colliderParent.transform);
+                newVisibleCollider.transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
