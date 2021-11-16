@@ -7,4 +7,9 @@ public class Shape
         posX = _posX;
         posY = _posY;
     }
+    public Shape()
+    {
+        posX = 0;
+        posY = 0;
+    }
 }

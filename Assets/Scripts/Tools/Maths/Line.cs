@@ -7,4 +7,9 @@ public class Line : Shape
         endPosX = _endPosX;
         endPosY = _endPosY;
     }
+    public Line() : base()
+    {
+        endPosX = 0;
+        endPosY = 0;
+    }
 }

@@ -5,4 +5,8 @@ public class Circle : Shape
     {
         radius = _radius;
     }
+    public Circle() : base()
+    {
+        radius = 0;
+    }
 }
