@@ -3,23 +3,16 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Wheel : MonoBehaviour
 {
-    [SerializeField] float distanceFromAxle = 5f;
-    [SerializeField] Transform WheelAxle;
+    enum TypeOfWheel
+    {
+        Sprocket,
+        Idler,
+        Roadwheel,
+        ReturnRoller
+    }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-    void OnValidate()
-    {
-        if (!Application.isPlaying)
-        {
+    //[SerializeField] float distanceFromAxle = 5f;
+    //[SerializeField] Transform WheelAxle;
+    [SerializeField] TypeOfWheel WheelType;
 
-        }
-    }
-    void Update()
-    {
-        
-    }
 }
