@@ -7,43 +7,44 @@ public class TrackWrapper : MonoBehaviour
     [SerializeField] Transform TrackParent;
     [SerializeField] Transform Sprocket;
     [SerializeField] Transform Idler;
-    [SerializeField] Transform RoadWheel_Parent;
-    [SerializeField] Transform ReturnRoller_Parent;
+    [SerializeField] Transform RoadWheelParent;
+    [SerializeField] Transform ReturnRollerParent;
 
     List<Transform> Wheels;
-    Dictionary<Transform, Transform> NeighbouringWheels;            //Can't use a dictionary since we need the key (MainWheel) to have 2 neigbour wheels
-                                                                    //TODO: Use a 2D array instead
-
-    private void Start()
+    Transform[,] NeighbouringWheels;                            //[index, Neighbouring Wheels]
+                                                                //By using index of same value we can get the parent wheel from Wheels and it's neighbouring wheels from NeigbouringWheels
+    private void Start()        //Currently won't work when changing wheel transforms at runtime
     {
+        Wheels = new List<Transform>();
         PutAllWheelsIntoAList(Wheels);
-        Transform[] tempArray = new Transform[2];
-        KeyValuePair<Transform, Transform> WheelPair;               //<MainWheel, NeighbouringWheel>
+        NeighbouringWheels = new Transform[Wheels.Count, 2];
+        Transform[] tempArray;
 
-        foreach(Transform Wheel in Wheels)
+        for(int i = 0; i < Wheels.Count; i++)
         {
-            tempArray = GetNeighbourWheels(Wheel);
-            if (!IsTransformInDictionary(Wheel, NeighbouringWheels))            //Won't work since we need each of the wheels to be twice in the list
-            {
-                WheelPair = new KeyValuePair<Transform, Transform>(Wheel, tempArray[0]);
-            }
+            tempArray = GetNeighbourWheels(Wheels[i]);
+            NeighbouringWheels[i, 0] = tempArray[0];
+            NeighbouringWheels[i, 1] = tempArray[1];
+
+            //Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name}: {NeighbouringWheels[i,0].name}, {NeighbouringWheels[i,1].name}");
         }
+
     }
 
     void PutAllWheelsIntoAList(List<Transform> TargetList)  //Takes the assigned wheel transforms and puts them into a single list
     {
         TargetList.Add(Sprocket);
         TargetList.Add(Idler);
-        if(RoadWheel_Parent != null)
+        if(RoadWheelParent != null)
         {
-            foreach (Transform Axle in RoadWheel_Parent.transform)
+            foreach (Transform Axle in RoadWheelParent.transform)
             {
                 TargetList.Add(Axle.GetChild(0));   //Get the wheel from the axle and add it into the list
             }
         }
-        if (ReturnRoller_Parent != null)
+        if (ReturnRollerParent != null)
         {
-            foreach (Transform Axle in ReturnRoller_Parent.transform)
+            foreach (Transform Axle in ReturnRollerParent.transform)
             {
                 TargetList.Add(Axle.GetChild(0));   //Get the wheel from the axle and add it into the list
             }
