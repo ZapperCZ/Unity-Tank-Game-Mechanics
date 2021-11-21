@@ -125,8 +125,4 @@ public class TrackWrapper : MonoBehaviour
         Line tangent = new Line();
         return tangent;
     }
-    bool IsTransformInDictionary(Transform transformToCheck, Dictionary<Transform, Transform> dictionaryToCheck)    //Checks whether a dictionary contains the input value, either as a key or as a value
-    {
-        return dictionaryToCheck.ContainsKey(transformToCheck) || dictionaryToCheck.ContainsValue(transformToCheck);
-    }
 }
