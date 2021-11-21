@@ -3,7 +3,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Wheel : MonoBehaviour
 {
-    enum TypeOfWheel
+    public enum TypeOfWheel
     {
         Sprocket,
         Idler,
@@ -13,6 +13,6 @@ public class Wheel : MonoBehaviour
 
     //[SerializeField] float distanceFromAxle = 5f;
     //[SerializeField] Transform WheelAxle;
-    [SerializeField] TypeOfWheel WheelType;
+    [SerializeField] public TypeOfWheel WheelType;
 
 }
