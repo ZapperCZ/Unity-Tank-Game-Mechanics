@@ -29,7 +29,7 @@ public class TrackWrapper : MonoBehaviour
             NeighbouringWheels[i, 0] = tempArray[0];
             NeighbouringWheels[i, 1] = tempArray[1];
 
-            if (hasReturnRollers)
+            if (!hasReturnRollers)
             {
                 if (Wheels[i].GetComponent<Wheel>().WheelType == Wheel.TypeOfWheel.Sprocket)
                 {
@@ -40,6 +40,7 @@ public class TrackWrapper : MonoBehaviour
                     NeighbouringWheels[i, 1] = Sprocket;
                 }
             }
+            
             Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name}: {NeighbouringWheels[i,0].name}, {NeighbouringWheels[i,1].name}");
         }
 
@@ -70,42 +71,63 @@ public class TrackWrapper : MonoBehaviour
         Transform[] ClosestWheels = new Transform[2];             //0 - Closest wheel, 1 - Second closest wheel
         
         //TODO: Create a method that takes 2 wheels as an input and outputs whether the wheels can be connected or not
-        //TODO: Move the special condition for sprocket and idler into here
+        //TODO: Move the special condition for sprocket and idler without return rollers into here
 
         float minDist = float.MaxValue;         //Distance of the closest wheel
         float minDist2 = float.MaxValue;        //Distance of the second closest wheel
         float tempDist;
         Vector3 wheelPos = referenceWheel.position;
             
-        foreach(Transform Wheel in Wheels)
+        foreach(Transform NewWheel in Wheels)
         {
-            //Runs on the first iteration
-            if (ClosestWheels[0] == null) 
+            if (AreWheelsConnectable(referenceWheel.GetComponent<Wheel>(), NewWheel.GetComponent<Wheel>()))
             {
-                //Since the new wheel is the first one found, it is also the closest one
-                ClosestWheels[0] = Wheel;
-                minDist = Vector3.Distance(wheelPos, Wheel.position);     //Distance between the closest wheel and the input wheel
-                continue;
-            }
-            //Runs on the second iteration
-            if (ClosestWheels[1] == null)
-            {
-                tempDist = Vector3.Distance(wheelPos, Wheel.position);
+                //Runs on the first iteration
+                if (ClosestWheels[0] == null)
+                {
+                    //Since the new wheel is the first one found, it is also the closest one
+                    ClosestWheels[0] = NewWheel;
+                    minDist = Vector3.Distance(wheelPos, NewWheel.position);     //Distance between the closest wheel and the input wheel
+                    continue;
+                }
+                //Runs on the second iteration
+                if (ClosestWheels[1] == null)
+                {
+                    tempDist = Vector3.Distance(wheelPos, NewWheel.position);
+                    if (tempDist < minDist)
+                    {
+                        //The new wheel is closer than the previous one
+                        //Set the previously closest wheel to now be the second closest one
+                        ClosestWheels[1] = ClosestWheels[0];
+                        ClosestWheels[0] = NewWheel;
+                        minDist2 = minDist;
+                        minDist = tempDist;
+                        continue;
+                    }
+                    else
+                    {
+                        //The new wheel is further than the previous one
+                        //Set the new wheel as the second closest one
+                        ClosestWheels[1] = NewWheel;
+                        minDist2 = tempDist;
+                        continue;
+                    }
+                }
+
+                //The new wheel and the input wheel can theoretically have track between them
+                tempDist = Vector3.Distance(wheelPos, NewWheel.position);
                 if (tempDist < minDist)
                 {
-                    //The new wheel is closer than the previous one
-                    //Set the previously closest wheel to now be the second closest one
-                    ClosestWheels[1] = ClosestWheels[0];
-                    ClosestWheels[0] = Wheel;
-                    minDist2 = minDist;
+                    //New wheel is closer than the closest wheel
+                    ClosestWheels[0] = NewWheel;
                     minDist = tempDist;
                     continue;
                 }
-                else
+                //Will run only when the wheel is further than the closest wheel but closer than the second closest wheel
+                if (tempDist < minDist2)
                 {
-                    //The new wheel is further than the previous one
-                    //Set the new wheel as the second closest one
-                    ClosestWheels[1] = Wheel;
+                    //New wheel is closer than the second closest wheel
+                    ClosestWheels[1] = NewWheel;
                     minDist2 = tempDist;
                     continue;
                 }
@@ -119,6 +141,11 @@ public class TrackWrapper : MonoBehaviour
     bool AreWheelsConnectable(Wheel firstWheel, Wheel secondWheel)
     {
         bool result = false;
+        if(firstWheel.gameObject == secondWheel.gameObject)
+        {
+            //The wheels are the same, a wheel can't connect to itself
+            return result;
+        }
         switch (firstWheel.WheelType)
         {
             //Ordered by the probability of the wheel being the corresponding type (highest to lowest)
