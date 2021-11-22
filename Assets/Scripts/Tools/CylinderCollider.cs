@@ -4,14 +4,14 @@ using UnityEngine;
 public class CylinderCollider : MonoBehaviour
 {
     [Range(6, 50)]
-    [SerializeField] int cylinderSides = 16;
+    [SerializeField] int cylinderSides = 30;
     [Range(0.1f, 10)]
-    [SerializeField] float cylinderSideWidth = 10;
+    [SerializeField] float cylinderSideWidth = 0.1051042f;
     [SerializeField] bool sideWidthLocked = true;
     [Range(0.1f, 5)]
     [SerializeField] float cylinderDiameter = 1;
     [SerializeField] bool diameterLocked = true;
-    public float cylinderHeight = 1;
+    public float cylinderHeight = 2;
     [SerializeField] bool isTrigger = false;
     [SerializeField] bool deleteColliders = false;
     public bool changed = false;                                //A bool other scripts can reference to detect when the collider has been changed by user
