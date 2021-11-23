@@ -12,10 +12,14 @@ public class TrackWrapper : MonoBehaviour
     [SerializeField] Transform ReturnRollerParent;
 
     List<Transform> Wheels;
+    Line testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
+    LineRenderer LineRenderer;
     Transform[,] NeighbouringWheels;                            //[index, Neighbouring Wheels]
                                                                 //By using index of same value we can get the parent wheel from Wheels and it's neighbouring wheels from NeigbouringWheels
     private void Start()        //Currently won't work when changing wheel transforms at runtime
     {
+        LineRenderer = gameObject.AddComponent<LineRenderer>();
+        testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
         Wheels = new List<Transform>();
         PutAllWheelsIntoAList(Wheels);
         NeighbouringWheels = new Transform[Wheels.Count, 2];
@@ -45,7 +49,18 @@ public class TrackWrapper : MonoBehaviour
         }
 
     }
+    private void OnGUI()
+    {
+        LineRenderer.startColor = Color.red;
+        LineRenderer.endColor = Color.red;
 
+        // set width of the renderer
+        LineRenderer.startWidth = 0.3f;
+        LineRenderer.endWidth = 0.3f;
+
+        LineRenderer.SetPosition(0, testLine.pointA);
+        LineRenderer.SetPosition(1, testLine.pointB);
+    }
     void PutAllWheelsIntoAList(List<Transform> TargetList)  //Takes the assigned wheel transforms and puts them into a single list
     {
         TargetList.Add(Sprocket);
