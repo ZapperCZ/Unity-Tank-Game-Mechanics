@@ -1,15 +1,14 @@
+using UnityEngine;
+
 public class Shape
 {
-    public float posX { get; set; }
-    public float posY { get; set; }
-    public Shape(float _posX, float _posY)
+    public Vector3 pointA { get; set; }
+    public Shape(Vector3 _pointA)
     {
-        posX = _posX;
-        posY = _posY;
+        pointA = _pointA;
     }
     public Shape()
     {
-        posX = 0;
-        posY = 0;
+        pointA = new Vector3(0, 0, 0);
     }
 }

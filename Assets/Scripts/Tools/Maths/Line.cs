@@ -1,15 +1,14 @@
+using UnityEngine;
+
 public class Line : Shape
 {
-    public float endPosX { get; set; }
-    public float endPosY { get; set; }
-    public Line(float _posX, float _posY, float _endPosX, float _endPosY) : base(_posX, _posY)  //posX and posY are the starting point coords
+    public Vector3 pointB { get; set; }
+    public Line(Vector3 _pointA, Vector3 _pointB) : base(_pointA)  //posX and posY are the starting point coords
     {
-        endPosX = _endPosX;
-        endPosY = _endPosY;
+        pointB = _pointB;
     }
     public Line() : base()
     {
-        endPosX = 0;
-        endPosY = 0;
+        pointB = new Vector3(0,0,0);
     }
 }

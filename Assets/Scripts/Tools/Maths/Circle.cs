@@ -1,7 +1,9 @@
+using UnityEngine;
+
 public class Circle : Shape
 {
     public float radius { get; set; }
-    public Circle(float _posX, float _posY, float _radius) : base (_posX, _posY)
+    public Circle(Vector3 _pointA, float _radius) : base (_pointA)
     {
         radius = _radius;
     }
