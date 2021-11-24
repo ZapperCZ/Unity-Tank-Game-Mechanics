@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,22 +11,40 @@ public class TrackWrapper : MonoBehaviour
     [SerializeField] Transform RoadWheelParent;
     [SerializeField] bool hasReturnRollers;
     [SerializeField] Transform ReturnRollerParent;
+    [SerializeField] Transform LineRendererParent;
 
     List<Transform> Wheels;
+    List<Line> Lines;
+    List<Transform> DrawnWheels;
+
     Line testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
-    LineRenderer LineRenderer;
+    //LineRenderer LineRenderer;
     Transform[,] NeighbouringWheels;                            //[index, Neighbouring Wheels]
                                                                 //By using index of same value we can get the parent wheel from Wheels and it's neighbouring wheels from NeigbouringWheels
     private void Start()        //Currently won't work when changing wheel transforms at runtime
     {
+        /*
+        #region lineRenderer
         LineRenderer = gameObject.AddComponent<LineRenderer>();
+        LineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        LineRenderer.startColor = new Color(1f, 0.53f, 0, 1f);
+        LineRenderer.endColor = new Color(1f, 0.53f, 0, 1f);
+
+        // set width of the renderer
+        LineRenderer.startWidth = 0.3f;
+        LineRenderer.endWidth = 0.3f;
+
+        LineRenderer.SetPosition(0, testLine.pointA);
+        LineRenderer.SetPosition(1, testLine.pointB);
+        #endregion
+        */
         testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
+
         Wheels = new List<Transform>();
         PutAllWheelsIntoAList(Wheels);
+        #region neighbourWheels
         NeighbouringWheels = new Transform[Wheels.Count, 2];
         Transform[] tempArray;
-
-        Debug.Log($"Track Wrapper - {transform.name} - {Wheels.Count}");
 
         for (int i = 0; i < Wheels.Count; i++)
         {
@@ -44,22 +63,73 @@ public class TrackWrapper : MonoBehaviour
                     NeighbouringWheels[i, 1] = Sprocket;
                 }
             }
-            
-            Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name}: {NeighbouringWheels[i,0].name}, {NeighbouringWheels[i,1].name}");
+            Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name} - {Wheels[i].parent.name}: {NeighbouringWheels[i,0].name} - {NeighbouringWheels[i, 0].parent.name}, {NeighbouringWheels[i,1].name} - {NeighbouringWheels[i, 1].parent.name}");
         }
+        #endregion
 
+        SortWheels();
+
+        DrawnWheels = new List<Transform>();
+        Lines = new List<Line>();
+        Transform currentWheel,wheelA, wheelB;
+        for(int i = 0; i < Wheels.Count; i++)
+        {
+            currentWheel = Wheels[i];
+            wheelA = NeighbouringWheels[i, 0];
+            wheelB = NeighbouringWheels[i, 1];
+            //TODO: Create a method for this
+            if(!DrawnWheels.Contains(wheelA))           //Wheel hasn't been connected to yet
+            {
+                Line newLine = new Line(Wheels[i].position,wheelA.position);
+                Lines.Add(newLine);
+                DrawnWheels.Add(wheelA);
+            }
+            if (!DrawnWheels.Contains(wheelB))
+            {
+                Line newLine = new Line(Wheels[i].position, wheelB.position);
+                Lines.Add(newLine);
+                DrawnWheels.Add(wheelB);
+            }
+        }
+        for(int i = 0; i < DrawnWheels.Count; i++)
+        {
+            Vector3[] LinePositions = new Vector3[2];
+            GameObject lineRendererParentGO = new GameObject();
+            lineRendererParentGO.transform.parent = LineRendererParent;
+            LineRenderer newLineRenderer = lineRendererParentGO.AddComponent<LineRenderer>();
+            newLineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            newLineRenderer.startColor = new Color(1f, 0.53f, 0, 1f);
+            newLineRenderer.endColor = new Color(1f, 0.53f, 0, 1f);
+
+            // set width of the renderer
+            newLineRenderer.startWidth = 0.05f;
+            newLineRenderer.endWidth = 0.05f;
+
+            LinePositions[0] = Lines[i].pointA;
+            LinePositions[1] = Lines[i].pointB;
+            newLineRenderer.SetPositions(LinePositions);
+        }
+        /*
+        LineRenderer.positionCount = LinePositions.Length;
+        LineRenderer.SetPositions(LinePositions);
+        */
     }
-    private void OnGUI()
+    void SortWheels()
     {
-        LineRenderer.startColor = Color.red;
-        LineRenderer.endColor = Color.red;
-
-        // set width of the renderer
-        LineRenderer.startWidth = 0.3f;
-        LineRenderer.endWidth = 0.3f;
-
-        LineRenderer.SetPosition(0, testLine.pointA);
-        LineRenderer.SetPosition(1, testLine.pointB);
+        int currIndex = 0;
+        Transform currWheel = Wheels[currIndex];
+        Transform nextWheel = NeighbouringWheels[currIndex, 0];
+        Transform lastWheel = null;
+        Transform endWheel = NeighbouringWheels[currIndex, 1];
+        Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " - " + currWheel.parent.name);
+        while (currWheel != endWheel)
+        {
+            lastWheel = currWheel;
+            currWheel = nextWheel;
+            currIndex = Wheels.IndexOf(currWheel);
+            nextWheel = NeighbouringWheels[currIndex, 0] == lastWheel ? NeighbouringWheels[currIndex, 1] : NeighbouringWheels[currIndex, 0];
+            Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " - " + currWheel.parent.name);
+        }
     }
     void PutAllWheelsIntoAList(List<Transform> TargetList)  //Takes the assigned wheel transforms and puts them into a single list
     {
@@ -152,7 +222,6 @@ public class TrackWrapper : MonoBehaviour
         return ClosestWheels;
     }
 
-
     bool AreWheelsConnectable(Wheel firstWheel, Wheel secondWheel)
     {
         bool result = false;
@@ -187,9 +256,5 @@ public class TrackWrapper : MonoBehaviour
         //TODO: Finish this
         Line tangent = new Line();
         return tangent;
-    }
-    bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a component or not
-    {
-        return inputObject.GetComponent<T>() != null;
     }
 }
