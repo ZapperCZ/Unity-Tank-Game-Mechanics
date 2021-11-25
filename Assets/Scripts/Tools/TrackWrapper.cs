@@ -155,7 +155,6 @@ public class TrackWrapper : MonoBehaviour
     {
         Transform[] ClosestWheels = new Transform[2];             //0 - Closest wheel, 1 - Second closest wheel
         
-        //TODO: Create a method that takes 2 wheels as an input and outputs whether the wheels can be connected or not
         //TODO: Move the special condition for sprocket and idler without return rollers into here
 
         float minDist = float.MaxValue;         //Distance of the closest wheel
@@ -167,18 +166,20 @@ public class TrackWrapper : MonoBehaviour
         {
             if (AreWheelsConnectable(referenceWheel.GetComponent<Wheel>(), NewWheel.GetComponent<Wheel>()))
             {
+                //The new wheel and the input wheel can theoretically have track between them
+                tempDist = Vector3.Distance(wheelPos, NewWheel.position);
+
                 //Runs on the first iteration
                 if (ClosestWheels[0] == null)
                 {
                     //Since the new wheel is the first one found, it is also the closest one
                     ClosestWheels[0] = NewWheel;
-                    minDist = Vector3.Distance(wheelPos, NewWheel.position);     //Distance between the closest wheel and the input wheel
+                    minDist = tempDist;     //Distance between the closest wheel and the input wheel
                     continue;
                 }
                 //Runs on the second iteration
                 if (ClosestWheels[1] == null)
                 {
-                    tempDist = Vector3.Distance(wheelPos, NewWheel.position);
                     if (tempDist < minDist)
                     {
                         //The new wheel is closer than the previous one
@@ -199,8 +200,6 @@ public class TrackWrapper : MonoBehaviour
                     }
                 }
 
-                //The new wheel and the input wheel can theoretically have track between them
-                tempDist = Vector3.Distance(wheelPos, NewWheel.position);
                 if (tempDist < minDist)
                 {
                     //New wheel is closer than the closest wheel
@@ -228,7 +227,7 @@ public class TrackWrapper : MonoBehaviour
         if(firstWheel.gameObject == secondWheel.gameObject)
         {
             //The wheels are the same, a wheel can't connect to itself
-            return result;
+            return false;
         }
         switch (firstWheel.WheelType)
         {
