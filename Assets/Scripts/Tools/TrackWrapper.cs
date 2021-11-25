@@ -12,7 +12,6 @@ public class TrackWrapper : MonoBehaviour
     [SerializeField] bool hasReturnRollers;
     [SerializeField] Transform ReturnRollerParent;
     [SerializeField] Transform LineRendererParent;
-
     List<Transform> Wheels;
     List<Line> Lines;
     List<Transform> DrawnWheels;
@@ -41,7 +40,7 @@ public class TrackWrapper : MonoBehaviour
         testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
 
         Wheels = new List<Transform>();
-        PutAllWheelsIntoAList(Wheels);
+        PutAllWheelsIntoAList(ref Wheels);
         #region neighbourWheels
         NeighbouringWheels = new Transform[Wheels.Count, 2];
         Transform[] tempArray;
@@ -63,7 +62,7 @@ public class TrackWrapper : MonoBehaviour
                     NeighbouringWheels[i, 1] = Sprocket;
                 }
             }
-            Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name} - {Wheels[i].parent.name}: {NeighbouringWheels[i,0].name} - {NeighbouringWheels[i, 0].parent.name}, {NeighbouringWheels[i,1].name} - {NeighbouringWheels[i, 1].parent.name}");
+            Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name} ({Wheels[i].parent.name}): {NeighbouringWheels[i,0].name} ({NeighbouringWheels[i, 0].parent.name}), {NeighbouringWheels[i,1].name} ({NeighbouringWheels[i, 1].parent.name})");
         }
         #endregion
 
@@ -128,14 +127,14 @@ public class TrackWrapper : MonoBehaviour
             currWheel = nextWheel;
             currIndex = Wheels.IndexOf(currWheel);
             nextWheel = NeighbouringWheels[currIndex, 0] == lastWheel ? NeighbouringWheels[currIndex, 1] : NeighbouringWheels[currIndex, 0];
-            Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " - " + currWheel.parent.name);
+            Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " (" + currWheel.parent.name + ")");
         }
     }
-    void PutAllWheelsIntoAList(List<Transform> TargetList)  //Takes the assigned wheel transforms and puts them into a single list
+    void PutAllWheelsIntoAList(ref List<Transform> TargetList)  //Takes the assigned wheel transforms and puts them into a single list
     {
-        TargetList.Add(Sprocket);
         TargetList.Add(Idler);
-        if(RoadWheelParent != null)
+        TargetList.Add(Sprocket);
+        if (RoadWheelParent != null)
         {
             foreach (Transform Axle in RoadWheelParent.transform)
             {
@@ -188,7 +187,6 @@ public class TrackWrapper : MonoBehaviour
                         ClosestWheels[0] = NewWheel;
                         minDist2 = minDist;
                         minDist = tempDist;
-                        continue;
                     }
                     else
                     {
@@ -196,14 +194,16 @@ public class TrackWrapper : MonoBehaviour
                         //Set the new wheel as the second closest one
                         ClosestWheels[1] = NewWheel;
                         minDist2 = tempDist;
-                        continue;
                     }
+                    continue;
                 }
 
                 if (tempDist < minDist)
                 {
                     //New wheel is closer than the closest wheel
+                    ClosestWheels[1] = ClosestWheels[0];
                     ClosestWheels[0] = NewWheel;
+                    minDist2 = minDist;
                     minDist = tempDist;
                     continue;
                 }
