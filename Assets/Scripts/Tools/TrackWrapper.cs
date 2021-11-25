@@ -115,19 +115,40 @@ public class TrackWrapper : MonoBehaviour
     }
     void SortWheels()
     {
-        int currIndex = 0;
+        int currIndex = 0;  //The index of the current wheel
+        int loopIndex = 1;  //Index of the loop, starts from 1 because the first wheel is skipped.
+        Transform tempWheel;
+        Transform[] tempWheels = new Transform[2];
         Transform currWheel = Wheels[currIndex];
         Transform nextWheel = NeighbouringWheels[currIndex, 0];
-        Transform lastWheel = null;
+        Transform lastWheel;
         Transform endWheel = NeighbouringWheels[currIndex, 1];
         Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " - " + currWheel.parent.name);
         while (currWheel != endWheel)
         {
+            //Loop mechanism
             lastWheel = currWheel;
             currWheel = nextWheel;
             currIndex = Wheels.IndexOf(currWheel);
             nextWheel = NeighbouringWheels[currIndex, 0] == lastWheel ? NeighbouringWheels[currIndex, 1] : NeighbouringWheels[currIndex, 0];
+
+            //Swapping mechanism
+            //Cache the original wheel
+            tempWheel = Wheels[loopIndex];
+            tempWheels[0] = NeighbouringWheels[loopIndex, 0];
+            tempWheels[1] = NeighbouringWheels[loopIndex, 1];
+            //Replace the original
+            Wheels[loopIndex] = currWheel;
+            NeighbouringWheels[loopIndex, 0] = NeighbouringWheels[currIndex,0];
+            NeighbouringWheels[loopIndex, 1] = NeighbouringWheels[currIndex,1];
+            //Put the cached wheel into the place of the current wheel
+            Wheels[currIndex] = tempWheel;
+            NeighbouringWheels[currIndex, 0] = tempWheels[0];
+            NeighbouringWheels[currIndex, 1] = tempWheels[1];
+            
+
             Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " (" + currWheel.parent.name + ")");
+            loopIndex++;
         }
     }
     void PutAllWheelsIntoAList(ref List<Transform> TargetList)  //Takes the assigned wheel transforms and puts them into a single list
