@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,21 +21,21 @@ public class TrackWrapper : MonoBehaviour
                                                                 //By using index of same value we can get the parent wheel from Wheels and it's neighbouring wheels from NeigbouringWheels
     private void Start()        //Currently won't work when changing wheel transforms at runtime
     {
-        /*
         #region lineRenderer
-        LineRenderer = gameObject.AddComponent<LineRenderer>();
+        LineRenderer LineRenderer = gameObject.AddComponent<LineRenderer>();
         LineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         LineRenderer.startColor = new Color(1f, 0.53f, 0, 1f);
         LineRenderer.endColor = new Color(1f, 0.53f, 0, 1f);
 
         // set width of the renderer
-        LineRenderer.startWidth = 0.3f;
-        LineRenderer.endWidth = 0.3f;
+        LineRenderer.startWidth = 0.05f;
+        LineRenderer.endWidth = 0.05f;
+        LineRenderer.loop = true;
 
-        LineRenderer.SetPosition(0, testLine.pointA);
-        LineRenderer.SetPosition(1, testLine.pointB);
+        //LineRenderer.SetPosition(0, testLine.pointA);
+        //LineRenderer.SetPosition(1, testLine.pointB);
         #endregion
-        */
+
         testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
 
         Wheels = new List<Transform>();
@@ -62,37 +61,36 @@ public class TrackWrapper : MonoBehaviour
                     NeighbouringWheels[i, 1] = Sprocket;
                 }
             }
-            Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name} ({Wheels[i].parent.name}): {NeighbouringWheels[i,0].name} ({NeighbouringWheels[i, 0].parent.name}), {NeighbouringWheels[i,1].name} ({NeighbouringWheels[i, 1].parent.name})");
+            //Debug.Log(@$"Track Wrapper - {transform.name} - {Wheels[i].name} ({Wheels[i].parent.name}): {NeighbouringWheels[i,0].name} ({NeighbouringWheels[i, 0].parent.name}), {NeighbouringWheels[i,1].name} ({NeighbouringWheels[i, 1].parent.name})");
         }
         #endregion
 
         SortWheels();
 
-        DrawnWheels = new List<Transform>();
         Lines = new List<Line>();
-        Transform currentWheel,wheelA, wheelB;
+        Transform currentWheel = null, previousWheel = null;//wheelA, wheelB;
         for(int i = 0; i < Wheels.Count; i++)
         {
+            previousWheel = currentWheel;
             currentWheel = Wheels[i];
-            wheelA = NeighbouringWheels[i, 0];
-            wheelB = NeighbouringWheels[i, 1];
-            //TODO: Create a method for this
-            if(!DrawnWheels.Contains(wheelA))           //Wheel hasn't been connected to yet
+            if (previousWheel != null)
             {
-                Line newLine = new Line(Wheels[i].position,wheelA.position);
+                Line newLine = new Line(previousWheel.position,currentWheel.position);
                 Lines.Add(newLine);
-                DrawnWheels.Add(wheelA);
-            }
-            if (!DrawnWheels.Contains(wheelB))
-            {
-                Line newLine = new Line(Wheels[i].position, wheelB.position);
-                Lines.Add(newLine);
-                DrawnWheels.Add(wheelB);
             }
         }
-        for(int i = 0; i < DrawnWheels.Count; i++)
+        DrawLines(Lines.ToArray(), ref LineRenderer);
+    }
+
+    private void DrawLines(Line[] inputLines, ref LineRenderer lineRenderer)
+    {
+        Vector3[] LinePositions = new Vector3[inputLines.Length * 2];
+
+        for (int i = 0; i < inputLines.Length; i++)
         {
+            /*
             Vector3[] LinePositions = new Vector3[2];
+            
             GameObject lineRendererParentGO = new GameObject();
             lineRendererParentGO.transform.parent = LineRendererParent;
             LineRenderer newLineRenderer = lineRendererParentGO.AddComponent<LineRenderer>();
@@ -103,16 +101,15 @@ public class TrackWrapper : MonoBehaviour
             // set width of the renderer
             newLineRenderer.startWidth = 0.05f;
             newLineRenderer.endWidth = 0.05f;
-
-            LinePositions[0] = Lines[i].pointA;
-            LinePositions[1] = Lines[i].pointB;
-            newLineRenderer.SetPositions(LinePositions);
+            */
+            LinePositions[i * 2] = Lines[i].pointA;
+            LinePositions[(i * 2) + 1] = Lines[i].pointB;
+            //newLineRenderer.SetPositions(LinePositions);
         }
-        /*
-        LineRenderer.positionCount = LinePositions.Length;
-        LineRenderer.SetPositions(LinePositions);
-        */
+        lineRenderer.positionCount = LinePositions.Length;
+        lineRenderer.SetPositions(LinePositions);
     }
+
     void SortWheels()
     {
         int currIndex = 0;  //The index of the current wheel
@@ -126,6 +123,7 @@ public class TrackWrapper : MonoBehaviour
         Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " - " + currWheel.parent.name);
         while (currWheel != endWheel)
         {
+            //Debug.Log("Track Wrapper - Fuck");
             //Loop mechanism
             lastWheel = currWheel;
             currWheel = nextWheel;
@@ -146,7 +144,6 @@ public class TrackWrapper : MonoBehaviour
             NeighbouringWheels[currIndex, 0] = tempWheels[0];
             NeighbouringWheels[currIndex, 1] = tempWheels[1];
             
-
             Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " (" + currWheel.parent.name + ")");
             loopIndex++;
         }
@@ -238,7 +235,6 @@ public class TrackWrapper : MonoBehaviour
                 }
             }
         }
-
         return ClosestWheels;
     }
 
