@@ -11,4 +11,8 @@ public class Circle : Shape
     {
         radius = 0;
     }
+    public override string ToString()
+    {
+        return this.GetType().Name + " - Center: " + pointA.ToString() + " Radius: " + radius.ToString();
+    }
 }

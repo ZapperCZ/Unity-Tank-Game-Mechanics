@@ -11,4 +11,8 @@ public class Line : Shape
     {
         pointB = new Vector3(0,0,0);
     }
+    public override string ToString()
+    {
+        return this.GetType().Name +  " - Position: " + pointA.ToString() + " End: " + pointB.ToString();
+    }
 }
