@@ -12,10 +12,10 @@ public class TrackWrapper : MonoBehaviour
     [SerializeField] Transform ReturnRollerParent;
     [SerializeField] Transform LineRendererParent;
     List<Transform> Wheels;
-    List<Line> Lines;
+    List<MathLine> ConnectingLines;
     List<Transform> DrawnWheels;
 
-    Line testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
+    MathLine testLine = new MathLine(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
     //LineRenderer LineRenderer;
     Transform[,] NeighbouringWheels;                            //[index, Neighbouring Wheels]
                                                                 //By using index of same value we can get the parent wheel from Wheels and it's neighbouring wheels from NeigbouringWheels
@@ -36,7 +36,7 @@ public class TrackWrapper : MonoBehaviour
         //LineRenderer.SetPosition(1, testLine.pointB);
         #endregion
 
-        testLine = new Line(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
+        testLine = new MathLine(new Vector3(0, 1, 0), new Vector3(5, 1, 0));
 
         Wheels = new List<Transform>();
         PutAllWheelsIntoAList(ref Wheels);
@@ -67,7 +67,7 @@ public class TrackWrapper : MonoBehaviour
 
         SortWheels();
 
-        Lines = new List<Line>();
+        ConnectingLines = new List<MathLine>();
         Transform currentWheel = null, previousWheel = null;//wheelA, wheelB;
         for(int i = 0; i < Wheels.Count; i++)
         {
@@ -75,21 +75,22 @@ public class TrackWrapper : MonoBehaviour
             currentWheel = Wheels[i];
             if (previousWheel != null)
             {
-                Line newLine = new Line(previousWheel.position,currentWheel.position);
-                Lines.Add(newLine);
+                MathLine newLine = new MathLine(previousWheel.position,currentWheel.position);
+                ConnectingLines.Add(newLine);
             }
         }
-        DrawLines(Lines.ToArray(), ref LineRenderer);
+        DrawLines(ConnectingLines.ToArray(), ref LineRenderer);
     }
 
-    private void DrawLines(Line[] inputLines, ref LineRenderer lineRenderer)
+    private void DrawLines(MathLine[] inputLines, ref LineRenderer lineRenderer)
     {
         Vector3[] LinePositions = new Vector3[inputLines.Length * 2];
 
         for (int i = 0; i < inputLines.Length; i++)
         {
-            LinePositions[i * 2] = Lines[i].pointA;
-            LinePositions[(i * 2) + 1] = Lines[i].pointB;
+            
+            LinePositions[i * 2] = ConnectingLines[i].pointA;
+            LinePositions[(i * 2) + 1] = ConnectingLines[i].pointB;
         }
         lineRenderer.positionCount = LinePositions.Length;
         lineRenderer.SetPositions(LinePositions);
@@ -251,10 +252,10 @@ public class TrackWrapper : MonoBehaviour
         return result;
     }
 
-    Line CreateOuterTangent(Circle circle_A, Circle circle_B, bool isUpper)     //isUpper determines whether the tangent should be made on the "upper" sides of the circles or on the "lower" sides
+    MathLine CreateOuterTangent(MathCircle circle_A, MathCircle circle_B, bool isUpper)     //isUpper determines whether the tangent should be made on the "upper" sides of the circles or on the "lower" sides
     {
         //TODO: Finish this
-        Line tangent = new Line();
+        MathLine tangent = new MathLine();
         return tangent;
     }
 }
