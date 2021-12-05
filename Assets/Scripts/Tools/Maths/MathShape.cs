@@ -1,13 +1,13 @@
 using UnityEngine;
 
-public class Shape
+public class MathShape
 {
     public Vector3 pointA { get; set; }
-    public Shape(Vector3 _pointA)
+    public MathShape(Vector3 _pointA)
     {
         pointA = _pointA;
     }
-    public Shape()
+    public MathShape()
     {
         pointA = new Vector3(0, 0, 0);
     }

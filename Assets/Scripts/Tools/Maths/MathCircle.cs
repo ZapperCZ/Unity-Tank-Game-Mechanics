@@ -1,13 +1,13 @@
 using UnityEngine;
 
-public class Circle : Shape
+public class MathCircle : MathShape
 {
     public float radius { get; set; }
-    public Circle(Vector3 _pointA, float _radius) : base (_pointA)
+    public MathCircle(Vector3 _pointA, float _radius) : base (_pointA)
     {
         radius = _radius;
     }
-    public Circle() : base()
+    public MathCircle() : base()
     {
         radius = 0;
     }
