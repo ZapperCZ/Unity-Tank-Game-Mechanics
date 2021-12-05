@@ -88,23 +88,8 @@ public class TrackWrapper : MonoBehaviour
 
         for (int i = 0; i < inputLines.Length; i++)
         {
-            /*
-            Vector3[] LinePositions = new Vector3[2];
-            
-            GameObject lineRendererParentGO = new GameObject();
-            lineRendererParentGO.transform.parent = LineRendererParent;
-            LineRenderer newLineRenderer = lineRendererParentGO.AddComponent<LineRenderer>();
-            newLineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            newLineRenderer.startColor = new Color(1f, 0.53f, 0, 1f);
-            newLineRenderer.endColor = new Color(1f, 0.53f, 0, 1f);
-
-            // set width of the renderer
-            newLineRenderer.startWidth = 0.05f;
-            newLineRenderer.endWidth = 0.05f;
-            */
             LinePositions[i * 2] = Lines[i].pointA;
             LinePositions[(i * 2) + 1] = Lines[i].pointB;
-            //newLineRenderer.SetPositions(LinePositions);
         }
         lineRenderer.positionCount = LinePositions.Length;
         lineRenderer.SetPositions(LinePositions);
@@ -123,7 +108,6 @@ public class TrackWrapper : MonoBehaviour
         Debug.Log("Track Wrapper - " + transform.name + " - " + currWheel.name + " - " + currWheel.parent.name);
         while (currWheel != endWheel)
         {
-            //Debug.Log("Track Wrapper - Fuck");
             //Loop mechanism
             lastWheel = currWheel;
             currWheel = nextWheel;
