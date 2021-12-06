@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(Line))]
-public class Splines : Editor
+public class LineInspector : Editor
 {
 	private void OnSceneGUI()
 	{
