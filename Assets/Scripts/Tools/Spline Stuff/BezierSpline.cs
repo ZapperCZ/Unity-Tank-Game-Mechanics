@@ -7,7 +7,7 @@ public class BezierSpline : MonoBehaviour
 	private BezierControlPointMode[] modes;
 	[SerializeField]
 	private bool loop;
-	private Vector3[] points;
+	public Vector3[] points;
 
 
 	public bool Loop

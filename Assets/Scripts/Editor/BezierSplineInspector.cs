@@ -4,7 +4,6 @@ using UnityEngine;
 [CustomEditor(typeof(BezierSpline))]
 public class BezierSplineInspector : Editor
 {
-
 	private const int stepsPerCurve = 10;
 	private const float directionScale = 0.5f;
 	private const float handleSize = 0.04f;
@@ -103,7 +102,7 @@ public class BezierSplineInspector : Editor
 
 	private Vector3 ShowPoint(int index)
 	{
-		Vector3 point = handleTransform.TransformPoint(spline.GetControlPoint(index));
+		Vector3 point = handleTransform.TransformPoint(spline.GetControlPoint(index));	
 		float size = HandleUtility.GetHandleSize(point);
 		if (index == 0)
 		{
