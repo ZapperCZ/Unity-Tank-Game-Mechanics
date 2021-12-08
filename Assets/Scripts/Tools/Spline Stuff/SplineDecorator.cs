@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[ExecuteInEditMode]
+
 public class SplineDecorator : MonoBehaviour
 {
 
@@ -10,9 +12,46 @@ public class SplineDecorator : MonoBehaviour
 	public bool lookForward;
 
 	public Transform[] items;
+	bool inputChanged = false;
 
 	private void Awake()
 	{
+		DeleteObjects();
+		GenerateObjects();
+	}
+    private void OnValidate()
+    {
+		inputChanged = true;
+    }
+    private void Update()
+    {
+        if (inputChanged)
+        {
+			DeleteObjects();
+			GenerateObjects();
+			inputChanged = false;
+        }
+    }
+	private void DeleteObjects()
+    {
+		foreach (Transform child in transform)
+		{
+			DestroyObjectSafely(child.gameObject);
+		}
+    }
+	void DestroyObjectSafely(Object obj)
+	{
+		if (Application.isPlaying)
+		{
+			Destroy(obj);
+		}
+		else if (Application.isEditor)
+		{
+			DestroyImmediate(obj);
+		}
+	}
+	private void GenerateObjects()
+    {
 		if (frequency <= 0 || items == null || items.Length == 0)
 		{
 			return;
