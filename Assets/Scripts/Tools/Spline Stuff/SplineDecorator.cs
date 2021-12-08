@@ -34,8 +34,18 @@ public class SplineDecorator : MonoBehaviour
     }
 	private void DeleteObjects()
     {
-		foreach (Transform child in transform)
+		int childCount = transform.childCount;
+		Transform child = null;
+		for (int i = 0; i < childCount; i++)
 		{
+			if (Application.isPlaying)
+			{
+				child = transform.GetChild(i);
+			}
+			else if (Application.isEditor)
+			{
+				child = transform.GetChild(0);
+			}
 			DestroyObjectSafely(child.gameObject);
 		}
     }
