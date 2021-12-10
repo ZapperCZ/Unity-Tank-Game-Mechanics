@@ -3,6 +3,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class CylinderCollider : MonoBehaviour
 {
+    [Header ("Cylinder Parameters")]
     [Range(6, 50)]
     [SerializeField] int cylinderSides = 30;
     [Range(0.1f, 10)]
@@ -12,7 +13,13 @@ public class CylinderCollider : MonoBehaviour
     [SerializeField] float cylinderDiameter = 1;
     [SerializeField] bool diameterLocked = true;
     public float cylinderHeight = 2;
+
+    [Header ("Component Settings")]
     [SerializeField] bool isTrigger = false;
+    [SerializeField] bool usePhysicsMaterial = false;
+    [SerializeField] PhysicMaterial CylinderPhysicsMaterial;
+
+    [Header ("Debug")] 
     [SerializeField] bool deleteColliders = false;
     public bool changed = false;                                //A bool other scripts can reference to detect when the collider has been changed by user
 
@@ -106,6 +113,13 @@ public class CylinderCollider : MonoBehaviour
             //prevSideWidth = cylinderSideWidth = Mathf.PI * cylinderDiameter / cylinderSides;              //My approximation
             prevSideWidth = cylinderSideWidth = cylinderDiameter * Mathf.Tan(Mathf.PI / cylinderSides);     //Precise equation
         }
+
+        //If no physics material is assigned, disable it's usage    
+        if(usePhysicsMaterial && CylinderPhysicsMaterial == null)
+        {
+            usePhysicsMaterial = false;
+        }
+
         regenerate = true;
     }
     void Update()
@@ -186,6 +200,10 @@ public class CylinderCollider : MonoBehaviour
                 collider.AddComponent<Rigidbody>().useGravity = false;          //Trigger needs a Rigidbody to detect collisions properly
                 collider.GetComponent<Rigidbody>().isKinematic = true;
                 collider.AddComponent<TriggerChild>();                          //TODO: Pass a layermask into this
+            }
+            if (usePhysicsMaterial)
+            {
+                collider.GetComponent<BoxCollider>().material = CylinderPhysicsMaterial;
             }
             collider.transform.SetParent(Parent);
             collider.transform.localPosition = new Vector3(0, 0, 0);        //Set it at the position of it's parent
