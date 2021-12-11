@@ -3,15 +3,23 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class TrackBuilder : MonoBehaviour
 {
+    [Header ("Track Settings")]
     [Range(1,20)]
     [SerializeField] float trackLength = 10f;               //The length of a track
     [Range(0,0.5f)]
     [SerializeField] float linkSpacing = 0.2f;              //Amount of space between the track links
-    [Range(1,180)]
-    [SerializeField] float linkJointAngleLimit = 120;       //The maximum angle between the track links
-    [SerializeField] bool generateTracks = false;
     [SerializeField] string parentName = "Track";           //The name of the track parent
+    [Header ("Joint Settings")]
+    [Range(1, 180)]
+    [SerializeField] float linkJointAngleLimit = 120;       //The maximum angle between the track links
+    [SerializeField] bool useCustomBreakForce = false;
+    [SerializeField] float jointBreakForce = 20000;
+    [SerializeField] bool useCustomBreakTorque = false;
+    [SerializeField] float jointBreakTorque = 10000;
+    [Header ("Script Settings")]
     [SerializeField] bool generateOnChange = true;
+    [Header ("Debug")]
+    [SerializeField] bool generateTracks = false;
     [SerializeField] bool deleteTracks = false;
 
     GameObject TrackLink;
@@ -122,22 +130,34 @@ public class TrackBuilder : MonoBehaviour
         GameObject previousTrackLink = TrackLink;
         for(int i = 1; i <  linkAmount; i++)
         {
-            GameObject newTrackLink = Instantiate(TrackLink);
-            newTrackLink.transform.parent = TrackLink.transform.parent;
+            GameObject newTrackLink = Instantiate(TrackLink);               //Create a new link
+            newTrackLink.transform.parent = TrackLink.transform.parent;     //Set it to have the same parent
+
             Vector3 offset;
-            if(trackDirection == 0)
+            if(trackDirection == 0)                                         //The track is heading on the x axis of the parent
             {
-                offset = direction * i * (TrackLink.transform.lossyScale.x + linkSpacing);
+                offset = direction * i * (TrackLink.transform.lossyScale.x + linkSpacing);  //Offset of the new track link from the previous one
             }
-            else
+            else                                                            //The track is heading on the z axis of the parent
             {
-                offset = direction * i * (TrackLink.transform.lossyScale.z + linkSpacing);
+                offset = direction * i * (TrackLink.transform.lossyScale.z + linkSpacing);  //Offset of the new track link from the previous one
             }
-            newTrackLink.transform.localPosition = TrackLink.transform.localPosition + offset;
+            newTrackLink.transform.localPosition = TrackLink.transform.localPosition + offset;  //Apply offset
+
             newTrackLink.name = TrackLink.name + " " + i.ToString();
+
             newTrackLink.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
-            newTrackLink.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);
-            newTrackLink.AddComponent<HingeJoint>().connectedBody = previousTrackLink.GetComponent<Rigidbody>();
+            newTrackLink.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);        //Set these 2 values because otherwise physics just decide to jump out the window, don't ask me why
+            newTrackLink.AddComponent<HingeJoint>().connectedBody = previousTrackLink.GetComponent<Rigidbody>();    //Create a joint between the current and previous track
+
+            if (useCustomBreakForce)
+            {
+                newTrackLink.GetComponent<HingeJoint>().breakForce = jointBreakForce;
+            }
+            if (useCustomBreakTorque)
+            {
+                newTrackLink.GetComponent<HingeJoint>().breakTorque = jointBreakTorque;
+            }
             Vector3 hingeAxis;
             Vector3 hingeAnchor;
             float ratio;
