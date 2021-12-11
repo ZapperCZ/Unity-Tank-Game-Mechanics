@@ -8,7 +8,9 @@ public class Spin : MonoBehaviour
     public bool FlipSpinDirection = false;
     public float MaxAngularVelocity = 7;
     int Direction = 1;
-    
+    //TODO: Add variable that allows to change the axis of the spin
+
+
     private void OnValidate()
     {
         Direction = FlipSpinDirection ? -1 : 1;                 //If enabled, direction is flipped (-1), else it is unchanged (1)
@@ -16,7 +18,7 @@ public class Spin : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        this.GetComponent<Rigidbody>().AddRelativeTorque(new Vector3(0,Torque * Direction,0));
+        this.GetComponent<Rigidbody>().AddRelativeTorque(new Vector3(Torque * Direction,0,0));
         this.GetComponent<Rigidbody>().maxAngularVelocity = MaxAngularVelocity;
     }
 }
