@@ -20,6 +20,7 @@ public class CylinderCollider : MonoBehaviour
     [SerializeField] PhysicMaterial CylinderPhysicsMaterial;
 
     [Header ("Debug")] 
+    [SerializeField] bool runOutsideEditMode = false;
     [SerializeField] bool deleteColliders = false;
     public bool changed = false;                                //A bool other scripts can reference to detect when the collider has been changed by user
 
@@ -36,6 +37,11 @@ public class CylinderCollider : MonoBehaviour
 
     void Start()
     {
+        if(Application.isPlaying && !runOutsideEditMode)
+        {
+            this.enabled = false;
+            return;
+        }
         Parent = this.transform;
         Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
         prevSideWidth = cylinderSideWidth;
