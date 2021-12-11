@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Spin : MonoBehaviour
 {
-    public float Torque = 0f;
-    public bool FlipSpinDirection = false;
-    public float MaxAngularVelocity = 7;
+    [SerializeField] bool applyTorque = false;          //Whether the torque should be applied or not
+    [SerializeField] float Torque = 0f;                 //The amount of torque applied
+    [SerializeField] bool FlipSpinDirection = false;    //Whether the spinning direction should be flipped or not
+    [SerializeField] float MaxAngularVelocity = 20;     //The rotational limit, by default set to 7 by Unity
+
     int Direction = 1;
     //TODO: Add variable that allows to change the axis of the spin
-
 
     private void OnValidate()
     {
@@ -18,7 +19,7 @@ public class Spin : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        this.GetComponent<Rigidbody>().AddRelativeTorque(new Vector3(Torque * Direction,0,0));
-        this.GetComponent<Rigidbody>().maxAngularVelocity = MaxAngularVelocity;
+        this.GetComponent<Rigidbody>().AddRelativeTorque(new Vector3(Torque * Direction,0,0));  //Apply the torque
+        this.GetComponent<Rigidbody>().maxAngularVelocity = MaxAngularVelocity;                 //Apply the rotational velocity limit
     }
 }
