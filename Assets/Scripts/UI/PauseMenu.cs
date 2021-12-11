@@ -16,6 +16,7 @@ public class PauseMenu : MonoBehaviour
             isPaused = !isPaused;
             pauseMenuUI.SetActive(isPaused);
             Time.timeScale = (float)Convert.ToInt32(!isPaused);
+            Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
         }
     }
 
