@@ -15,22 +15,22 @@ public class CylinderCollider : MonoBehaviour
     public float cylinderHeight = 2;
 
     [Header ("Component Settings")]
-    [SerializeField] bool isTrigger = false;
-    [SerializeField] bool usePhysicsMaterial = false;
-    [SerializeField] PhysicMaterial CylinderPhysicsMaterial;
+    [SerializeField] bool isTrigger = false;                    //Determines whether the colliders should be a trigger or not
+    [SerializeField] bool usePhysicsMaterial = false;           //Whether the physics material should be used or not
+    [SerializeField] PhysicMaterial CylinderPhysicsMaterial;    //The physics material that should be applied to the colliders
 
     [Header ("Debug")] 
-    [SerializeField] bool runOutsideEditMode = false;
-    [SerializeField] bool deleteColliders = false;
+    [SerializeField] bool runOutsideEditMode = false;           //When enabled, the colliders cannot be altered by this script when play mode is enabled 
+    [SerializeField] bool deleteColliders = false;              //A poor mans button for deleting colliders
     public bool changed = false;                                //A bool other scripts can reference to detect when the collider has been changed by user
 
-    Transform Parent;
+    Transform Parent;               //The parent of this script
     bool prevSideWidthLocked;
     bool prevDiameterLocked;
     //float prevSides;
     float prevSideWidth;
     float prevDiameter;
-    bool regenerate = false;
+    bool regenerate = false;        
     bool destroyColliders = false;
     bool destroyManager = false;
     bool addManager = false;
@@ -42,6 +42,8 @@ public class CylinderCollider : MonoBehaviour
             this.enabled = false;
             return;
         }
+
+
         Parent = this.transform;
         Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
         prevSideWidth = cylinderSideWidth;
