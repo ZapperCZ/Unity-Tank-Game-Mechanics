@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Spin : MonoBehaviour
@@ -19,7 +17,10 @@ public class Spin : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        this.GetComponent<Rigidbody>().AddRelativeTorque(new Vector3(Torque * Direction,0,0));  //Apply the torque
+        if(applyTorque)
+        {
+            this.GetComponent<Rigidbody>().AddRelativeTorque(new Vector3(Torque * Direction, 0, 0));  //Apply the torque
+        }
         this.GetComponent<Rigidbody>().maxAngularVelocity = MaxAngularVelocity;                 //Apply the rotational velocity limit
     }
 }
