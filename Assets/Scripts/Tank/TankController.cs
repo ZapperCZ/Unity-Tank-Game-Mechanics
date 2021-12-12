@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class TankController : MonoBehaviour
 {
+    public GameObject LeftSprocket;
+    public GameObject RightSprocket;
+
+    [HideInInspector] public Vector3 leftExitPos;
+    [HideInInspector] public Vector3 rightExitPos;
     bool isSpaceOnLeft = true;
     bool isSpaceOnRight = true;
 
+    public Vector3 CameraOffset;
+
     [SerializeField] Transform Player;
-    [SerializeField] Transform COM;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,11 +25,13 @@ public class TankController : MonoBehaviour
     void Update()
     {
         GetInput();
-        if (Input.GetButtonDown("UseKey"))
+        if (Input.GetButtonDown("Use Key"))
         {
             Player.GetComponent<PlayerControllerManager>().SwitchController(true, this.isSpaceOnLeft, this.isSpaceOnRight);
+            Debug.Log("Cock");
         }
     }
+
     void GetInput()
     {
 
@@ -39,4 +47,5 @@ public class TankController : MonoBehaviour
             isSpaceOnRight = isExiting;
         }
     }
+
 }
