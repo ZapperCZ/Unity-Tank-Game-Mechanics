@@ -29,10 +29,10 @@ public class PlayerControllerManager : MonoBehaviour
             GameObject absoluteParent = FindAbsoluteParentWithComponent<TankController>(raycastTarget.transform.gameObject);
             if (absoluteParent != null)
             {
-                Debug.Log(absoluteParent.name);
                 if (Input.GetButtonDown("Use Key"))
                 {
-                    Tank = raycastTarget.transform;
+                    Tank = absoluteParent.transform;
+                    TankControllerScript = absoluteParent.GetComponent<TankController>();
                     SwitchController();
                 }
             }
@@ -80,6 +80,12 @@ public class PlayerControllerManager : MonoBehaviour
             TankControllerScript.RightSprocket
             */
         }
+        PlayerMovementScript.enabled = isExiting;
+        PlayerCamera.gameObject.SetActive(isExiting);
+
+        isInTank = !isExiting;
+        TankCamera.gameObject.SetActive(!isExiting);
+        TankControllerScript.enabled = !isExiting;
     }
     GameObject FindAbsoluteParentWithComponent<T>(GameObject inputObject) where T : Component
     {
