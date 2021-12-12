@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TankExitTrigger : MonoBehaviour
 {
-    TankController TankController;
+    [SerializeField] TankController TankController;
 
     void Start()
     {
