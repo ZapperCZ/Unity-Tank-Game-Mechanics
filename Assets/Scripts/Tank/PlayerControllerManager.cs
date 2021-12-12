@@ -77,6 +77,7 @@ public class PlayerControllerManager : MonoBehaviour
             TankControllerScript.RightSprocket
             */
         }
+        GraphicsParent.SetActive(isExiting);
         PlayerMovementScript.enabled = isExiting;
         PlayerCamera.gameObject.SetActive(isExiting);
 
