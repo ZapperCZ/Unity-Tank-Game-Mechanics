@@ -6,7 +6,6 @@ public class TankExitTrigger : MonoBehaviour
 
     void Start()
     {
-        TankController = this.GetComponentInParent<TankController>();
         if (transform.localPosition.x < 0)
         {
             TankController.leftExitPos = new Vector3(transform.localPosition.x, 0, 0);
