@@ -4,23 +4,20 @@ using UnityEngine;
 
 public class PlayerControllerManager : MonoBehaviour
 {
-    public Transform Player;
+    [SerializeField] Transform Player;
 
-    public Camera PlayerCamera;
-    public Camera TankCamera;
-    public GameObject test;
+    [SerializeField] Camera PlayerCamera;
+    [SerializeField] Camera TankCamera;
 
-    public CharacterController CharacterController;
-    public Player_Movement PlayerMovementScript;
+    [SerializeField] GameObject GraphicsParent;
+    [SerializeField] CharacterController CharacterController;
+    [SerializeField] Player_Movement PlayerMovementScript;
 
-    public int vehicleEnterRange = 3;
+    [SerializeField] int vehicleEnterRange = 3;
     public bool isInTank = false;
+
     TankController TankControllerScript;
     Transform Tank;
-    void Start()
-    {
-        Debug.LogWarning(test.transform.parent);
-    }
     void Update()
     {
         RaycastHit raycastTarget;
@@ -80,6 +77,7 @@ public class PlayerControllerManager : MonoBehaviour
             TankControllerScript.RightSprocket
             */
         }
+        GraphicsParent.SetActive(isExiting);
         PlayerMovementScript.enabled = isExiting;
         PlayerCamera.gameObject.SetActive(isExiting);
 
