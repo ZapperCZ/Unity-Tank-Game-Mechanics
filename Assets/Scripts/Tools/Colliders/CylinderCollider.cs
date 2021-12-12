@@ -43,14 +43,13 @@ public class CylinderCollider : MonoBehaviour
             return;
         }
 
-
         Parent = this.transform;
-        Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
         prevSideWidth = cylinderSideWidth;
         prevDiameter = cylinderDiameter;
         prevSideWidthLocked = sideWidthLocked;
         prevDiameterLocked = diameterLocked;
         CreateCylinderCollider();
+        Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
     }
     void OnValidate()
     {

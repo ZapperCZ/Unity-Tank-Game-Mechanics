@@ -113,7 +113,7 @@ public class TrackBuilder : MonoBehaviour
             if(TrackLink.transform.parent.gameObject.name == parentName)
             {
                 TrackLink.transform.parent = TrackParent.transform.parent;
-                DestroyObjectSafely(TrackParent);
+                DestroyGameObjectSafely(TrackParent);
             }
         }
         float linkLength;                   //Length of a link in the direction of the track
@@ -208,7 +208,7 @@ public class TrackBuilder : MonoBehaviour
             }
             if (linkToDelete.name.Contains(this.name) && !HasComponent<TrackBuilder>(linkToDelete.gameObject))
             {
-                DestroyObjectSafely(linkToDelete.gameObject);
+                DestroyGameObjectSafely(linkToDelete.gameObject);
             }
         }
     }
@@ -223,7 +223,7 @@ public class TrackBuilder : MonoBehaviour
             DestroyImmediate(obj);
         }
     }
-    void DestroyObjectSafely(GameObject obj)            //Destroys the object appropriately to the current mode
+    void DestroyGameObjectSafely(GameObject obj)            //Destroys the object appropriately to the current mode
     {
         if (Application.isPlaying)
         {
