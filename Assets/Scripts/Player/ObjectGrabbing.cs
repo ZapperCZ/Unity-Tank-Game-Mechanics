@@ -20,7 +20,7 @@ public class ObjectGrabbing : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Grab Object"))
+        if (Input.GetButtonDown("Use Key"))
         {
             if(CurrentlyGrabbedObject == null)      //Pick the item up
             {
