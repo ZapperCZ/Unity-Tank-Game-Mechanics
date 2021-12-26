@@ -64,7 +64,7 @@ public class TankController : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         if (vertical != 0)          //W or S is being pressed
         {
-            if(vertical > 0)        //W is being pressed
+            if(vertical > 0)        //W is being pressed - forward
             {
                 if(currentLeftTorque < maxTorque)
                     currentLeftTorque += torqueStep;
@@ -74,7 +74,7 @@ public class TankController : MonoBehaviour
                 leftReverse = false;
                 rightReverse = false;
             }
-            if (vertical < 0)        //S is being pressed
+            if (vertical < 0)        //S is being pressed - backwards
             {
                 if (currentLeftTorque < maxTorque)
                     currentLeftTorque += torqueStep;
@@ -94,12 +94,12 @@ public class TankController : MonoBehaviour
         }
         if (horizontal != 0)        //A or D is being pressed
         {
-            if (horizontal > 0)        //D is being pressed
+            if (horizontal > 0)        //D is being pressed - right
             {
                 leftReverse = false;
                 rightReverse = true;
             }
-            if (horizontal < 0)        //A is being pressed
+            if (horizontal < 0)        //A is being pressed - left
             {
                 leftReverse = true;
                 rightReverse = false;
