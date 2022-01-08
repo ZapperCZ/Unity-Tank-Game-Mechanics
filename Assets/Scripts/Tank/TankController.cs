@@ -1,4 +1,4 @@
-using System.Collections;
+    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +7,10 @@ public class TankController : MonoBehaviour
     public GameObject LeftSprocket;
     public GameObject RightSprocket;
 
+    public Transform CameraFocusPoint;
+
     public float responsiveness = 0.05f;
-    [SerializeField] float maxTorque = 800f;
+    [SerializeField] float maxTorque = 600f;
     float currentLeftTorque = 0f;
     float currentRightTorque = 0f;
     bool leftReverse = false;
@@ -22,7 +24,7 @@ public class TankController : MonoBehaviour
     bool isSpaceOnLeft = true;
     bool isSpaceOnRight = true;
 
-    public Vector3 CameraOffset;
+    public float CameraDistance = 4;
 
     [SerializeField] Transform Player;
 

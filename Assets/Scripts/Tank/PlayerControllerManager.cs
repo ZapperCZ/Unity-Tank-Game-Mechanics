@@ -62,7 +62,10 @@ public class PlayerControllerManager : MonoBehaviour
             Player.SetParent(Tank);
             Player.localPosition = new Vector3(0, 0, 0);
             TankCamera.transform.SetParent(null);
-            TankCamera.GetComponent<CameraFollow>().targetVehicle = Tank;
+            TankCamera.GetComponent<VehicleCameraController>().FocusPoint = TankControllerScript.CameraFocusPoint;
+            TankCamera.GetComponent<VehicleCameraController>().distance = TankControllerScript.CameraDistance;
+            //TankCamera.GetComponent<CameraFollow>().targetVehicle = Tank;
+/*
             if (TankControllerScript.CameraOffset != new Vector3(0, 0, 0))
             {
                 TankCamera.GetComponent<CameraFollow>().actualOffset = TankControllerScript.CameraOffset;
@@ -71,7 +74,7 @@ public class PlayerControllerManager : MonoBehaviour
             {
                 TankCamera.GetComponent<CameraFollow>().actualOffset = TankCamera.GetComponent<CameraFollow>().offset;
             }
-
+*/
             /*  Stop the tank
             TankControllerScript.LeftSprocket
             TankControllerScript.RightSprocket
