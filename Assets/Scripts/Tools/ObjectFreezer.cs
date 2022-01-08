@@ -8,6 +8,7 @@ public class ObjectFreezer : MonoBehaviour
     [SerializeField] bool FreezeAllChildren = true;
     [SerializeField] bool UnfreezeOnPlayMode = true;
     [SerializeField] bool Freeze = false;
+    [SerializeField] int minChildAmount = 1;
 
     bool valuesChanged = false;
 
@@ -55,7 +56,7 @@ public class ObjectFreezer : MonoBehaviour
             {
                 child.GetComponent<Rigidbody>().isKinematic = Freeze;
             }
-            if(child.childCount > 0)
+            if(child.childCount >= minChildAmount)
             {
                 FreezeChildren(child);
             }
