@@ -55,7 +55,7 @@ public class ObjectFreezer : MonoBehaviour
             {
                 child.GetComponent<Rigidbody>().isKinematic = Freeze;
             }
-            if(child.childCount > 1)
+            if(child.childCount > 0)
             {
                 FreezeChildren(child);
             }
