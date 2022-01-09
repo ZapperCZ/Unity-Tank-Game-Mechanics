@@ -33,6 +33,7 @@ public class ShootingSystem : MonoBehaviour
         FiredShell.transform.parent = BarrelPosition;
         FiredShell.transform.localPosition = new Vector3(0, 0, FiredShell.transform.localScale.z);
         FiredShell.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        FiredShell.GetComponent<Collider>().enabled = true;
         FiredShell.GetComponent<Rigidbody>().AddForce(BarrelPosition.forward.normalized * force);
 
         reloadCountdown = reloadTime;
