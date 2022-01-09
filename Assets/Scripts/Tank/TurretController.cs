@@ -7,14 +7,21 @@ public class TurretController : MonoBehaviour
     [SerializeField] Transform Camera;
     [SerializeField] Transform Test;
     [SerializeField] Transform Gun;
-    [SerializeField] float turretSlewingSpeed = 15f;
-    [SerializeField] float gunElevationSpeed = 10f;
+    [SerializeField] float angleDifferenceThreshold = 4;        //The angle threshold where the component starts deecreasing it's velocity
+    [SerializeField] float maxTurretSlewingSpeed = 15f;
+    [SerializeField] float maxGunElevationSpeed = 10f;
 
     Vector3 TargetPoint;
     Vector2 TurretDirection;
-    Vector2 TargetDirectionXZ;
-    float GunDirection;
-    float TargetDirectionY;
+    Vector2 TargetDirectionFromTurret;
+    Vector2 GunDirection;
+    Vector2 TargetDirectionFromGun;
+
+    float TurretAngleToTarget;
+    float GunAngleToTarget;
+
+    float gunMagnitude = 1f;
+    float turretMagnitude = 1f;
 
     JointMotor TurretDrive;
     JointMotor GunDrive;
@@ -29,34 +36,51 @@ public class TurretController : MonoBehaviour
         GetTargetPoint();
 
         TurretDirection = new Vector2(transform.forward.x,transform.forward.z);
-        TargetDirectionXZ = new Vector2(Camera.forward.x, Camera.forward.z);
+        TargetDirectionFromTurret = new Vector2(TargetPoint.x - transform.position.x, TargetPoint.z - transform.position.z);
 
-        GunDirection = Gun.forward.y;
-        TargetDirectionY = Camera.forward.y;
+        GunDirection = new Vector2(Mathf.Abs(Gun.forward.x), Gun.forward.y);
+        TargetDirectionFromGun = new Vector2(Mathf.Abs(TargetPoint.x - Gun.position.x), (TargetPoint.y - Gun.position.y));        //The sign of the X component is omitted to not mess with sign of a resulting angle. The Y component is inverted because idk, just doesn't work without it
 
-        //Debug.Log(GunDirection + " - " + TargetDirectionY);
+        TurretAngleToTarget = AngleBetweenVector2(TurretDirection, TargetDirectionFromTurret);
+        GunAngleToTarget = AngleBetweenVector2(GunDirection, TargetDirectionFromGun);
 
-        //Debug.Log(AngleBetweenVector2(TurretDirection,TargetDirectionXZ) + " - " +  TurretDirection + " - " + TargetDirectionXZ);
-
-        if (AngleBetweenVector2(TurretDirection, TargetDirectionXZ) > 0)            //player is aiming to the turret left
+        if(Mathf.Abs(GunAngleToTarget) < angleDifferenceThreshold)
         {
-            TurretDrive.targetVelocity = -turretSlewingSpeed;
+            gunMagnitude = normalizeNumber(GunAngleToTarget, angleDifferenceThreshold);
+        }
+        else
+        {
+            gunMagnitude = 1f;
+        }
+        
+        if(Mathf.Abs(TurretAngleToTarget) < angleDifferenceThreshold)
+        {
+            turretMagnitude = normalizeNumber(TurretAngleToTarget, angleDifferenceThreshold);
+        }
+        else
+        {
+            turretMagnitude = 1f;
+        }
+
+        if (TurretAngleToTarget > 0)            //Player is aiming to the turret left
+        {
+            TurretDrive.targetVelocity = -maxTurretSlewingSpeed * turretMagnitude;
             transform.GetComponent<HingeJoint>().motor = TurretDrive;
         }
-        else if (AngleBetweenVector2(TurretDirection, TargetDirectionXZ) < 0)     //player is aiming to the turret right
+        else if (TurretAngleToTarget < 0)       //Player is aiming to the turret right
         {
-            TurretDrive.targetVelocity = turretSlewingSpeed;
+            TurretDrive.targetVelocity = maxTurretSlewingSpeed * turretMagnitude;
             transform.GetComponent<HingeJoint>().motor = TurretDrive;
         }
 
-        if(TargetDirectionY > GunDirection)         //Player is aiming above the gun
+        if(GunAngleToTarget > 0)         //Player is aiming above the gun
         {
-            GunDrive.targetVelocity = -gunElevationSpeed;
+            GunDrive.targetVelocity = -maxGunElevationSpeed * gunMagnitude;
             Gun.GetComponent<HingeJoint>().motor = GunDrive;
         }
-        else if(TargetDirectionY < GunDirection)    //Player is aiming below the gun
+        else if(GunAngleToTarget < 0)    //Player is aiming below the gun
         {
-            GunDrive.targetVelocity = gunElevationSpeed;
+            GunDrive.targetVelocity = maxGunElevationSpeed * gunMagnitude;
             Gun.GetComponent<HingeJoint>().motor = GunDrive;
         }
 
@@ -75,7 +99,7 @@ public class TurretController : MonoBehaviour
             if (!hit.transform.CompareTag("Player Controlled"))
             {
                 TargetPoint = hit.point;
-                Test.position = TargetPoint;
+                //Test.position = TargetPoint;
                 break;
             }
         }
@@ -85,5 +109,13 @@ public class TurretController : MonoBehaviour
         Vector2 vec1Rotated90 = new Vector2(-vec1.y, vec1.x);
         float sign = (Vector2.Dot(vec1Rotated90, vec2) < 0) ? -1.0f : 1.0f;
         return Vector2.Angle(vec1, vec2) * sign;
+    }
+    float normalizeNumber(float num, float max)
+    {
+        return Mathf.Abs(num / max);
+    }
+    bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a component or not
+    {
+        return inputObject.GetComponent<T>() != null;
     }
 }
