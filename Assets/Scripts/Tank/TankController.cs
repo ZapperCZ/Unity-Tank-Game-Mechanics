@@ -8,6 +8,7 @@ public class TankController : MonoBehaviour
     public GameObject RightSprocket;
 
     [SerializeField] TurretController TurretControllerScript;
+    [SerializeField] ShootingSystem ShootingSystemScript;
     public Transform CameraFocusPoint;
 
     public float responsiveness = 0.05f;
@@ -35,6 +36,7 @@ public class TankController : MonoBehaviour
         RightSprocketSpin.applyTorque = true;
 
         TurretControllerScript.enabled = true;
+        ShootingSystemScript.enabled = true;
         transform.tag = "Player Controlled";
         AddTagToChildren(transform, "Player Controlled");
     }
@@ -44,6 +46,7 @@ public class TankController : MonoBehaviour
         RightSprocketSpin.applyTorque = false;
 
         TurretControllerScript.enabled = false;
+        ShootingSystemScript.enabled = false;
         transform.tag = "Untagged";
         AddTagToChildren(transform, "Untagged");
     }

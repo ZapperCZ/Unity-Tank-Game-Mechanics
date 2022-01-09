@@ -14,8 +14,6 @@ public class VehicleCameraController : MonoBehaviour
     {
         GetInput();
 
-        Debug.Log(scroll);
-
         if(scroll < 0 && distance < maxDistance)            //Scrolling away (down)
         {
             distance += scrollSens;
