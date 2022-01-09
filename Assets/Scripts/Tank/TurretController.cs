@@ -99,7 +99,7 @@ public class TurretController : MonoBehaviour
             if (!hit.transform.CompareTag("Player Controlled"))
             {
                 TargetPoint = hit.point;
-                //Test.position = TargetPoint;
+                Test.position = TargetPoint;
                 break;
             }
         }
