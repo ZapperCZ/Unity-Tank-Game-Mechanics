@@ -7,6 +7,7 @@ public class TankController : MonoBehaviour
     public GameObject LeftSprocket;
     public GameObject RightSprocket;
 
+    [SerializeField] TurretController TurretControllerScript;
     public Transform CameraFocusPoint;
 
     public float responsiveness = 0.05f;
@@ -32,11 +33,19 @@ public class TankController : MonoBehaviour
     {
         LeftSprocketSpin.applyTorque = true;
         RightSprocketSpin.applyTorque = true;
+
+        TurretControllerScript.enabled = true;
+        transform.tag = "Player Controlled";
+        AddTagToChildren(transform, "Player Controlled");
     }
     private void OnDisable()
     {
         LeftSprocketSpin.applyTorque = false;
         RightSprocketSpin.applyTorque = false;
+
+        TurretControllerScript.enabled = false;
+        transform.tag = "Untagged";
+        AddTagToChildren(transform, "Untagged");
     }
     void Awake()
     {
@@ -119,5 +128,15 @@ public class TankController : MonoBehaviour
             isSpaceOnRight = isExiting;
         }
     }
-
+    void AddTagToChildren(Transform Parent, string tag)
+    {
+        foreach (Transform child in Parent)
+        {
+            child.tag = tag;
+            if (child.childCount >= 0)
+            {
+                AddTagToChildren(child, tag);
+            }
+        }
+    }
 }
