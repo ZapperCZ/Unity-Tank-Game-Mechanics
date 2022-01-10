@@ -6,19 +6,24 @@ using UnityEngine;
 public class ObjectFreezer : MonoBehaviour
 {
     [SerializeField] bool FreezeAllChildren = true;
-    [SerializeField] bool UnfreezeOnPlayMode = true;
     [SerializeField] bool Freeze = false;
+    [SerializeField] bool UnfreezeOnPlayMode = true;
+    [SerializeField] float unfreezeDelay = 1f;
     [SerializeField] int minChildAmount = 1;
 
+    float _unfreezeDelay = float.MaxValue;
     bool valuesChanged = false;
 
     // Start is called before the first frame update
     private void Awake()
     {
+        _unfreezeDelay = unfreezeDelay;
+        /*
         if (UnfreezeOnPlayMode && Application.isPlaying)
         {
             Freeze = false;
         }
+        */
         valuesChanged = true;
     }
 
@@ -29,20 +34,33 @@ public class ObjectFreezer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Application.isPlaying && UnfreezeOnPlayMode)
+        {
+            if (_unfreezeDelay >= 0)
+            {
+                _unfreezeDelay -= Time.deltaTime;
+            }
+            else
+            {
+                _unfreezeDelay = unfreezeDelay;
+                Freeze = false;
+                FreezeChildren(transform);
+                this.enabled = false;
+            }
+            return;
+        }
+
         if (valuesChanged)
         {
-            if (Application.isPlaying && !UnfreezeOnPlayMode)
-                return;
-
             if (FreezeAllChildren)
             {
-                FreezeChildren(this.transform);
+                FreezeChildren(transform);
             }
             else
             {
                 if (HasComponent<Rigidbody>(this.gameObject))
                 {
-                    this.transform.GetComponent<Rigidbody>().isKinematic = Freeze;
+                    transform.GetComponent<Rigidbody>().isKinematic = Freeze;
                 }
             }
         }
