@@ -9,11 +9,13 @@ public class ShootingSystem : MonoBehaviour
     [SerializeField] float force;
     [SerializeField] float reloadTime;
     [SerializeField] float reloadCountdown = 0f;
+    [SerializeField] bool fire = false;
+
     bool reloaded = true;
 
     void Update()
     {
-        if(Input.GetButton("Left Click") && reloaded)
+        if((Input.GetButton("Left Click") && reloaded) || fire)
         {
             Fire();
         }

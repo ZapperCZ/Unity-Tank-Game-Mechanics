@@ -31,6 +31,14 @@ public class TurretController : MonoBehaviour
         TurretDrive = transform.GetComponent<HingeJoint>().motor;
         GunDrive = Gun.GetComponent<HingeJoint>().motor;
     }
+    void OnDisable()
+    {
+        TurretDrive.targetVelocity = 0;
+        GunDrive.targetVelocity = 0;
+
+        transform.GetComponent<HingeJoint>().motor = TurretDrive;
+        Gun.GetComponent<HingeJoint>().motor = GunDrive;
+    }
     void Update()
     {
         GetTargetPoint();

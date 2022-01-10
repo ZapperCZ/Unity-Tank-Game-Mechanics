@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VehicleCameraController : MonoBehaviour
 {
-    float x, y;
+    float x, y = 180;
     float scroll;
     public float sensitivity, distance, minDistance, maxDistance, scrollSens;
     public Vector2 MinMax;                      //The maximum and minimum angle

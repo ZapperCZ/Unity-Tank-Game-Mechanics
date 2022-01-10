@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3977465619591655731}
   - component: {fileID: 3977465619591655740}
   - component: {fileID: -5823288165896533913}
-  - component: {fileID: -8687083411477979888}
+  - component: {fileID: 5233442766075947251}
   m_Layer: 0
   m_Name: Shell
   m_TagString: Untagged
@@ -94,7 +94,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 3977465619591655741}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.5000001
   m_Height: 2
   m_Direction: 1
@@ -115,7 +115,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-8687083411477979888
+--- !u!114 &5233442766075947251
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,5 +127,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 485f6fec78da5e24eb13c47b7e3bdcc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionRadius: 3
+  explosionRadius: 7
   explosionForce: 10000
