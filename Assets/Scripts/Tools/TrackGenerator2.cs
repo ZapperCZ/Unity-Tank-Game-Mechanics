@@ -21,7 +21,7 @@ public class TrackGenerator2 : MonoBehaviour
     [SerializeField] float trackLength = 10f;               //The length of a track
     [Range(0, 0.5f)]
     [SerializeField] float linkSpacing = 0.2f;              //Amount of space between the track links
-    [SerializeField] string parentName = "Track";           //The name of the track parent
+    //[SerializeField] string parentName = "Track";           //The name of the track parent
     [Header("Joint Settings")]
     [Range(1, 180)]
     [SerializeField] float linkJointAngleLimit = 120;       //The maximum angle between the track links
@@ -36,8 +36,6 @@ public class TrackGenerator2 : MonoBehaviour
     [SerializeField] bool generateTracks = false;
     [SerializeField] bool deleteTracks = false;
 
-    GameObject TrackParent;
-    bool createParent = true;                               //Whether a parent for the track links should be created or not
     bool createTracks = false;
     bool destroyTracks = false;
 
@@ -81,12 +79,13 @@ public class TrackGenerator2 : MonoBehaviour
     }
     void OnValidate()
     {
+/*
         if (parentName == "")
         {
             parentName = "Track";
             return;
         }
-
+*/
         if (generateTracks == true)
         {
             generateTracks = false;
@@ -111,46 +110,51 @@ public class TrackGenerator2 : MonoBehaviour
         //FIX: Tracks sometimes get generated twice when the script is unloaded and loaded (might do something with onLoad)
         DestroyTracks();
         Debug.Log($"Track Builder - {this.name} - Generating Tracks");
-        if (createParent)
-        {
-            if (TrackLink.transform.parent.gameObject.name != parentName)        //Parent doesn't exist yet
-            {
-                TrackParent = new GameObject();
-                TrackParent.name = parentName;
-                TrackParent.transform.parent = TrackLink.transform.parent;
-                TrackLink.transform.parent = TrackParent.transform;
-            }
-        }
-        else
-        {
-            if (TrackLink.transform.parent.gameObject.name == parentName)
-            {
-                TrackLink.transform.parent = TrackParent.transform.parent;
-                DestroyGameObjectSafely(TrackParent);
-            }
-        }
+        /*        
+                if (createParent)
+                {
+                    if (TrackLink.transform.parent.gameObject.name != parentName)        //Parent doesn't exist yet
+                    {
+                        TrackParent = new GameObject();
+                        TrackParent.name = parentName;
+                        TrackParent.transform.parent = TrackLink.transform.parent;
+                        TrackLink.transform.parent = TrackParent.transform;
+                    }
+                }
+                else
+                {
+                    if (TrackLink.transform.parent.gameObject.name == parentName)
+                    {
+                        TrackLink.transform.parent = TrackParent.transform.parent;
+                        DestroyGameObjectSafely(TrackParent);
+                    }
+                }
+        */
+        Vector3 linkDimensions = BoundsSizeToVector3(TrackLink.GetComponent<MeshFilter>().sharedMesh.bounds);
         float linkLength;                   //Length of a link in the direction of the track
         float linkAmount;                   //Amount of links in one track
         Vector3 direction;                  //The direction of the track
         int trackDirection = 0;             //Track direction in relation to the main link axis, 0 - X, 1 - Z
-        if (TrackLink.transform.lossyScale.x > TrackLink.transform.lossyScale.z)     //x is track width, z is track direction
+        if (linkDimensions.x * TrackLink.transform.lossyScale.x > linkDimensions.z * TrackLink.transform.lossyScale.z)     //x is track width, z is track direction
         {
-            linkLength = TrackLink.transform.lossyScale.z;
+            linkLength = linkDimensions.z * TrackLink.transform.lossyScale.z;
             direction = TrackLink.transform.forward;
             trackDirection = 1;
         }
         else                                                                        //z is track width, x is track direction
         {
-            linkLength = TrackLink.transform.lossyScale.x;
+            linkLength = linkDimensions.x * TrackLink.transform.lossyScale.x;
             direction = Quaternion.Euler(0, 90, 0) * TrackLink.transform.forward;   //Rotates the Z direction by 90 degrees on Y axis to achieve X direction
         }
+
+        Debug.Log(linkLength);
 
         linkAmount = Mathf.Round(trackLength / (linkLength + linkSpacing)) - 1;         //Decrease by one to account for the already existing parent link
         GameObject previousTrackLink = TrackLink;
         for (int i = 1; i < linkAmount; i++)
         {
             GameObject newTrackLink = Instantiate(TrackLink);               //Create a new link
-            newTrackLink.transform.parent = TrackLink.transform.parent;     //Set it to have the same parent
+            newTrackLink.transform.parent = this.transform;                 //Set it to have the same parent
 
             Vector3 offset;
             if (trackDirection == 0)                                         //The track is heading on the x axis of the parent
@@ -205,10 +209,10 @@ public class TrackGenerator2 : MonoBehaviour
     void DestroyTracks()
     {
         Debug.Log("Track Builder - Destroying Tracks");
-        Transform Parent = transform.parent;
-        int childCount = Parent.childCount - 1;           //The parent can't be deleted
+        Transform Parent = transform;
+        int childCount = Parent.childCount;
 
-        for (int i = 1; i <= childCount; i++)
+        for (int i = 0; i < childCount; i++)
         {
             Transform linkToDelete = null;
             if (Application.isPlaying)
@@ -217,12 +221,9 @@ public class TrackGenerator2 : MonoBehaviour
             }
             else if (Application.isEditor)
             {
-                linkToDelete = Parent.GetChild(1);      //The 0 element will be the parent link
+                linkToDelete = Parent.GetChild(0);      //The 0 element will be the parent link
             }
-            if (linkToDelete.name.Contains(this.name) && !HasComponent<TrackBuilder>(linkToDelete.gameObject))
-            {
-                DestroyGameObjectSafely(linkToDelete.gameObject);
-            }
+            DestroyGameObjectSafely(linkToDelete.gameObject);
         }
     }
     void DestroyObjectSafely(Object obj)
@@ -258,5 +259,10 @@ public class TrackGenerator2 : MonoBehaviour
     bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a component or not
     {
         return inputObject.GetComponent<T>() != null;
+    }
+    Vector3 BoundsSizeToVector3(Bounds inputBounds)
+    {
+        Vector3 result = new Vector3(inputBounds.size.x,inputBounds.size.y,inputBounds.size.z);
+        return result;
     }
 }
