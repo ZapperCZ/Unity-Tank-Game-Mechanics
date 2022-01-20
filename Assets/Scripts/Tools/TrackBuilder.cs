@@ -3,6 +3,13 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class TrackBuilder : MonoBehaviour
 {
+    enum TrackType
+    {
+        Basic,
+        Complicated
+    }
+
+
     [Header ("Track Settings")]
     [Range(1,20)]
     [SerializeField] float trackLength = 10f;               //The length of a track

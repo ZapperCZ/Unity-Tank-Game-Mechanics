@@ -16,10 +16,12 @@ public class Shell : MonoBehaviour
 
     void HighSpeedCollisionDetection()
     {
-        if (Physics.Raycast(transform.position, transform.position - previousPosition,Vector3.Distance(transform.position,previousPosition)))
+        RaycastHit hit;
+        Ray ray = new Ray(transform.position, transform.position - previousPosition);
+
+        if (Physics.Raycast(ray,out hit, Vector3.Distance(transform.position, previousPosition)))
         {
-            //Debug.Log("hit");
-            TriggerExplosion();
+            TriggerExplosion(hit.point);
         }
 
         previousPosition = transform.position;
@@ -27,9 +29,9 @@ public class Shell : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        TriggerExplosion();
+        TriggerExplosion(transform.position);
     }
-    void TriggerExplosion()
+    void TriggerExplosion(Vector3 CurrentPosition)
     {
         Collider[] nearbyObjects = Physics.OverlapSphere(transform.position, explosionRadius);
         GameObject obj;
