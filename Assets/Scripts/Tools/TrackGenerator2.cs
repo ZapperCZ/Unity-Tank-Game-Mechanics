@@ -149,7 +149,7 @@ public class TrackGenerator2 : MonoBehaviour
 
         Debug.Log(linkLength);
 
-        linkAmount = Mathf.Round(trackLength / (linkLength + linkSpacing)) - 1;         //Decrease by one to account for the already existing parent link
+        linkAmount = Mathf.Round(trackLength / (linkLength + linkSpacing));
         GameObject previousTrackLink = TrackLink;
         for (int i = 1; i < linkAmount; i++)
         {
@@ -157,6 +157,8 @@ public class TrackGenerator2 : MonoBehaviour
             newTrackLink.transform.parent = this.transform;                 //Set it to have the same parent
 
             Vector3 offset;
+
+/*
             if (trackDirection == 0)                                         //The track is heading on the x axis of the parent
             {
                 offset = direction * i * (TrackLink.transform.lossyScale.x + linkSpacing);  //Offset of the new track link from the previous one
@@ -165,7 +167,10 @@ public class TrackGenerator2 : MonoBehaviour
             {
                 offset = direction * i * (TrackLink.transform.lossyScale.z + linkSpacing);  //Offset of the new track link from the previous one
             }
-            newTrackLink.transform.localPosition = TrackLink.transform.localPosition + offset;  //Apply offset
+*/
+            offset = direction * i * (linkLength + linkSpacing);
+
+            newTrackLink.transform.localPosition = offset;  //Apply offset
 
             newTrackLink.name = TrackLink.name + " " + i.ToString();
 
