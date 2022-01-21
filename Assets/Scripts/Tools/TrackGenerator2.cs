@@ -174,10 +174,9 @@ public class TrackGenerator2 : MonoBehaviour
 
             newTrackLink.name = TrackLink.name + " " + i.ToString();
 
-            //newTrackLink.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
+            newTrackLink.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
             newTrackLink.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);        //Set these 2 values because otherwise physics just decide to jump out the window, don't ask me why
-            newTrackLink.AddComponent<HingeJoint>().connectedBody = previousTrackLink.GetComponent<Rigidbody>();    //Create a joint between the current and previous track
-
+/*
             if (useCustomBreakForce)
             {
                 newTrackLink.GetComponent<HingeJoint>().breakForce = jointBreakForce;
@@ -206,7 +205,8 @@ public class TrackGenerator2 : MonoBehaviour
             }
             newTrackLink.GetComponent<HingeJoint>().axis = hingeAxis;
             newTrackLink.GetComponent<HingeJoint>().anchor = hingeAnchor;
-            DestroyObjectSafely(newTrackLink.GetComponent<TrackBuilder>());
+*/
+
             Events.instance.Raise(new GameObjectCreated(newTrackLink));
             previousTrackLink = newTrackLink;
         }
