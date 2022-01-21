@@ -150,13 +150,28 @@ public class TrackGenerator2 : MonoBehaviour
         Debug.Log(linkLength);
 
         linkAmount = Mathf.Round(trackLength / (linkLength + linkSpacing));
-        GameObject previousTrackLink = TrackLink;
-        for (int i = 1; i < linkAmount; i++)
+        GameObject previousTrackLink = null;
+        for (int i = 0; i < linkAmount; i++)
         {
-            GameObject newTrackLink = Instantiate(TrackLink);               //Create a new link
-            newTrackLink.transform.parent = this.transform;                 //Set it to have the same parent
-
             Vector3 offset;
+            offset = direction * i * (linkLength + linkSpacing);
+
+            GameObject newTrackLinkParent = new GameObject();
+            newTrackLinkParent.name = "Track Link - " + (i+1);
+            newTrackLinkParent.transform.parent = this.transform;
+            newTrackLinkParent.transform.localPosition = offset;
+
+            //Copy the reference link
+            GameObject newTrackLink = Instantiate(TrackLink);               //Create a new link
+            GameObject newLeftOuterBracket = Instantiate(LeftConnectingBracket);
+            GameObject newMiddleBracket = Instantiate(MiddleConnectingBracket);
+            GameObject newRightOuterBracket = Instantiate(RightConnectingBracket);
+
+            //Assign the parents
+            newTrackLink.transform.parent = newTrackLinkParent.transform;                 //Set it to have the same parent
+            newLeftOuterBracket.transform.parent = newTrackLinkParent.transform;
+            newMiddleBracket.transform.parent = newTrackLinkParent.transform;
+            newRightOuterBracket.transform.parent = newTrackLinkParent.transform;
 
 /*
             if (trackDirection == 0)                                         //The track is heading on the x axis of the parent
@@ -168,47 +183,140 @@ public class TrackGenerator2 : MonoBehaviour
                 offset = direction * i * (TrackLink.transform.lossyScale.z + linkSpacing);  //Offset of the new track link from the previous one
             }
 */
-            offset = direction * i * (linkLength + linkSpacing);
 
-            newTrackLink.transform.localPosition = offset;  //Apply offset
+            //Set the position (the parent is already offset, hence only the local adjustments)
+            newTrackLink.transform.localPosition = Vector3.zero;
+            newLeftOuterBracket.transform.localPosition = LeftConnectingBracket.transform.localPosition;
+            newMiddleBracket.transform.localPosition = MiddleConnectingBracket.transform.localPosition;
+            newRightOuterBracket.transform.localPosition = RightConnectingBracket.transform.localPosition;
 
-            newTrackLink.name = TrackLink.name + " " + i.ToString();
+            //Rename the track link
+            newTrackLink.name = TrackLink.name;
+            newLeftOuterBracket.name = LeftConnectingBracket.name;
+            newMiddleBracket.name = MiddleConnectingBracket.name;
+            newRightOuterBracket.name = RightConnectingBracket.name;
 
+            //Reset the COM and interia, cuz physics
             newTrackLink.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
             newTrackLink.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);        //Set these 2 values because otherwise physics just decide to jump out the window, don't ask me why
-/*
-            if (useCustomBreakForce)
-            {
-                newTrackLink.GetComponent<HingeJoint>().breakForce = jointBreakForce;
-            }
-            if (useCustomBreakTorque)
-            {
-                newTrackLink.GetComponent<HingeJoint>().breakTorque = jointBreakTorque;
-            }
+            newLeftOuterBracket.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
+            newLeftOuterBracket.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);
+            newMiddleBracket.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
+            newMiddleBracket.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);
+            newRightOuterBracket.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, 0, 0);
+            newRightOuterBracket.GetComponent<Rigidbody>().inertiaTensor = new Vector3(1, 1, 1);
+
+            //Handling hinge joints
+
             Vector3 hingeAxis;
-            Vector3 hingeAnchor;
-            float ratio;
-            float anchOffset;
+            Vector3 currHingeAnchor;
+            Vector3 prevHingeAnchor;
+            int currHingeIndex = 0;
+
             if (trackDirection == 1)
             {
                 hingeAxis = new Vector3(1, 0, 0);
-                ratio = TrackLink.transform.lossyScale.z / linkSpacing;
-                anchOffset = 0.5f + (0.5f / ratio);
-                hingeAnchor = new Vector3(0, 0, -anchOffset);
+                currHingeAnchor = new Vector3(0f, 0f, ConnectingBracketHingePosition.localPosition.z);
+                prevHingeAnchor = new Vector3(0f, 0f, -ConnectingBracketHingePosition.localPosition.z);
             }
             else
             {
                 hingeAxis = new Vector3(0, 0, 1);
-                ratio = TrackLink.transform.lossyScale.x / linkSpacing;
-                anchOffset = 0.5f + (0.5f / ratio);
-                hingeAnchor = new Vector3(-anchOffset, 0, 0);
+                currHingeAnchor = new Vector3(ConnectingBracketHingePosition.localPosition.z, 0f, 0f);
+                prevHingeAnchor = new Vector3(-ConnectingBracketHingePosition.localPosition.z, 0f, 0f);
             }
-            newTrackLink.GetComponent<HingeJoint>().axis = hingeAxis;
-            newTrackLink.GetComponent<HingeJoint>().anchor = hingeAnchor;
-*/
+
+            if (previousTrackLink != null)
+            {
+                //Add HingeJoint and set the previous link as the connected body
+                newLeftOuterBracket.AddComponent<HingeJoint>().connectedBody = previousTrackLink.transform.Find(newTrackLink.name).GetComponent<Rigidbody>();
+                newMiddleBracket.AddComponent<HingeJoint>().connectedBody = previousTrackLink.transform.Find(newTrackLink.name).GetComponent<Rigidbody>();
+                newRightOuterBracket.AddComponent<HingeJoint>().connectedBody = previousTrackLink.transform.Find(newTrackLink.name).GetComponent<Rigidbody>();
+
+                if (useCustomBreakForce)
+                {
+                    newLeftOuterBracket.GetComponent<HingeJoint>().breakForce = jointBreakForce;
+                    newMiddleBracket.GetComponent<HingeJoint>().breakForce = jointBreakForce;
+                    newRightOuterBracket.GetComponent<HingeJoint>().breakForce = jointBreakForce;
+                }
+                if (useCustomBreakTorque)
+                {
+                    newLeftOuterBracket.GetComponent<HingeJoint>().breakTorque = jointBreakTorque;
+                    newMiddleBracket.GetComponent<HingeJoint>().breakTorque = jointBreakTorque;
+                    newRightOuterBracket.GetComponent<HingeJoint>().breakTorque = jointBreakTorque;
+                }
+
+                newLeftOuterBracket.GetComponent<HingeJoint>().axis = hingeAxis;
+                newMiddleBracket.GetComponent<HingeJoint>().axis = hingeAxis;
+                newRightOuterBracket.GetComponent<HingeJoint>().axis = hingeAxis;
+
+                newLeftOuterBracket.GetComponent<HingeJoint>().anchor = prevHingeAnchor;
+                newMiddleBracket.GetComponent<HingeJoint>().anchor = prevHingeAnchor;
+                newRightOuterBracket.GetComponent<HingeJoint>().anchor = prevHingeAnchor;
+
+                currHingeIndex = 1;
+            }
+
+            newLeftOuterBracket.AddComponent<HingeJoint>().connectedBody = newTrackLink.GetComponent<Rigidbody>();
+            newMiddleBracket.AddComponent<HingeJoint>().connectedBody = newTrackLink.GetComponent<Rigidbody>();
+            newRightOuterBracket.AddComponent<HingeJoint>().connectedBody = newTrackLink.GetComponent<Rigidbody>();
+
+            if (useCustomBreakForce)
+            {
+                newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].breakForce = jointBreakForce;
+                newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].breakForce = jointBreakForce;
+                newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].breakForce = jointBreakForce;
+            }
+            if (useCustomBreakTorque)
+            {
+                newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].breakTorque = jointBreakTorque;
+                newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].breakTorque = jointBreakTorque;
+                newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].breakTorque = jointBreakTorque;
+            }
+
+            newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].axis = hingeAxis;        //Has 2 hinge components now, currHingeIndex is the index of the 2nd hinge
+            newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].axis = hingeAxis;
+            newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].axis = hingeAxis;
+
+            newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;        //Has 2 hinge components now, currHingeIndex is the index of the 2nd hinge
+            newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;
+            newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;
+
+            /*
+                        if (useCustomBreakForce)
+                        {
+                            newTrackLink.GetComponent<HingeJoint>().breakForce = jointBreakForce;
+                        }
+                        if (useCustomBreakTorque)
+                        {
+                            newTrackLink.GetComponent<HingeJoint>().breakTorque = jointBreakTorque;
+                        }
+                        Vector3 hingeAxis;
+                        Vector3 hingeAnchor;
+                        float ratio;
+                        float anchOffset;
+                        if (trackDirection == 1)
+                        {
+                            hingeAxis = new Vector3(1, 0, 0);
+                            ratio = TrackLink.transform.lossyScale.z / linkSpacing;
+                            anchOffset = 0.5f + (0.5f / ratio);
+                            hingeAnchor = new Vector3(0, 0, -anchOffset);
+                        }
+                        else
+                        {
+                            hingeAxis = new Vector3(0, 0, 1);
+                            ratio = TrackLink.transform.lossyScale.x / linkSpacing;
+                            anchOffset = 0.5f + (0.5f / ratio);
+                            hingeAnchor = new Vector3(-anchOffset, 0, 0);
+                        }
+                        newTrackLink.GetComponent<HingeJoint>().axis = hingeAxis;
+                        newTrackLink.GetComponent<HingeJoint>().anchor = hingeAnchor;
+            */
+
+
 
             Events.instance.Raise(new GameObjectCreated(newTrackLink));
-            previousTrackLink = newTrackLink;
+            previousTrackLink = newTrackLinkParent;
         }
     }
     void DestroyTracks()
@@ -259,6 +367,20 @@ public class TrackGenerator2 : MonoBehaviour
         else if (Application.isEditor)
         {
             DestroyImmediate(obj);
+        }
+    }
+    void ReportCreatedChildColliders(Transform Parent)
+    {
+        foreach (Transform child in Parent)
+        {
+            if (HasComponent<Collider>(child.gameObject))
+            {
+                Events.instance.Raise(new GameObjectCreated(child.gameObject));
+            }
+            if (child.childCount > 0)
+            {
+                ReportCreatedChildColliders(child);
+            }
         }
     }
     bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a component or not

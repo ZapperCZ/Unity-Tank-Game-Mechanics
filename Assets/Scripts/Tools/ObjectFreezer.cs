@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -14,16 +12,9 @@ public class ObjectFreezer : MonoBehaviour
     float _unfreezeDelay = float.MaxValue;
     bool valuesChanged = false;
 
-    // Start is called before the first frame update
     private void Awake()
     {
         _unfreezeDelay = unfreezeDelay;
-        /*
-        if (UnfreezeOnPlayMode && Application.isPlaying)
-        {
-            Freeze = false;
-        }
-        */
         valuesChanged = true;
     }
 
