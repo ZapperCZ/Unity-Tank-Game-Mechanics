@@ -282,39 +282,6 @@ public class TrackGenerator2 : MonoBehaviour
             newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;
             newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;
 
-            /*
-                        if (useCustomBreakForce)
-                        {
-                            newTrackLink.GetComponent<HingeJoint>().breakForce = jointBreakForce;
-                        }
-                        if (useCustomBreakTorque)
-                        {
-                            newTrackLink.GetComponent<HingeJoint>().breakTorque = jointBreakTorque;
-                        }
-                        Vector3 hingeAxis;
-                        Vector3 hingeAnchor;
-                        float ratio;
-                        float anchOffset;
-                        if (trackDirection == 1)
-                        {
-                            hingeAxis = new Vector3(1, 0, 0);
-                            ratio = TrackLink.transform.lossyScale.z / linkSpacing;
-                            anchOffset = 0.5f + (0.5f / ratio);
-                            hingeAnchor = new Vector3(0, 0, -anchOffset);
-                        }
-                        else
-                        {
-                            hingeAxis = new Vector3(0, 0, 1);
-                            ratio = TrackLink.transform.lossyScale.x / linkSpacing;
-                            anchOffset = 0.5f + (0.5f / ratio);
-                            hingeAnchor = new Vector3(-anchOffset, 0, 0);
-                        }
-                        newTrackLink.GetComponent<HingeJoint>().axis = hingeAxis;
-                        newTrackLink.GetComponent<HingeJoint>().anchor = hingeAnchor;
-            */
-
-
-
             Events.instance.Raise(new GameObjectCreated(newTrackLink));
             previousTrackLink = newTrackLinkParent;
         }
