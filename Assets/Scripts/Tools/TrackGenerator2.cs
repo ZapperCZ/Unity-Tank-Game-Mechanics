@@ -21,9 +21,9 @@ public class TrackGenerator2 : MonoBehaviour
     [SerializeField] float trackLength = 10f;               //The length of a track
     [Range(0, 0.5f)]
     [SerializeField] float linkSpacing = 0.2f;              //Amount of space between the track links
-    //[SerializeField] string parentName = "Track";           //The name of the track parent
     [Header("Joint Settings")]
     [Range(1, 180)]
+    [SerializeField] bool useAngleLimit = true;
     [SerializeField] float linkJointAngleLimit = 120;       //The maximum angle between the track links
     [SerializeField] bool useCustomBreakForce = false;
     [SerializeField] float jointBreakForce = 20000;
@@ -254,6 +254,21 @@ public class TrackGenerator2 : MonoBehaviour
                 newMiddleBracket.GetComponent<HingeJoint>().anchor = prevHingeAnchor;
                 newRightOuterBracket.GetComponent<HingeJoint>().anchor = prevHingeAnchor;
 
+                newLeftOuterBracket.GetComponent<HingeJoint>().enablePreprocessing = false;
+                newMiddleBracket.GetComponent<HingeJoint>().enablePreprocessing = false;
+                newRightOuterBracket.GetComponent<HingeJoint>().enablePreprocessing = false;
+
+                if (useAngleLimit)
+                {
+                    JointLimits hingeLimit = newLeftOuterBracket.GetComponent<HingeJoint>().limits;
+                    hingeLimit.min = -(linkJointAngleLimit / 2);
+                    hingeLimit.max = (linkJointAngleLimit / 2);
+
+                    newLeftOuterBracket.GetComponent<HingeJoint>().limits = hingeLimit;
+                    newMiddleBracket.GetComponent<HingeJoint>().limits = hingeLimit;
+                    newRightOuterBracket.GetComponent<HingeJoint>().limits = hingeLimit;
+                }
+
                 currHingeIndex = 1;
             }
 
@@ -281,6 +296,21 @@ public class TrackGenerator2 : MonoBehaviour
             newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;        //Has 2 hinge components now, currHingeIndex is the index of the 2nd hinge
             newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;
             newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].anchor = currHingeAnchor;
+
+            newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].enablePreprocessing = false;
+            newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].enablePreprocessing = false;
+            newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].enablePreprocessing = false;
+
+            if (useAngleLimit)
+            {
+                JointLimits hingeLimit = newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].limits;
+                hingeLimit.min = -(linkJointAngleLimit / 2);
+                hingeLimit.max = (linkJointAngleLimit / 2);
+
+                newLeftOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].limits = hingeLimit;
+                newMiddleBracket.GetComponents<HingeJoint>()[currHingeIndex].limits = hingeLimit;
+                newRightOuterBracket.GetComponents<HingeJoint>()[currHingeIndex].limits = hingeLimit;
+            }
 
             Events.instance.Raise(new GameObjectCreated(newTrackLink));
             previousTrackLink = newTrackLinkParent;
