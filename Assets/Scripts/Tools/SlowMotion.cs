@@ -67,7 +67,6 @@ public class SlowMotion : MonoBehaviour
             currentMultiplierIndex -= Convert.ToInt32(decreaseSlowmo);
             increaseSlowmo = false;
             decreaseSlowmo = false;
-
         }
         HandleIndexOverflow();
     }
