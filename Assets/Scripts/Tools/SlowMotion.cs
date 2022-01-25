@@ -7,6 +7,7 @@ public class SlowMotion : MonoBehaviour
     [SerializeField] bool slowmoActive;
 
     float slowmoHorizontalAxis = 0f;
+    float slowmoVerticalAxis = 0f;
     bool slowmoModifier = false;
 
     // Update is called once per frame
@@ -18,23 +19,32 @@ public class SlowMotion : MonoBehaviour
     {
         GetInput();
 
-        if (slowmoActive && slowmoModifier && slowmoAxis != 0)
-        {
-            if(slowmoAxis > 0)
-            {
-                currentMultiplierIndex++;
-            }
-            else
-            {
-                currentMultiplierIndex--;
-            }
-            HandleIndexOverflow();
-        }
+
     }
     void GetInput()
     {
         slowmoHorizontalAxis = Input.GetAxis("Slowmotion Horizontal Axis");
         slowmoModifier = Input.GetButton("Slowmotion Modifier");
+
+        if (Input.GetButtonDown("Slowmotion Toggle"))
+        {
+            slowmoActive = !slowmoActive;
+        }
+        if (slowmoModifier)
+        {
+            if (slowmoActive && slowmoHorizontalAxis != 0)
+            {
+                if (slowmoHorizontalAxis > 0)           //Player pressed left
+                {
+                    currentMultiplierIndex++;
+                }
+                else
+                {
+                    currentMultiplierIndex--;           //Player pressed right
+                }
+                HandleIndexOverflow();
+            }
+        }
     }
     void HandleIndexOverflow()
     {
