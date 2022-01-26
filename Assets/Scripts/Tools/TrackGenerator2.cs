@@ -22,8 +22,8 @@ public class TrackGenerator2 : MonoBehaviour
     [Range(0, 0.5f)]
     [SerializeField] float linkSpacing = 0.2f;              //Amount of space between the track links
     [Header("Joint Settings")]
-    [Range(1, 180)]
     [SerializeField] bool useAngleLimit = true;
+    [Range(1, 180)]
     [SerializeField] float linkJointAngleLimit = 120;       //The maximum angle between the track links
     [SerializeField] bool useCustomBreakForce = false;
     [SerializeField] float jointBreakForce = 20000;
