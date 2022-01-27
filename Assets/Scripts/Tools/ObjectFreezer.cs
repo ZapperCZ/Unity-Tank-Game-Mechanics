@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -7,6 +8,8 @@ public class ObjectFreezer : MonoBehaviour
     [SerializeField] bool Freeze = false;
     [SerializeField] bool UnfreezeOnPlayMode = true;
     [SerializeField] float unfreezeDelay = 1f;
+    [SerializeField] bool useDelayBetweenObjectUnfreeze = true;
+    [SerializeField] float objectFreezeDelay = 0.05f;
     [SerializeField] int minChildAmount = 1;
 
     float _unfreezeDelay = float.MaxValue;
@@ -35,7 +38,11 @@ public class ObjectFreezer : MonoBehaviour
             {
                 _unfreezeDelay = unfreezeDelay;
                 Freeze = false;
-                FreezeChildren(transform);
+                Debug.Log("SDJK");
+                if (useDelayBetweenObjectUnfreeze)
+                    StartCoroutine(FreezeChildrenDelayed(transform));
+                else
+                    FreezeChildren(transform);
                 this.enabled = false;
             }
             return;
@@ -45,7 +52,10 @@ public class ObjectFreezer : MonoBehaviour
         {
             if (FreezeAllChildren)
             {
-                FreezeChildren(transform);
+                if (useDelayBetweenObjectUnfreeze)
+                    StartCoroutine(FreezeChildrenDelayed(transform));
+                else
+                    FreezeChildren(transform);
             }
             else
             {
@@ -57,6 +67,24 @@ public class ObjectFreezer : MonoBehaviour
         }
         valuesChanged = false;
     }
+    IEnumerator FreezeChildrenDelayed(Transform Parent)
+    {
+        foreach (Transform child in Parent)
+        {
+            if (useDelayBetweenObjectUnfreeze)
+            {
+                yield return new WaitForSecondsRealtime(objectFreezeDelay);
+            }
+            if (HasComponent<Rigidbody>(child.gameObject))
+            {
+                child.GetComponent<Rigidbody>().isKinematic = Freeze;
+            }
+            if(child.childCount >= minChildAmount)
+            {
+                StartCoroutine(FreezeChildrenDelayed(child));
+            }
+        }
+    }
     void FreezeChildren(Transform Parent)
     {
         foreach (Transform child in Parent)
@@ -65,9 +93,9 @@ public class ObjectFreezer : MonoBehaviour
             {
                 child.GetComponent<Rigidbody>().isKinematic = Freeze;
             }
-            if(child.childCount >= minChildAmount)
+            if (child.childCount >= minChildAmount)
             {
-                FreezeChildren(child);
+                FreezeChildrenDelayed(child);
             }
         }
     }
