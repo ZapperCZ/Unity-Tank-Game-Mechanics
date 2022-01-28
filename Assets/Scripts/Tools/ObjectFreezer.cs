@@ -52,7 +52,7 @@ public class ObjectFreezer : MonoBehaviour
         {
             if (FreezeAllChildren)
             {
-                if (useDelayBetweenObjectUnfreeze)
+                if (useDelayBetweenObjectUnfreeze && Application.isPlaying)
                     StartCoroutine(FreezeChildrenDelayed(transform));
                 else
                     FreezeChildren(transform);
@@ -95,7 +95,7 @@ public class ObjectFreezer : MonoBehaviour
             }
             if (child.childCount >= minChildAmount)
             {
-                FreezeChildrenDelayed(child);
+                FreezeChildren(child);
             }
         }
     }
