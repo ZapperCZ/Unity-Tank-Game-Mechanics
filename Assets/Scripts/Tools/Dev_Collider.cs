@@ -182,10 +182,12 @@ public class Dev_Collider : MonoBehaviour
     {
         GameObject newVisibleCollider = null;
         bool isValid = true;
+        bool isBox = false;
         switch (Array.FindIndex(Colliders, c => c.GetType() == colliderParent.GetComponent<Collider>().GetType()))  //Gets the ID of the current collider type
         {
             case 0:             //BoxCollider
                 newVisibleCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                isBox = true;
                 Destroy(newVisibleCollider.GetComponent<Collider>());
                 break;
             case 1:             //SphereCollider
@@ -211,7 +213,10 @@ public class Dev_Collider : MonoBehaviour
         {
             newVisibleCollider.name = colliderParent.name;
             newVisibleCollider.transform.position = colliderParent.transform.position;
-            newVisibleCollider.transform.localScale = colliderParent.transform.localScale;
+            if (isBox)
+                newVisibleCollider.transform.localScale = new Vector3(colliderParent.transform.localScale.x * colliderParent.GetComponent<BoxCollider>().size.x, colliderParent.transform.localScale.y * colliderParent.GetComponent<BoxCollider>().size.y, colliderParent.transform.localScale.z * colliderParent.GetComponent<BoxCollider>().size.z);
+            else
+                newVisibleCollider.transform.localScale = colliderParent.transform.localScale;
             newVisibleCollider.transform.rotation = colliderParent.transform.rotation;
             newVisibleCollider.GetComponent<MeshRenderer>().material = Materials[rand.Next(Materials.Length)];
             newVisibleCollider.GetComponent<MeshRenderer>().enabled = false;
@@ -220,7 +225,10 @@ public class Dev_Collider : MonoBehaviour
             {
                 NonStaticColliderModels.Add(newVisibleCollider);
                 newVisibleCollider.transform.SetParent(colliderParent.transform);
-                newVisibleCollider.transform.localScale = new Vector3(1, 1, 1);
+                if (isBox)
+                    newVisibleCollider.transform.localScale = new Vector3(colliderParent.GetComponent<BoxCollider>().size.x, colliderParent.GetComponent<BoxCollider>().size.y, colliderParent.GetComponent<BoxCollider>().size.z);
+                else
+                    newVisibleCollider.transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
