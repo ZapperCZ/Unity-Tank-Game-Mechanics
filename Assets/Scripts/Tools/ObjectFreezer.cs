@@ -38,7 +38,6 @@ public class ObjectFreezer : MonoBehaviour
             {
                 _unfreezeDelay = unfreezeDelay;
                 Freeze = false;
-                Debug.Log("SDJK");
                 if (useDelayBetweenObjectUnfreeze)
                     StartCoroutine(FreezeChildrenDelayed(transform));
                 else
