@@ -11,6 +11,10 @@ public class Spin : MonoBehaviour
     int Direction = 1;
     //TODO: Add variable that allows to change the axis of the spin
 
+    private void Awake()
+    {
+        this.GetComponent<Rigidbody>().maxAngularVelocity = MaxAngularVelocity;     //Apply the rotational velocity limit
+    }
     private void OnValidate()
     {
         MaxAngularVelocity = MaxAngularVelocity < 0 ? 0 : MaxAngularVelocity;       //If less than 0, change to 0, otherwise leave as is
