@@ -32,6 +32,7 @@ public class CollisionAdjuster : MonoBehaviour
     void Awake()
     {
         LayerMask allLayers = ~0;                   //~ is the NOT binary operator in C# -> ~0 gets the inverse of 0 - which is an int's max value
+        Collider[] SceneColliders;
 
         switch (TypeOfCollisionAdjustment)
         {
@@ -39,8 +40,21 @@ public class CollisionAdjuster : MonoBehaviour
             //      or all of the objects contained within the input layer have to be looped through, disabling collisions with them by using Physics.IgnoreCollisions. This will be much more performance costly
 
             case AdjustmentType.IgnoreCollisionsWithObjects:        //Select all objects, enable collisions with them, disable collisions with input objects
-                Debug.LogError(this.GetType().Name + " - " + this.name + " - Not implemented yet");
-                this.enabled = false;
+
+                SceneColliders = (Collider[])FindObjectsOfType(typeof(Collider));
+
+                //Enables collisions for all colliders in the scene
+                foreach(Collider colliderToAdjust in SceneColliders)
+                {
+                    Physics.IgnoreCollision(this.gameObject.GetComponent<Collider>(), colliderToAdjust, false);
+                }
+
+                //Disables collisions for the target objects
+                foreach(GameObject targetObject in inputObjects)
+                {
+                    AdjustCollisions(this.gameObject, targetObject, true);
+                }
+
                 break;
             case AdjustmentType.IgnoreCollisionsWithLayers:         //Select all layers, enable collisions with them, disable collisions with input layers
                 Debug.LogError(this.GetType().Name + " - " + this.name + " - Not implemented yet");
@@ -49,13 +63,12 @@ public class CollisionAdjuster : MonoBehaviour
             case AdjustmentType.CollideOnlyWithObjects:             //Select all objects, disable collisions with them, enable collisions with input objects
 
                 //Gets all colliders within the scene
-                Collider[] SceneColliders = (Collider[])FindObjectsOfType(typeof(Collider));
+                SceneColliders = (Collider[])FindObjectsOfType(typeof(Collider));
 
                 //Iterates through them and disables collisions with them
-                foreach (Collider colliderToIgnore in SceneColliders)
+                foreach (Collider colliderToAdjust in SceneColliders)
                 {
-                    Debug.Log(this.GetType().Name + " - " + colliderToIgnore.transform.name);
-                    Physics.IgnoreCollision(this.gameObject.GetComponent<Collider>(), colliderToIgnore, true);
+                    Physics.IgnoreCollision(this.gameObject.GetComponent<Collider>(), colliderToAdjust, true);
                 }
                 
                 //Enables collisions for the target objects
