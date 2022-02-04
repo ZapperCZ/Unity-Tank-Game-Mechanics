@@ -21,7 +21,7 @@ public class ObjectFreezer : MonoBehaviour
         valuesChanged = true;
     }
 
-    private void OnValidate()
+    private void OnValidate()   
     {
         valuesChanged = true;
     }
@@ -63,8 +63,8 @@ public class ObjectFreezer : MonoBehaviour
                     transform.GetComponent<Rigidbody>().isKinematic = freeze;
                 }
             }
+            valuesChanged = false;
         }
-        valuesChanged = false;
     }
     IEnumerator FreezeChildrenDelayed(Transform Parent)
     {
