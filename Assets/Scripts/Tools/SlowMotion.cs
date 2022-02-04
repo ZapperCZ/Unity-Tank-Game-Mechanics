@@ -9,6 +9,7 @@ public class SlowMotion : MonoBehaviour
     [SerializeField] float inputMsDelay = 200f;      //The delay on control input in ms    
 
     float slowmoHorizontalAxis = 0f;
+    bool slowmoPrevState = false;
     bool slowmoModifier = false;
     bool increaseSlowmo = false;
     bool decreaseSlowmo = false;
@@ -29,10 +30,11 @@ public class SlowMotion : MonoBehaviour
         {
             Time.timeScale = 1f / slowmoMultiplier[currentMultiplierIndex];
         }
-        else
+        else if(slowmoPrevState != slowmoActive)
         {
-            Time.timeScale = 1;
+            Time.timeScale = 1f;
         }
+        slowmoPrevState = slowmoActive;
     }
     void GetInput()
     {
@@ -50,10 +52,12 @@ public class SlowMotion : MonoBehaviour
                 if (slowmoHorizontalAxis > 0)           //Player pressed left
                 {
                     increaseSlowmo = true;
+                    slowmoActive = true;
                 }
                 else                                    //Player pressed right
                 {
                     decreaseSlowmo = true;
+                    slowmoActive = true;
                 }
                 if (internalTimer > inputMsDelay / 1000)
                 {
