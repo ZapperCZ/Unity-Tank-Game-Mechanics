@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TurretController : MonoBehaviour
@@ -99,8 +100,7 @@ public class TurretController : MonoBehaviour
     {
         RaycastHit[] hits = Physics.RaycastAll(Camera.position, Camera.forward, 1000f);
 
-        List<RaycastHit> hitList = new List<RaycastHit>(hits);
-        hitList.Sort((x, y) => y.collider.gameObject.layer.CompareTo(x.collider.gameObject.layer));
+        List<RaycastHit> hitList = hits.OrderBy(x => Vector2.Distance(Camera.GetComponent<VehicleCameraController>().FocusPoint.position, x.point)).ToList();
 
         foreach (RaycastHit hit in hitList)
         {
