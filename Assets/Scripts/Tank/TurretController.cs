@@ -108,7 +108,7 @@ public class TurretController : MonoBehaviour
             {
                 TargetPoint = hit.point;
                 Test.position = TargetPoint;
-                break;
+                return;
             }
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class VehicleCameraController : MonoBehaviour
@@ -43,10 +44,27 @@ public class VehicleCameraController : MonoBehaviour
     {
         Vector3 cameraDirection = (transform.position - FocusPoint.position).normalized;            //Direction from focus point to the camera
 
+        RaycastHit[] hits = Physics.RaycastAll(FocusPoint.position, cameraDirection, targetDistance);
+
+        List<RaycastHit> hitList = hits.OrderBy(x => Vector2.Distance(FocusPoint.position, x.point)).ToList();
+
+        foreach (RaycastHit hit in hitList)
+        {
+            Debug.Log(Vector3.Distance(FocusPoint.position, hit.point) + " - " + hit.transform.name);
+            if (!hit.transform.CompareTag("Player Controlled"))
+            {
+                Debug.Log("set");
+                targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
+                return;
+            }
+        }
+
+        /*
         RaycastHit hit;
         if (Physics.Raycast(FocusPoint.position, cameraDirection, out hit, maxDistance))
         {
             targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
         }
+        */
     }
 }
