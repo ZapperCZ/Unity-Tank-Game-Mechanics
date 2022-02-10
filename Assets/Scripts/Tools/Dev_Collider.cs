@@ -201,7 +201,8 @@ public class Dev_Collider : MonoBehaviour
             case 3:             //MeshCollider
                 newVisibleCollider = new GameObject();
                 newVisibleCollider.AddComponent<MeshFilter>();
-                newVisibleCollider.GetComponent<MeshFilter>().mesh = colliderParent.GetComponent<MeshCollider>().sharedMesh;
+                newVisibleCollider.GetComponent<MeshFilter>().mesh = colliderParent.GetComponent<MeshCollider>().sharedMesh;            //Gets the original mesh, even if a collider is set to be convex, resulting in inaccurate mesh display.
+                                                                                                                                        //However there seems to be no way to access the convex mesh via scripts, so I'm out of luck
                 newVisibleCollider.AddComponent<MeshRenderer>();
                 break;
             default:

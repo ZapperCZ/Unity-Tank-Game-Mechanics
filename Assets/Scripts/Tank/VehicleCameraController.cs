@@ -1,32 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class VehicleCameraController : MonoBehaviour
 {
     float x, y = 180;
     float scroll;
-    public float sensitivity, distance, minDistance, maxDistance, scrollSens;
-    public Vector2 MinMax;                      //The maximum and minimum angle
+    [SerializeField] float sensitivity, minDistance, maxDistance, scrollSens;
+    public float targetDistance;
+    float currentDistance;
+    [SerializeField] Vector2 MinMax;                      //The maximum and minimum angle
     public Transform FocusPoint;
 
     void Update()
     {
         GetInput();
 
-        if(scroll < 0 && distance < maxDistance)            //Scrolling away (down)
+        if(scroll < 0 && targetDistance < maxDistance)            //Scrolling away (down)
         {
-            distance += scrollSens;
+            targetDistance += scrollSens;
         }
-        else if (scroll > 0 && distance > minDistance)      //Scrolling in (up)
+        else if (scroll > 0 && targetDistance > minDistance)      //Scrolling in (up)
         {
-            distance -= scrollSens;
+            targetDistance -= scrollSens;
         }
+
+        CameraClippingAvoidance();
 
         x = Mathf.Clamp(x, MinMax.x, MinMax.y);
 
         transform.eulerAngles = new Vector3(x, y + 180, 0);
-        transform.position = FocusPoint.position - transform.forward * distance;
+        transform.position = FocusPoint.position - transform.forward * targetDistance;
     }
     void GetInput()
     {
@@ -34,5 +39,32 @@ public class VehicleCameraController : MonoBehaviour
         y += Input.GetAxis("Mouse X") * sensitivity;
 
         scroll = Input.GetAxis("Mouse ScrollWheel");
+    }
+    void CameraClippingAvoidance()
+    {
+        Vector3 cameraDirection = (transform.position - FocusPoint.position).normalized;            //Direction from focus point to the camera
+
+        RaycastHit[] hits = Physics.RaycastAll(FocusPoint.position, cameraDirection, targetDistance);
+
+        List<RaycastHit> hitList = hits.OrderBy(x => Vector2.Distance(FocusPoint.position, x.point)).ToList();
+
+        foreach (RaycastHit hit in hitList)
+        {
+            Debug.Log(Vector3.Distance(FocusPoint.position, hit.point) + " - " + hit.transform.name);
+            if (!hit.transform.CompareTag("Player Controlled"))
+            {
+                Debug.Log("set");
+                targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
+                return;
+            }
+        }
+
+        /*
+        RaycastHit hit;
+        if (Physics.Raycast(FocusPoint.position, cameraDirection, out hit, maxDistance))
+        {
+            targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
+        }
+        */
     }
 }
