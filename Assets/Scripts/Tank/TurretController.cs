@@ -11,6 +11,7 @@ public class TurretController : MonoBehaviour
     [SerializeField] float angleDifferenceThreshold = 4;        //The angle threshold where the component starts deecreasing it's velocity
     [SerializeField] float maxTurretSlewingSpeed = 15f;
     [SerializeField] float maxGunElevationSpeed = 10f;
+    [SerializeField] float raycastDistance;
 
     Vector3 TargetPoint;
     Vector2 TurretDirection;
@@ -98,8 +99,9 @@ public class TurretController : MonoBehaviour
 
     void GetTargetPoint()
     {
-        RaycastHit[] hits = Physics.RaycastAll(Camera.position, Camera.forward, 1000f);
+        RaycastHit[] hits = Physics.RaycastAll(Camera.position, Camera.forward, raycastDistance);
 
+        //Sort the hits ascendingly by the distance from the focus point
         List<RaycastHit> hitList = hits.OrderBy(x => Vector2.Distance(Camera.GetComponent<VehicleCameraController>().FocusPoint.position, x.point)).ToList();
 
         foreach (RaycastHit hit in hitList)
@@ -111,6 +113,8 @@ public class TurretController : MonoBehaviour
                 return;
             }
         }
+        //Sets the target point far away in the case that the player isn't aiming at a physical object
+        TargetPoint = Camera.position + Camera.forward * raycastDistance * 10;
     }
     float AngleBetweenVector2(Vector2 vec1, Vector2 vec2)
     {
