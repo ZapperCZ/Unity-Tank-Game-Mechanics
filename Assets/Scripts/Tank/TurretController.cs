@@ -93,8 +93,6 @@ public class TurretController : MonoBehaviour
             GunDrive.targetVelocity = maxGunElevationSpeed * gunMagnitude;
             Gun.GetComponent<HingeJoint>().motor = GunDrive;
         }
-
-        //TurretPosition = Vector2.zero;
     }
 
     void GetTargetPoint()

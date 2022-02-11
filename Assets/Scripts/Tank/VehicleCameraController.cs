@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,7 +6,7 @@ public class VehicleCameraController : MonoBehaviour
 {
     float x, y = 180;
     float scroll;
-    [SerializeField] float sensitivity, minDistance, maxDistance, scrollSens;
+    [SerializeField] float sensitivity, maximumSpeed, minDistance, maxDistance, scrollSens;
     public float targetDistance;
     float currentDistance;
     [SerializeField] Vector2 MinMax;                      //The maximum and minimum angle
@@ -66,5 +65,9 @@ public class VehicleCameraController : MonoBehaviour
             targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
         }
         */
+    }
+    float normalizeNumber(float num, float max)
+    {
+        return Mathf.Abs(num / max);
     }
 }
