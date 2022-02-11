@@ -49,7 +49,6 @@ public class CylinderCollider : MonoBehaviour
         prevSideWidthLocked = sideWidthLocked;
         prevDiameterLocked = diameterLocked;
         CreateCylinderCollider();
-        Debug.Log($"Cylinder Collider - {Parent.name} - Initialized");
     }
     void OnValidate()
     {

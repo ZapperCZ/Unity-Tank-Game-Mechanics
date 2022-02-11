@@ -49,10 +49,8 @@ public class VehicleCameraController : MonoBehaviour
 
         foreach (RaycastHit hit in hitList)
         {
-            Debug.Log(Vector3.Distance(FocusPoint.position, hit.point) + " - " + hit.transform.name);
             if (!hit.transform.CompareTag("Player Controlled"))
             {
-                Debug.Log("set");
                 targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
                 return;
             }

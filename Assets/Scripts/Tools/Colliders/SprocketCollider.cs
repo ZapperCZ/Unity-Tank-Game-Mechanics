@@ -56,7 +56,6 @@ public class SprocketCollider : MonoBehaviour
         DestroySprocketCollider();
         for (int i = 0; i < toothAmount / 2; i++)
         {
-            Debug.Log(i);
             GameObject tooth = new GameObject();
             tooth.layer = 7;                                             //Non-Static layer
             tooth.name = toothObjectName;
