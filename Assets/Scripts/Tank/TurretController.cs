@@ -11,7 +11,7 @@ public class TurretController : MonoBehaviour
     [SerializeField] float angleDifferenceThreshold = 4;        //The angle threshold where the component starts deecreasing it's velocity
     [SerializeField] float maxTurretSlewingSpeed = 15f;
     [SerializeField] float maxGunElevationSpeed = 10f;
-    [SerializeField] float raycastDistance;
+    [SerializeField] float raycastDistance = 1000f;
 
     Vector3 TargetPoint;
     Vector2 TurretDirection;
