@@ -77,6 +77,7 @@ public class ObjectFreezer : MonoBehaviour
             }
             if (HasComponent<Rigidbody>(child.gameObject))
             {
+                child.GetComponent<Rigidbody>().useGravity = gravity;
                 child.GetComponent<Rigidbody>().isKinematic = freeze;
             }
             if(child.childCount >= minChildAmount)
