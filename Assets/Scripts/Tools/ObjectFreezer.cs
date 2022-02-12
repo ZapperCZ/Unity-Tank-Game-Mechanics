@@ -6,6 +6,7 @@ public class ObjectFreezer : MonoBehaviour
 {
     [SerializeField] bool freezeAllChildren = true;                 //Whether the children of the parent should be frozen as well
     [SerializeField] bool freeze = false;                           //Set the current state
+    [SerializeField] bool gravity = true;                           //Whether gravity should be enabled for the objects or not
     [SerializeField] bool unfreezeOnPlayMode = true;                //Whether the object(s) should be unfrozen when entering playmode
     [SerializeField] float unfreezeDelay = 1f;                      //Delay after changing the state
     [SerializeField] bool useDelayBetweenObjectUnfreeze = true;     //Use delay between objects while changing their state
@@ -90,6 +91,7 @@ public class ObjectFreezer : MonoBehaviour
         {
             if (HasComponent<Rigidbody>(child.gameObject))
             {
+                child.GetComponent<Rigidbody>().useGravity = gravity;
                 child.GetComponent<Rigidbody>().isKinematic = freeze;
             }
             if (child.childCount >= minChildAmount)
