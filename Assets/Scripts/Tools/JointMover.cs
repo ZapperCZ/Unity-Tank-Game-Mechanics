@@ -12,9 +12,13 @@ public class JointMover : MonoBehaviour
     }
 
     [SerializeField] JointType TypeOfJoint = new JointType();
-    [SerializeField] Transform FinalLocation;
-    [SerializeField] float movementSpeed = 0.05f;
+    [SerializeField] Transform TargetPosition;
+    [SerializeField] float movementSpeed = 0.01f;
+
     private Rigidbody ConnectedBody;
+    private float distanceToLocation;
+    private Vector3 ChangeVector;
+    private Vector3 LocationDirection;
 
     void Start()
     {
@@ -32,19 +36,39 @@ public class JointMover : MonoBehaviour
                 {
                     Debug.LogError(this.GetType().Name + " - " + this.name + " - Selected joint not found on GameObject");
                     this.enabled = false;
+                    return;
                 }
                 break;
             default:
                 Debug.LogError(this.GetType().Name + " - " + this.name + " - Joint type not yet implemented");
                 this.enabled = false;
+                return;
+        }
+        ConnectedBody.isKinematic = true;
+    }
+    void FixedUpdate()
+    {
+        LocationDirection = (TargetPosition.position - transform.position).normalized;
+        distanceToLocation = Vector3.Distance(transform.position, TargetPosition.position);
+        ChangeVector = LocationDirection * movementSpeed;
+
+        if (distanceToLocation > 0.02f)
+        {
+            transform.position += ChangeVector;
+            return;
+        }
+
+        //This part only runs when the object is in it's new position
+        switch (TypeOfJoint)
+        {
+            case 0:
+                transform.gameObject.AddComponent<FixedJoint>().connectedBody = ConnectedBody;
                 break;
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        transform.GetComponent<Rigidbody>().isKinematic = false;
+        ConnectedBody.isKinematic = false;
+        this.enabled = false;
     }
     bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a component or not
     {
