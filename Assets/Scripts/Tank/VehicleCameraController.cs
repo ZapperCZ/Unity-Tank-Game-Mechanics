@@ -34,10 +34,10 @@ public class VehicleCameraController : MonoBehaviour
     }
     void GetInput()
     {
-        x += Input.GetAxis("Mouse Y") * sensitivity * -1;
-        y += Input.GetAxis("Mouse X") * sensitivity;
+        x += Input.GetAxis("Mouse Y") * sensitivity * -1 * Time.deltaTime;
+        y += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
 
-        scroll = Input.GetAxis("Mouse ScrollWheel");
+        scroll = Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime;
     }
     void CameraClippingAvoidance()
     {
