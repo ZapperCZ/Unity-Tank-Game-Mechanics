@@ -8,6 +8,7 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool isPaused = false;
     [SerializeField] GameObject pauseMenuUI;
+    [SerializeField] CursorLockMode LockModeOnUnpause;
 
     // Update is called once per frame
     void Update()
@@ -22,13 +23,13 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenuUI.SetActive(pauseGame);
         Time.timeScale = (float)Convert.ToInt32(!pauseGame);
-        Cursor.lockState = pauseGame ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.lockState = pauseGame ? CursorLockMode.None : LockModeOnUnpause;
     }
-    public void ReloadMainScene()
+    public void ReloadCurrentScene()
     {
         isPaused = false;
         ChangeGameState(isPaused);
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public void QuitGame()
     {
