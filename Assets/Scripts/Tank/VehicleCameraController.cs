@@ -55,14 +55,6 @@ public class VehicleCameraController : MonoBehaviour
                 return;
             }
         }
-
-        /*
-        RaycastHit hit;
-        if (Physics.Raycast(FocusPoint.position, cameraDirection, out hit, maxDistance))
-        {
-            targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
-        }
-        */
     }
     float normalizeNumber(float num, float max)
     {
