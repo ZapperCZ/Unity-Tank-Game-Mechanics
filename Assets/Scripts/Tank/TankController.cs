@@ -20,7 +20,6 @@ public class TankController : MonoBehaviour
 
     Spin LeftSprocketSpin;
     Spin RightSprocketSpin;
-    float torqueStep = 0f;
     bool isSpaceOnLeft = true;
     bool isSpaceOnRight = true;
 
@@ -50,7 +49,6 @@ public class TankController : MonoBehaviour
     }
     void Awake()
     {
-        torqueStep = maxTorque / 100;
         LeftSprocketSpin = LeftSprocket.GetComponent<Spin>();
         RightSprocketSpin = RightSprocket.GetComponent<Spin>();
     }
@@ -79,9 +77,9 @@ public class TankController : MonoBehaviour
             if(vertical > 0)        //W is being pressed - forward
             {
                 if(currentLeftTorque < maxTorque)
-                    currentLeftTorque += torqueStep;
+                    currentLeftTorque += responsiveness * Time.deltaTime;
                 if (currentRightTorque < maxTorque)
-                    currentRightTorque += torqueStep;
+                    currentRightTorque += responsiveness * Time.deltaTime;
 
                 leftReverse = false;
                 rightReverse = false;
@@ -89,9 +87,9 @@ public class TankController : MonoBehaviour
             if (vertical < 0)        //S is being pressed - backwards
             {
                 if (currentLeftTorque < maxTorque)
-                    currentLeftTorque += torqueStep;
+                    currentLeftTorque += responsiveness * Time.deltaTime;
                 if (currentRightTorque < maxTorque)
-                    currentRightTorque += torqueStep;
+                    currentRightTorque += responsiveness * Time.deltaTime;
 
                 leftReverse = true;
                 rightReverse = true;
@@ -100,9 +98,15 @@ public class TankController : MonoBehaviour
         else
         {
             if (currentLeftTorque > 0)
-                currentLeftTorque -= torqueStep;
+                if (currentLeftTorque > responsiveness * Time.deltaTime)
+                    currentLeftTorque -= responsiveness * Time.deltaTime;
+                else
+                    currentLeftTorque = 0;
             if (currentRightTorque > 0)
-                currentRightTorque -= torqueStep;
+                if (currentRightTorque > responsiveness * Time.deltaTime)
+                    currentRightTorque -= responsiveness * Time.deltaTime;
+                else
+                    currentRightTorque = 0;
         }
         if (horizontal != 0)        //A or D is being pressed
         {

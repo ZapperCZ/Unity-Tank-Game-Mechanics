@@ -6,7 +6,7 @@ using UnityEngine;
 public class TurretController : MonoBehaviour
 {
     [SerializeField] Transform Camera;
-    [SerializeField] Transform Test;
+    [SerializeField] Transform Reticle;
     [SerializeField] Transform Gun;
     [SerializeField] float angleDifferenceThreshold = 4;        //The angle threshold where the component starts deecreasing it's velocity
     [SerializeField] float maxTurretSlewingSpeed = 15f;
@@ -107,7 +107,7 @@ public class TurretController : MonoBehaviour
             if (!hit.transform.CompareTag("Player Controlled"))
             {
                 TargetPoint = hit.point;
-                Test.position = TargetPoint;
+                Reticle.position = TargetPoint;
                 return;
             }
         }
