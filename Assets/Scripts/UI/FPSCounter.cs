@@ -37,6 +37,6 @@ public class FPSCounter : MonoBehaviour
     }
     void OnGUI()
     {
-        CounterUI.GetComponent<UnityEngine.UI.Text>().text = Convert.ToInt32(fps).ToString() + " FPS";
+        CounterUI.GetComponent<UnityEngine.UI.Text>().text = Math.Round(fps,0).ToString() + " FPS";
     }
 }
