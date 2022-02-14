@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VehicleCameraController : MonoBehaviour
 {
-    float x, y = 180;
+    float vertical, horizontal = 180;
     float scroll;
     [SerializeField] float sensitivity, maximumSpeed, minDistance, maxDistance, scrollSens;
     public float targetDistance;
@@ -27,9 +27,9 @@ public class VehicleCameraController : MonoBehaviour
 
         CameraClippingAvoidance();
 
-        x = Mathf.Clamp(x, MinMax.x, MinMax.y);
+        vertical = Mathf.Clamp(vertical, MinMax.x, MinMax.y);
 
-        transform.eulerAngles = new Vector3(x, y + 180, 0);
+        transform.eulerAngles = new Vector3(vertical, horizontal + 180, 0);
         transform.position = FocusPoint.position - transform.forward * targetDistance;
     }
     void GetInput()
@@ -39,8 +39,16 @@ public class VehicleCameraController : MonoBehaviour
             scroll = 0;
             return;
         }
-        x += Input.GetAxis("Mouse Y") * sensitivity * -1;
-        y += Input.GetAxis("Mouse X") * sensitivity;
+        if (Input.GetButton("Arrow Look Modifier"))
+        {
+            vertical += Input.GetAxis("Arrow Look Vertical") * sensitivity * -1;
+            horizontal += Input.GetAxis("Arrow Look Horizontal") * sensitivity;
+        }
+        else
+        {
+            vertical += Input.GetAxis("Mouse Y") * sensitivity * -1;
+            horizontal += Input.GetAxis("Mouse X") * sensitivity;
+        }
 
         scroll = Input.GetAxis("Mouse ScrollWheel");
     }

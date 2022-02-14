@@ -3,8 +3,9 @@ using UnityEngine;
 public class Player_MouseLook : MonoBehaviour
 {
     [Range(10f, 1000f)]
-    [SerializeField] float Sensitivity = 100f;
+    [SerializeField] float sensitivity = 100f;
     [SerializeField] Transform Player;
+    float horizontal, vertical;
 
     float xRotation = 0f;
 
@@ -17,13 +18,21 @@ public class Player_MouseLook : MonoBehaviour
 
     void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X") * Sensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * Sensitivity * Time.deltaTime;
+        if (Input.GetButton("Arrow Look Modifier"))
+        {
+            vertical = Input.GetAxis("Arrow Look Vertical") * sensitivity * 0.05f;
+            horizontal = Input.GetAxis("Arrow Look Horizontal") * sensitivity * 0.05f;
+        }
+        else
+        {
+            horizontal = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+            vertical = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        }
 
-        xRotation -= mouseY;
+        xRotation -= vertical;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        Player.Rotate(Vector3.up * mouseX);
+        Player.Rotate(Vector3.up * horizontal);
     }
 }
