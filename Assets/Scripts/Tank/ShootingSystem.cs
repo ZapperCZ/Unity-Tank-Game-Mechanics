@@ -7,6 +7,7 @@ public class ShootingSystem : MonoBehaviour
     [SerializeField] Transform BarrelPosition;
     [SerializeField] GameObject Shell;
     [SerializeField] float force;
+    [SerializeField] float recoilForce;
     [SerializeField] float reloadTime;
     [SerializeField] float reloadCountdown = 0f;
     [SerializeField] bool fire = false;
@@ -37,6 +38,9 @@ public class ShootingSystem : MonoBehaviour
         FiredShell.transform.localRotation = Quaternion.Euler(90, 0, 0);
         FiredShell.GetComponent<Collider>().enabled = true;
         FiredShell.GetComponent<Rigidbody>().AddForce(BarrelPosition.forward.normalized * force);
+
+        Vector3 Recoil = transform.forward * -1 * recoilForce;
+        transform.GetComponent<Rigidbody>().AddForce(Recoil);
 
         reloadCountdown = reloadTime;
         reloaded = false;

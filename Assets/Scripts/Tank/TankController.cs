@@ -77,9 +77,9 @@ public class TankController : MonoBehaviour
             if(vertical > 0)        //W is being pressed - forward
             {
                 if(currentLeftTorque < maxTorque)
-                    currentLeftTorque += responsiveness * Time.deltaTime;
+                    currentLeftTorque += responsiveness * Mathf.Abs(vertical) * Time.deltaTime;
                 if (currentRightTorque < maxTorque)
-                    currentRightTorque += responsiveness * Time.deltaTime;
+                    currentRightTorque += responsiveness * Mathf.Abs(vertical) * Time.deltaTime;
 
                 leftReverse = false;
                 rightReverse = false;
