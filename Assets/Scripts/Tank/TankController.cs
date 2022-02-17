@@ -9,8 +9,9 @@ public class TankController : MonoBehaviour
     [SerializeField] ShootingSystem ShootingSystemScript;
     public Transform CameraFocusPoint;
 
-    public float responsiveness = 0.05f;
+    [SerializeField] float responsiveness = 0.05f;
     [SerializeField] float maxTorque = 600f;
+    [SerializeField] float idleForce = 1000f;               //The force stopping the sprocket hinges when no input is being received
     float currentLeftTorque = 0f;
     float currentRightTorque = 0f;
     bool leftReverse = false;
@@ -20,6 +21,8 @@ public class TankController : MonoBehaviour
 
     Spin LeftSprocketSpin;
     Spin RightSprocketSpin;
+    HingeJoint LeftSprocketHinge;
+    HingeJoint RightSprocketHinge;
     bool isSpaceOnLeft = true;
     bool isSpaceOnRight = true;
 
@@ -51,6 +54,8 @@ public class TankController : MonoBehaviour
     {
         LeftSprocketSpin = LeftSprocket.GetComponent<Spin>();
         RightSprocketSpin = RightSprocket.GetComponent<Spin>();
+        LeftSprocketHinge = LeftSprocket.GetComponent<HingeJoint>();
+        RightSprocketHinge = RightSprocket.GetComponent<HingeJoint>();
     }
     void Update()
     {
@@ -74,6 +79,8 @@ public class TankController : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         if (vertical != 0)          //W or S is being pressed
         {
+            LeftSprocketHinge.useMotor = false;
+            RightSprocketHinge.useMotor = false;
             if(vertical > 0)        //W is being pressed - forward
             {
                 if(currentLeftTorque < maxTorque)
@@ -97,6 +104,9 @@ public class TankController : MonoBehaviour
         }
         else
         {
+            LeftSprocketHinge.useMotor = true;
+            RightSprocketHinge.useMotor = true;
+
             if (currentLeftTorque > 0)
                 if (currentLeftTorque > responsiveness * Time.deltaTime)
                     currentLeftTorque -= responsiveness * Time.deltaTime;
