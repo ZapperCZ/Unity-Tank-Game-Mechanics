@@ -10,7 +10,6 @@ public class SlowMotion : MonoBehaviour
 
     float slowmoHorizontalAxis = 0f;
     bool slowmoPrevState = false;
-    bool slowmoModifier = false;
     bool increaseSlowmo = false;
     bool decreaseSlowmo = false;
     float internalTimer = 0f;
@@ -38,39 +37,32 @@ public class SlowMotion : MonoBehaviour
     }
     void GetInput()
     {
-        slowmoHorizontalAxis = Input.GetAxis("Slowmotion Horizontal Axis");
-        slowmoModifier = Input.GetButton("Slowmotion Modifier");
 
-        if (slowmoModifier)
+        slowmoHorizontalAxis = 0;
+
+        if (Input.GetButton("Slowmotion Modifier"))
         {
+            if (Input.GetButtonDown("Slowmotion Horizontal Axis"))
+            {
+                slowmoHorizontalAxis = Input.GetAxis("Slowmotion Horizontal Axis");
+            }
             if (Input.GetButtonDown("Slowmotion Toggle"))
             {
                 slowmoActive = !slowmoActive;
             }
-            if (slowmoActive && slowmoHorizontalAxis != 0)
+            if (slowmoHorizontalAxis != 0)
             {
                 if (slowmoHorizontalAxis > 0)           //Player pressed left
                 {
-                    increaseSlowmo = true;
                     slowmoActive = true;
+                    currentMultiplierIndex++;
                 }
                 else                                    //Player pressed right
                 {
-                    decreaseSlowmo = true;
                     slowmoActive = true;
-                }
-                if (internalTimer > inputMsDelay / 1000)
-                {
-                    internalTimer = 0;
+                    currentMultiplierIndex--;
                 }
             }
-        }
-        if (internalTimer > inputMsDelay / 1000)      //Only gets run once the internal timer has reached the input delay value
-        {
-            currentMultiplierIndex += Convert.ToInt32(increaseSlowmo);
-            currentMultiplierIndex -= Convert.ToInt32(decreaseSlowmo);
-            increaseSlowmo = false;
-            decreaseSlowmo = false;
         }
         HandleIndexOverflow();
     }
