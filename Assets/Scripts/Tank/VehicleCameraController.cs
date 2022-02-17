@@ -8,6 +8,7 @@ public class VehicleCameraController : MonoBehaviour
     float scroll;
     [SerializeField] float sensitivity, maximumSpeed, minDistance, maxDistance, scrollSens;
     public float targetDistance;
+    float tempDistance = 0;
     float currentDistance;
     [SerializeField] Vector2 MinMax;                      //The maximum and minimum angle
     public Transform FocusPoint;
@@ -30,7 +31,10 @@ public class VehicleCameraController : MonoBehaviour
         vertical = Mathf.Clamp(vertical, MinMax.x, MinMax.y);
 
         transform.eulerAngles = new Vector3(vertical, horizontal + 180, 0);
-        transform.position = FocusPoint.position - transform.forward * targetDistance;
+        if(tempDistance == 0)
+            transform.position = FocusPoint.position - transform.forward * targetDistance;
+        else
+            transform.position = FocusPoint.position - transform.forward * tempDistance;
     }
     void GetInput()
     {
@@ -64,10 +68,11 @@ public class VehicleCameraController : MonoBehaviour
         {
             if (!hit.transform.CompareTag("Player Controlled"))
             {
-                targetDistance = Vector3.Distance(FocusPoint.position, hit.point);
+                tempDistance = Vector3.Distance(FocusPoint.position, hit.point);
                 return;
             }
         }
+        tempDistance = 0;
     }
     float normalizeNumber(float num, float max)
     {
