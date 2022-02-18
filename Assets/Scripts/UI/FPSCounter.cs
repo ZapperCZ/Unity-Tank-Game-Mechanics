@@ -4,36 +4,20 @@ using UnityEngine;
 public class FPSCounter : MonoBehaviour
 {
     [SerializeField] GameObject CounterUI;
-    [SerializeField] float updateInterval = 0.5f; //How often should the number update
-
-    float accum = 0.0f;
-    int frames = 0;
-    float timeleft;
-    float fps;
-
-
-    // Use this for initialization
-    void Start()
-    {
-        timeleft = updateInterval;
-    }
+    [SerializeField] float updateInterval = 0.5f; //How often should fps update in seconds
+    float fps = 0;
+    float counter = 0;
 
     // Update is called once per frame
     void Update()
     {
-        timeleft -= Time.deltaTime;
-        accum += Time.timeScale / Time.deltaTime;
-        ++frames;
-
-        // Interval ended - update GUI text and start new interval
-        if (timeleft <= 0.0)
+        if(counter > updateInterval)
         {
-            // display two fractional digits (f2 format)
-            fps = (accum / frames);
-            timeleft = updateInterval;
-            accum = 0.0f;
-            frames = 0;
+            fps = 1 / Time.unscaledDeltaTime;
+            counter = 0;
+            return;
         }
+        counter += Time.unscaledDeltaTime;
     }
     void OnGUI()
     {
