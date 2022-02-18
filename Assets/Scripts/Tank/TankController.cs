@@ -5,6 +5,7 @@ public class TankController : MonoBehaviour
     public GameObject LeftSprocket;
     public GameObject RightSprocket;
 
+    [SerializeField] Speedometer speedometer;
     [SerializeField] TurretController TurretControllerScript;
     [SerializeField] ShootingSystem ShootingSystemScript;
     public Transform CameraFocusPoint;
@@ -39,6 +40,9 @@ public class TankController : MonoBehaviour
         ShootingSystemScript.enabled = true;
         transform.tag = "Player Controlled";
         AddTagToChildren(transform, "Player Controlled");
+
+        Speedometer.Instance.Vehicle = transform;
+        Speedometer.Instance.enabled = true;
     }
     private void OnDisable()
     {
@@ -49,6 +53,8 @@ public class TankController : MonoBehaviour
         ShootingSystemScript.enabled = false;
         transform.tag = "Untagged";
         AddTagToChildren(transform, "Untagged");
+
+        Speedometer.Instance.enabled = false;
     }
     void Awake()
     {
