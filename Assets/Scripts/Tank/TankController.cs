@@ -41,8 +41,11 @@ public class TankController : MonoBehaviour
         transform.tag = "Player Controlled";
         AddTagToChildren(transform, "Player Controlled");
 
-        Speedometer.Instance.Vehicle = transform;
-        Speedometer.Instance.enabled = true;
+        if(Speedometer.Instance != null)
+        {
+            Speedometer.Instance.Vehicle = transform;
+            Speedometer.Instance.enabled = true;
+        }
     }
     private void OnDisable()
     {
@@ -54,7 +57,10 @@ public class TankController : MonoBehaviour
         transform.tag = "Untagged";
         AddTagToChildren(transform, "Untagged");
 
-        Speedometer.Instance.enabled = false;
+        if (Speedometer.Instance != null)
+        {
+            Speedometer.Instance.enabled = false;
+        }
     }
     void Awake()
     {
