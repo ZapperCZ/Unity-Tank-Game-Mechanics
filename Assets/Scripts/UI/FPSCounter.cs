@@ -8,8 +8,10 @@ public class FPSCounter : MonoBehaviour
     [SerializeField] int fpsLimit = 60;
     float fps = 0;
     float counter = 0;
-
-    // Update is called once per frame
+    private void Start()
+    {
+        Application.targetFrameRate = fpsLimit;
+    }
     void OnValidate()
     {
         Application.targetFrameRate = fpsLimit;
