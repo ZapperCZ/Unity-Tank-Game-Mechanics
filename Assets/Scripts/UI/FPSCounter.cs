@@ -21,7 +21,7 @@ public class FPSCounter : MonoBehaviour
             fps = 1 / Time.unscaledDeltaTime;
             counter = 0;
             return;
-        }
+        }   
         counter += Time.unscaledDeltaTime;
     }
     void OnGUI()

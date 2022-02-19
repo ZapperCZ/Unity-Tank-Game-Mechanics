@@ -10,34 +10,30 @@ public class SlowMotion : MonoBehaviour
 
     float slowmoHorizontalAxis = 0f;
     bool slowmoPrevState = false;
-    bool increaseSlowmo = false;
-    bool decreaseSlowmo = false;
-    float internalTimer = 0f;
 
-    // Update is called once per frame
     void OnValidate()
     {
         HandleIndexOverflow();   
     }
     void Update()
     {
-        internalTimer = internalTimer + Time.deltaTime / Time.timeScale;        //A system that always increases the time uniformly, no matter the FPS or time scale
-
         GetInput();
 
-        if (slowmoActive)
+        if (!PauseMenu.isPaused)
         {
-            Time.timeScale = 1f / slowmoMultiplier[currentMultiplierIndex];
+            if (slowmoActive)
+            {
+                Time.timeScale = 1f / slowmoMultiplier[currentMultiplierIndex];
+            }
+            else if (slowmoPrevState != slowmoActive)
+            {
+                Time.timeScale = 1f;
+            }
+            slowmoPrevState = slowmoActive;
         }
-        else if(slowmoPrevState != slowmoActive)
-        {
-            Time.timeScale = 1f;
-        }
-        slowmoPrevState = slowmoActive;
     }
     void GetInput()
     {
-
         slowmoHorizontalAxis = 0;
 
         if (Input.GetButton("Slowmotion Modifier"))
@@ -76,5 +72,9 @@ public class SlowMotion : MonoBehaviour
         {
             currentMultiplierIndex = 0;
         }
+    }
+    void OnDisable()
+    {
+        Time.timeScale = 1;
     }
 }
