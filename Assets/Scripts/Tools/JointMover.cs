@@ -17,6 +17,7 @@ public class JointMover : MonoBehaviour
 
     private Rigidbody ConnectedBody;
     private float distanceToLocation;
+    private bool originalRigidbodyState;
     private Vector3 ChangeVector;
     private Vector3 LocationDirection;
 
@@ -44,6 +45,7 @@ public class JointMover : MonoBehaviour
                 this.enabled = false;
                 return;
         }
+        originalRigidbodyState = ConnectedBody.isKinematic;
         ConnectedBody.isKinematic = true;
     }
     void FixedUpdate()
@@ -67,7 +69,7 @@ public class JointMover : MonoBehaviour
         }
 
         transform.GetComponent<Rigidbody>().isKinematic = false;
-        ConnectedBody.isKinematic = false;
+        ConnectedBody.isKinematic = originalRigidbodyState;
         this.enabled = false;
     }
     bool HasComponent<T>(GameObject inputObject) where T : Component //Returns whether the input object has a component or not
