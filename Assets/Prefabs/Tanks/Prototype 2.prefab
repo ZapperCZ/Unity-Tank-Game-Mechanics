@@ -831,7 +831,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.55001897, y: -0.000002118759, z: -0.00000075860453}
+  m_ConnectedAnchor: {x: 0.550019, y: -0.0000011331092, z: -0.00000032511622}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1207,6 +1207,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665094406593260
@@ -2060,7 +2063,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.57570666, y: -0.0006846599, z: 0.00001125715}
+  m_ConnectedAnchor: {x: 0.5757066, y: -0.00068267307, z: 0.00001125715}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -3762,7 +3765,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5912837, y: -0.07778646, z: 0.000056949528}
+  m_ConnectedAnchor: {x: 0.5912836, y: -0.07778447, z: 0.000057383015}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -5583,7 +5586,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4223665094556219071}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.92, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4223665095890992832}
@@ -7645,7 +7648,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5777549, y: 0.043986555, z: -0.00011579556}
+  m_ConnectedAnchor: {x: 0.5777549, y: 0.043986555, z: -0.000115362076}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -10288,7 +10291,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5508386, y: -0.019060425, z: -0.00025987625}
+  m_ConnectedAnchor: {x: 0.5508386, y: -0.019060425, z: -0.00025944275}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -13282,7 +13285,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.56936896, y: -0.009384255, z: 0.00015679408}
+  m_ConnectedAnchor: {x: 0.5693685, y: -0.00938351, z: 0.00015722757}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -15216,7 +15219,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5758962, y: -0.00068981515, z: -0.00005025755}
+  m_ConnectedAnchor: {x: 0.5758962, y: -0.00068782835, z: -0.00005025755}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -17359,6 +17362,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095045776592
@@ -17425,7 +17431,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68e81742968bb942acefed6b4603ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  applyTorque: 0
   Torque: 0
+  FlipSpinDirection: 0
+  SpinAxis: {x: 0, y: 1, z: 0}
+  MaxAngularVelocity: 20
 --- !u!1 &4223665095048446233
 GameObject:
   m_ObjectHideFlags: 0
@@ -19088,6 +19098,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095123049705
@@ -19269,7 +19282,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.549832, y: 0.014073279, z: 0.00008183446}
+  m_ConnectedAnchor: {x: 0.549832, y: 0.014073279, z: 0.00008226795}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -19457,6 +19470,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095139594475
@@ -20347,7 +20363,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5784047, y: -0.0009521998, z: 0.000015172091}
+  m_ConnectedAnchor: {x: 0.5784047, y: -0.00095120637, z: 0.000015172091}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -21340,6 +21356,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095217452316
@@ -22754,7 +22773,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.57944363, y: -0.00050215365, z: 0.00001579523}
+  m_ConnectedAnchor: {x: 0.57944375, y: -0.00050016685, z: 0.00001579523}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -23367,7 +23386,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.54999083, y: 0.0000029336663, z: -0.0000008127906}
+  m_ConnectedAnchor: {x: 0.54999083, y: 0.0000029336663, z: -0.00000037930226}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -24208,7 +24227,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5785573, y: -0.003424908, z: 0.00020739707}
+  m_ConnectedAnchor: {x: 0.5785573, y: -0.003424908, z: 0.00020783056}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -25137,7 +25156,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.55000806, y: -0.0000008071463, z: 0.00000018965113}
+  m_ConnectedAnchor: {x: 0.550008, y: 0.00000018626453, z: 0.00000018965113}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -28421,6 +28440,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095466503651
@@ -28859,10 +28881,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trackLength: 10.8
   linkSpacing: 0.02
-  linkJointAngleLimit: 120
-  generateTracks: 0
   parentName: Track Left
+  linkJointAngleLimit: 120
+  useCustomBreakForce: 0
+  jointBreakForce: 20000
+  useCustomBreakTorque: 0
+  jointBreakTorque: 10000
   generateOnChange: 1
+  runOutsideEditMode: 0
+  generateTracks: 0
   deleteTracks: 0
 --- !u!59 &4223665095492778056
 HingeJoint:
@@ -32666,7 +32693,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.55000085, y: -0.0000009856498, z: -0.00000002709302}
+  m_ConnectedAnchor: {x: 0.5500009, y: 0.0000010011719, z: -0.00000002709302}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -32817,7 +32844,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5533957, y: 0.005501385, z: -0.000832731}
+  m_ConnectedAnchor: {x: 0.5533953, y: 0.0055029993, z: -0.000832731}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -33699,6 +33726,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095663060790
@@ -34699,6 +34729,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095719348990
@@ -35044,7 +35077,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5575693, y: 0.050611768, z: -0.00008047981}
+  m_ConnectedAnchor: {x: 0.5575695, y: 0.05061369, z: -0.00008047981}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -35404,6 +35437,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095742853080
@@ -36109,7 +36145,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.580017, y: -0.05702029, z: -0.00009521842}
+  m_ConnectedAnchor: {x: 0.58001685, y: -0.057018306, z: -0.00009521842}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -36911,7 +36947,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5784825, y: -0.00069749856, z: 0.000012069941}
+  m_ConnectedAnchor: {x: 0.5784825, y: -0.0006965052, z: 0.000012069941}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -37065,10 +37101,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trackLength: 10.8
   linkSpacing: 0.02
-  linkJointAngleLimit: 120
-  generateTracks: 0
   parentName: Track Right
+  linkJointAngleLimit: 120
+  useCustomBreakForce: 0
+  jointBreakForce: 20000
+  useCustomBreakTorque: 0
+  jointBreakTorque: 10000
   generateOnChange: 1
+  runOutsideEditMode: 0
+  generateTracks: 0
   deleteTracks: 0
 --- !u!59 &4223665095826733689
 HingeJoint:
@@ -37270,6 +37311,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095833828374
@@ -39094,6 +39138,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665095909711922
@@ -39656,7 +39703,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5499923, y: -0.0000012922102, z: -0.0000004334883}
+  m_ConnectedAnchor: {x: 0.5499923, y: -0.0000012883297, z: 0}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -42330,7 +42377,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5772204, y: 0.00077236915, z: -0.00009924173}
+  m_ConnectedAnchor: {x: 0.5772204, y: 0.0007723769, z: -0.00009880824}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -43055,6 +43102,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665096113348827
@@ -43564,7 +43614,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5499912, y: -0.00000047560513, z: 0.00000002709302}
+  m_ConnectedAnchor: {x: 0.5499912, y: 0.0000005141677, z: 0.00000046058133}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -44995,6 +45045,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665096204521331
@@ -45061,7 +45114,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68e81742968bb942acefed6b4603ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  applyTorque: 0
   Torque: 0
+  FlipSpinDirection: 0
+  SpinAxis: {x: 0, y: 1, z: 0}
+  MaxAngularVelocity: 20
 --- !u!1 &4223665096206817867
 GameObject:
   m_ObjectHideFlags: 0
@@ -45168,7 +45225,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4223665096207316572}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.87, y: -0.71, z: 21.52}
+  m_LocalPosition: {x: 1.87, y: 0, z: 21.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4223665094556219068}
@@ -45535,7 +45592,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5500058, y: -0.0000035700702, z: -0.0000001354651}
+  m_ConnectedAnchor: {x: 0.55000573, y: -0.0000015832485, z: -0.0000001354651}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -45813,7 +45870,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.57600176, y: -0.0014500653, z: -0.00028477472}
+  m_ConnectedAnchor: {x: 0.57600176, y: -0.001450065, z: -0.00028434125}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -46136,7 +46193,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.57709813, y: 0.036328427, z: 0.00018641353}
+  m_ConnectedAnchor: {x: 0.57709813, y: 0.036330417, z: 0.00018641353}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -46369,6 +46426,9 @@ MonoBehaviour:
   diameterLocked: 0
   cylinderHeight: 2
   isTrigger: 0
+  usePhysicsMaterial: 0
+  CylinderPhysicsMaterial: {fileID: 0}
+  runOutsideEditMode: 0
   deleteColliders: 0
   changed: 1
 --- !u!54 &4223665096255078794
@@ -46841,7 +46901,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5787071, y: -0.0005989336, z: 0.000014697963}
+  m_ConnectedAnchor: {x: 0.57870716, y: -0.00059694675, z: 0.000014697963}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -47037,7 +47097,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5500015, y: -0.0000047730286, z: -0.00000002709302}
+  m_ConnectedAnchor: {x: 0.5500015, y: -0.000002786207, z: -0.00000002709302}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -47188,7 +47248,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.57818055, y: -0.0009367088, z: 0.000025399706}
+  m_ConnectedAnchor: {x: 0.5781805, y: -0.00093475304, z: 0.000025399706}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -47781,7 +47841,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.570796, y: 0.024925299, z: -0.000071302056}
+  m_ConnectedAnchor: {x: 0.5707961, y: 0.024925299, z: -0.00007086856}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -48528,7 +48588,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.578201, y: -0.001505421, z: 0.00005678697}
+  m_ConnectedAnchor: {x: 0.5782009, y: -0.0015034341, z: 0.00005678697}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -49986,7 +50046,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5754348, y: 0.013437868, z: -0.0022572447}
+  m_ConnectedAnchor: {x: 0.57543427, y: 0.0134383645, z: -0.0022572447}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -50630,7 +50690,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.55000234, y: -0.000001769513, z: 0.000000094825566}
+  m_ConnectedAnchor: {x: 0.55000234, y: 0.00000018626453, z: 0.0000005283139}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -51611,7 +51671,7 @@ HingeJoint:
   m_Anchor: {x: -0.54999995, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.55001116, y: -0.000009313227, z: -0.00000062313944}
+  m_ConnectedAnchor: {x: 0.55001116, y: -0.000009313227, z: -0.00000018965113}
   m_UseSpring: 0
   m_Spring:
     spring: 0
