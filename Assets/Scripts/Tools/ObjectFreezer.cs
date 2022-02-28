@@ -39,6 +39,11 @@ public class ObjectFreezer : MonoBehaviour
             {
                 _unfreezeDelay = unfreezeDelay;     //Reset the timer
                 freeze = false;
+                if (HasComponent<Rigidbody>(transform.gameObject))
+                {
+                    transform.GetComponent<Rigidbody>().isKinematic = freeze;
+                }
+
                 if (useDelayBetweenObjectUnfreeze)
                     StartCoroutine(FreezeChildrenDelayed(transform));
                 else
