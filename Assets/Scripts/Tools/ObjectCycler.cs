@@ -7,7 +7,7 @@ public class ObjectCycler : MonoBehaviour
     [SerializeField] bool useTimer = false;
     [SerializeField] bool useKey = false;
     [SerializeField] BoxCollider Trigger;
-    [SerializeField] float timer = 10f;
+    [SerializeField] float switchingTime = 5f;
     [SerializeField] string switchKey = "";
     bool prevUseTrigger;
     bool prevUseTimer;
@@ -16,6 +16,7 @@ public class ObjectCycler : MonoBehaviour
     int index = 0;
     int prevIndex;
     int actualIndex;
+    float internalTimer;
 
     void Awake()
     {
@@ -23,6 +24,7 @@ public class ObjectCycler : MonoBehaviour
         prevUseTimer = useTimer;
         prevUseKey = useKey;
         prevIndex = index;
+        internalTimer = 0;
 
         if (useKey)
         {
@@ -51,14 +53,23 @@ public class ObjectCycler : MonoBehaviour
     }
     void Update()
     {
-        if (!Application.isPlaying)
-            return;
         if (useKey)
         {
             if (Input.GetKeyDown(switchKey))
             {
                 index++;
                 HandleIndexOverflow();
+            }
+        }
+        else if (useTimer)
+        {
+            if (internalTimer < switchingTime)
+                internalTimer += Time.deltaTime;
+            else
+            {
+                index++;
+                HandleIndexOverflow();
+                internalTimer = 0;
             }
         }
         CycleObjects();
