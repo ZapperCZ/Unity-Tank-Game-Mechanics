@@ -21,6 +21,11 @@ public class JointMover : MonoBehaviour
     private Vector3 ChangeVector;
     private Vector3 LocationDirection;
 
+    void Awake()
+    {
+        ConnectedBody = transform.GetComponent<Joint>().connectedBody;
+        originalRigidbodyState = ConnectedBody.isKinematic;
+    }
     void Start()
     {
         transform.GetComponent<Rigidbody>().isKinematic = true;
@@ -45,7 +50,6 @@ public class JointMover : MonoBehaviour
                 this.enabled = false;
                 return;
         }
-        originalRigidbodyState = ConnectedBody.isKinematic;
         ConnectedBody.isKinematic = true;
     }
     void FixedUpdate()
