@@ -26,7 +26,6 @@ public class Speedometer : MonoBehaviour
     void OnEnable()
     {
         SpeedometerUI.SetActive(true);
-        Debug.Log(Vehicle.name);
     }
     void OnDisable()
     {
