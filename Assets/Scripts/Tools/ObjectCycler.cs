@@ -3,6 +3,7 @@ using UnityEngine;
 public class ObjectCycler : MonoBehaviour
 {
     [SerializeField] GameObject[] ObjectsToCycle;
+    [SerializeField] bool createInstances = false;          //A more resource intensive way to cycle the objects, however allows th
     [SerializeField] bool useTrigger = true;    
     [SerializeField] bool useTimer = false;
     [SerializeField] bool useKey = false;
@@ -12,18 +13,20 @@ public class ObjectCycler : MonoBehaviour
     bool prevUseTrigger;
     bool prevUseTimer;
     bool prevUseKey;
+    GameObject prevInstance;
 
     int index = 0;
     int prevIndex;
     int actualIndex;
     float internalTimer;
+    GameObject currInstance;
 
     void Awake()
     {
         prevUseTrigger = useTrigger;
         prevUseTimer = useTimer;
         prevUseKey = useKey;
-        prevIndex = index;
+        prevIndex = -1;
         internalTimer = 0;
 
         if (useKey)
@@ -44,7 +47,7 @@ public class ObjectCycler : MonoBehaviour
         {
             GObj.SetActive(false);
         }
-        ObjectsToCycle[index].SetActive(true);
+        //ObjectsToCycle[index].SetActive(true);
     }
 
     void OnValidate()
@@ -73,7 +76,7 @@ public class ObjectCycler : MonoBehaviour
             }
         }
         CycleObjects();
-    }
+    }       
 
     void CycleObjects()
     {
@@ -82,9 +85,21 @@ public class ObjectCycler : MonoBehaviour
 
         actualIndex = index == 0 ? ObjectsToCycle.Length - 1 : index - 1;
 
-        Debug.Log(actualIndex);
-        ObjectsToCycle[actualIndex].SetActive(false);
-        ObjectsToCycle[index].SetActive(true);
+        if (createInstances)
+        {
+            if(prevInstance!=null)
+                Destroy(prevInstance);
+            currInstance = Instantiate(ObjectsToCycle[actualIndex]);
+            currInstance.transform.parent = this.transform;
+            currInstance.transform.position = Vector3.zero;
+            currInstance.SetActive(true);
+            prevInstance = currInstance;                                                                                                                            
+        }
+        else
+        {
+            ObjectsToCycle[actualIndex].SetActive(false);
+            ObjectsToCycle[index].SetActive(true);
+        }
 
         prevIndex = index;
     }
@@ -111,6 +126,10 @@ public class ObjectCycler : MonoBehaviour
                 useTimer = prevUseTimer = false;
                 useTrigger = prevUseTrigger = false;
             }
+        }
+        if(switchingTime == 0)
+        {
+            switchingTime = 0.1f;
         }
     }
     void HandleIndexOverflow()
