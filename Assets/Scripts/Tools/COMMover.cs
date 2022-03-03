@@ -10,33 +10,38 @@ public class COMMover : MonoBehaviour
 
     void Awake()
     {
-        currCOMPos = COM.localPosition;
         if (!HasComponent<Rigidbody>(this.gameObject))
         {
             Debug.LogError("COM Mover - " + this.name + "Required components not found, disabling script. Make sure that the parent object has a Rigidbody");
             this.enabled = false;
         }
+        currCOMPos = COM.position;
+        UpdateCOM();
     }
     void Update()
     {
-        if(Application.isEditor && ((Application.isPlaying && RunInPlayMode) || !Application.isPlaying))
+        if (currCOMPos != COM.position)
         {
-            if(currCOMPos != COM.localPosition)
-            {
-                currCOMPos = COM.localPosition;
-                if (ChangeChildrenCOM)
-                {
-                    ChangeCOMInChildren(this.transform);
-                }
-                else
-                {
-                    this.transform.GetComponent<Rigidbody>().centerOfMass = currCOMPos;
-                }
-                Debug.Log($"COM Mover - {this.transform.GetComponent<Rigidbody>().centerOfMass}");
-            }
+            currCOMPos = COM.position;
+            UpdateCOM();
+            Debug.Log($"COM Mover - {this.transform.GetComponent<Rigidbody>().centerOfMass}");
+        }
+
+        if (Application.isPlaying && (!RunInPlayMode || !Application.isEditor))
+        {
+            Debug.Log($"COM Mover - {this.transform.GetComponent<Rigidbody>().centerOfMass}");
+            this.enabled = false;
         }
     }
-    void ChangeCOMInChildren(Transform Parent)
+    void UpdateCOM()
+    {
+        this.transform.GetComponent<Rigidbody>().centerOfMass = currCOMPos;
+        if (ChangeChildrenCOM)
+        {
+            ChangeCOMInChildren(this.transform, currCOMPos);
+        }
+    }
+    void ChangeCOMInChildren(Transform Parent, Vector3 COMPos)
     {
         foreach (Transform child in Parent)
         {
@@ -46,7 +51,7 @@ public class COMMover : MonoBehaviour
             }
             if (child.childCount > 1)
             {
-                ChangeCOMInChildren(child);
+                ChangeCOMInChildren(child, COMPos);
             }
         }
     }
