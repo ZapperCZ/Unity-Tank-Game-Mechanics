@@ -23,7 +23,7 @@ public class JointMover : MonoBehaviour
 
     void Awake()
     {
-        ConnectedBody = this.transform.GetComponent<Joint>().connectedBody;
+        ConnectedBody = transform.GetComponent<Joint>().connectedBody;
         originalRigidbodyState = ConnectedBody.isKinematic;
     }
     void Start()
