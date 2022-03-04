@@ -15,14 +15,14 @@ public class COMMover : MonoBehaviour
             Debug.LogError("COM Mover - " + this.name + "Required components not found, disabling script. Make sure that the parent object has a Rigidbody");
             this.enabled = false;
         }
-        currCOMPos = COM.position;
+        currCOMPos = COM.localPosition;
         UpdateCOM();
     }
     void Update()
     {
-        if (currCOMPos != COM.position)
+        if (currCOMPos != COM.localPosition)
         {
-            currCOMPos = COM.position;
+            currCOMPos = COM.localPosition;
             UpdateCOM();
             Debug.Log($"COM Mover - {this.transform.GetComponent<Rigidbody>().centerOfMass}");
         }
