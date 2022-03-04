@@ -16,18 +16,16 @@ public class ObjectCycler : MonoBehaviour
     GameObject prevInstance;
 
     int index = 0;
-    int prevIndex;
+    int prevIndex = -1;
     int actualIndex;
-    float internalTimer;
+    float internalTimer = 0;
     GameObject currInstance;
 
-    void Awake()
+    void Start()
     {
         prevUseTrigger = useTrigger;
         prevUseTimer = useTimer;
         prevUseKey = useKey;
-        prevIndex = -1;
-        internalTimer = 0;
 
         if (useKey)
         {
@@ -89,9 +87,11 @@ public class ObjectCycler : MonoBehaviour
         {
             if(prevInstance!=null)
                 Destroy(prevInstance);
-            currInstance = Instantiate(ObjectsToCycle[actualIndex]);
+            currInstance = Instantiate(ObjectsToCycle[index]);
             currInstance.transform.parent = this.transform;
-            currInstance.transform.position = Vector3.zero;
+            currInstance.transform.localScale = ObjectsToCycle[index].transform.localScale;
+            currInstance.transform.localRotation = ObjectsToCycle[index].transform.localRotation;
+            currInstance.transform.localPosition = Vector3.zero;
             currInstance.SetActive(true);
             prevInstance = currInstance;                                                                                                                            
         }
