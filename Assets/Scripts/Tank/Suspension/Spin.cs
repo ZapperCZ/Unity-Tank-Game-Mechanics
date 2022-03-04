@@ -7,7 +7,9 @@ public class Spin : MonoBehaviour
     public bool FlipSpinDirection = false;    //Whether the spinning direction should be flipped or not
     [SerializeField] Vector3 SpinAxis = new Vector3(0, 1, 0);   
     [SerializeField] float MaxAngularVelocity = 20;     //The rotational limit, by default set to 7 by Unity
+    [SerializeField] float delay = 0;
 
+    [SerializeField] float internalTimer = 0;
     int Direction = 1;
 
     private void Awake()
@@ -22,6 +24,18 @@ public class Spin : MonoBehaviour
     private void Update()
     {
         Direction = FlipSpinDirection ? -1 : 1;                 //If enabled, direction is flipped (-1), else it is unchanged (1)
+        if(delay != 0)
+        {
+            if (internalTimer < delay)
+            {
+                internalTimer += Time.deltaTime;
+                applyTorque = false;
+            }
+            else
+            {
+                applyTorque = true;
+            }
+        }
     }
     private void FixedUpdate()
     {
