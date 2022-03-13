@@ -93,7 +93,7 @@ public class ObjectCycler : MonoBehaviour
             currInstance.transform.localRotation = ObjectsToCycle[index].transform.localRotation;
             currInstance.transform.localPosition = Vector3.zero;
             currInstance.SetActive(true);
-            prevInstance = currInstance;                                                                                                                            
+            prevInstance = currInstance;
         }
         else
         {
