@@ -9,27 +9,21 @@ public class Shell : MonoBehaviour
 
     Vector3 previousPosition = new Vector3(0,0,0);
 
-    void Update()
+    void FixedUpdate()
     {
         HighSpeedCollisionDetection();
     }
 
     void HighSpeedCollisionDetection()
     {
-        RaycastHit hit;
         Ray ray = new Ray(transform.position, transform.position - previousPosition);
 
-        if (Physics.Raycast(ray,out hit, Vector3.Distance(transform.position, previousPosition)))
+        if (Physics.Raycast(ray,out RaycastHit hit, Vector3.Distance(transform.position, previousPosition)))
         {
             TriggerExplosion(hit.point);
         }
 
         previousPosition = transform.position;
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        TriggerExplosion(transform.position);
     }
     void TriggerExplosion(Vector3 CurrentPosition)
     {
