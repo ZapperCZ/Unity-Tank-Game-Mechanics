@@ -71,16 +71,20 @@ public class SplineDecorator : MonoBehaviour
 			DestroyImmediate(obj);
 		}
 	}
-	private float[] LinearizeSpline(BezierSpline inputSpline, int precision)	//Returns an array of points along the input spline, higher precision >> more points
+	private float[] LinearizeSpline(BezierSpline inputSpline, int precision, float spacing)	//Returns an array of points along the input spline, higher precision >> more points
     {
 		int steps = precision * inputSpline.CurveCount;
-		Debug.Log(steps);
-		float[] result = new float[steps+1];
+		List<float> resultList = new List<float>();
+		Vector3 lastPosition = spline.GetPoint(linearizedArray[0]);
+		Vector3 currentPosition = spline.GetPoint(linearizedArray[0]);
+		float distance = 0;
+
 		for (int i = 1; i <= steps; i++)
 		{
-			result[i] = i / (float)steps;
+			//result[i] = i / (float)steps;
 			Debug.Log(i);
 		}
+		float[] result = resultList.ToArray();
 		return result;
     }
 	void GenerateObjects()
@@ -118,7 +122,7 @@ public class SplineDecorator : MonoBehaviour
 		if (itemSpacing < 0 || inputItem == null)
 			return;
 
-		linearizedArray = LinearizeSpline(spline, linearizationPrecision);
+		linearizedArray = LinearizeSpline(spline, linearizationPrecision, itemSpacing);
 
 		Vector3 lastPosition = spline.GetPoint(linearizedArray[0]);
 		Vector3 currentPosition = spline.GetPoint(linearizedArray[0]);
