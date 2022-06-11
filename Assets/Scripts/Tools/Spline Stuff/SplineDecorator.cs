@@ -5,19 +5,20 @@ using UnityEngine;
 
 public class SplineDecorator : MonoBehaviour
 {
-	[SerializeField] bool linearSpacing = false;
+	[SerializeField] bool linearSpacing = false;			//Whether linear spacing should be enabled or not
 	[Header("Linear Settings")]
-	[SerializeField] int linearizationPrecision = 100;
-	[SerializeField] float itemSpacing = 0.5f;
+	[SerializeField] int linearizationPrecision = 1000;		//The accuracy of spline linearization. Higher number >> Higher precision
+	[SerializeField] float itemSpacing = 0.5f;				//The linear spacing between items
 	[Header("Non-Linear settings")]
-	[SerializeField] int frequency;
+	[SerializeField] int frequency = 10;					//The frequency of non-linear item generation
 	[Header("Misc")]
-	[SerializeField] bool lookForward;
-	[SerializeField] BezierSpline spline;
-	[SerializeField] Transform inputItem;
+	[SerializeField] bool lookForward = true;				//Whether the items should point along the spline or not
+	[SerializeField] BezierSpline spline;					//The spline to be decorated
+	[SerializeField] Transform inputItem;					//The item for the spline to be decorated with
 
-	bool inputChanged = false;
-	float[] linearizedArray;
+	//------------ Internal properties ------------//
+	bool inputChanged = false;	//Detects an interaction of the user with values accessible through the Inspector window
+	float[] linearizedArray;	//Stores points along the spline with linear spacing between them
 
 	private void Awake()
 	{
@@ -27,13 +28,13 @@ public class SplineDecorator : MonoBehaviour
 		else
 			GenerateObjects();
 	}
-    private void OnValidate()
+    private void OnValidate()	//Usually gets called when an Inspector accessible variable has been changed
     {
 		inputChanged = true;
     }
     private void Update()
     {
-        if (inputChanged)
+        if (inputChanged)	//Only regenerate the objects when the values have been updated - most probably doesn't work in the build version
         {
 			DeleteObjects();
 			if (linearSpacing)
@@ -43,7 +44,7 @@ public class SplineDecorator : MonoBehaviour
 			inputChanged = false;
         }
     }
-	private void DeleteObjects()
+	private void DeleteObjects()	//Safely disposes of all current child transforms
     {
 		int childCount = transform.childCount;
 		Transform child = null;
@@ -71,21 +72,28 @@ public class SplineDecorator : MonoBehaviour
 			DestroyImmediate(obj);
 		}
 	}
-	private float[] LinearizeSpline(BezierSpline inputSpline, int precision, float spacing)	//Returns an array of points along the input spline, higher precision >> more points
+	private float[] LinearizeSpline(BezierSpline inputSpline, int precision, float spacing)	//Returns an array of linearly spaced points along the input spline, higher precision >> more points
     {
-		int steps = precision * inputSpline.CurveCount;
-		List<float> resultList = new List<float>();
-		Vector3 lastPosition = spline.GetPoint(linearizedArray[0]);
-		Vector3 currentPosition = spline.GetPoint(linearizedArray[0]);
-		float distance = 0;
+		int steps = precision * inputSpline.CurveCount;	//Better tuned precision value, ensures that precision stays the same no matter the size of the spline
+		List<float> resultList = new List<float>();		
+		Vector3 lastPosition;
+		Vector3 currentPosition = spline.GetPoint(0);
+		float calc;
+		float distance = spacing;
 
-		for (int i = 1; i <= steps; i++)
+		for (int i = 0; i <= steps; i++)
 		{
-			//result[i] = i / (float)steps;
-			Debug.Log(i);
+			calc = i / (float)steps;
+			lastPosition = currentPosition;
+			currentPosition = spline.GetPoint(calc);
+			distance += Vector3.Distance(lastPosition, currentPosition);
+			if(distance >= spacing)
+            {
+				resultList.Add(calc);
+				distance = 0;
+            }
 		}
-		float[] result = resultList.ToArray();
-		return result;
+		return resultList.ToArray();	//Returns an array for memory optimalization purposes
     }
 	void GenerateObjects()
     {
@@ -119,42 +127,24 @@ public class SplineDecorator : MonoBehaviour
     }
 	void GenerateObjectsLinearly()
     {
-		if (itemSpacing < 0 || inputItem == null)
+		if (itemSpacing <= 0 || inputItem == null)
 			return;
 
 		linearizedArray = LinearizeSpline(spline, linearizationPrecision, itemSpacing);
 
-		Vector3 lastPosition = spline.GetPoint(linearizedArray[0]);
-		Vector3 currentPosition = spline.GetPoint(linearizedArray[0]);
-		float distance = 0;
+		Vector3 position;
 		Transform item;
 
-		item = Instantiate(inputItem) as Transform;
-		item.transform.localPosition = lastPosition;
-		//item.GetComponent<Renderer>().material.color = new Color(0, 255, 0);
-		if (lookForward)
+		for (int i = 0; i < linearizedArray.Length; i++)
 		{
-			item.transform.LookAt(lastPosition + spline.GetDirection(linearizedArray[0]));
-		}
-		item.transform.parent = transform;
-
-		for (int i = 1; i < linearizedArray.Length; i++)
-		{
-			lastPosition = currentPosition;
-			currentPosition = spline.GetPoint(linearizedArray[i]);
-			distance += Vector3.Distance(lastPosition, currentPosition);
-			if(distance >= itemSpacing)
-            {
-				item = Instantiate(inputItem) as Transform;
-				item.transform.localPosition = currentPosition;
-				if (lookForward)
-				{
-					item.transform.LookAt(lastPosition + spline.GetDirection(linearizedArray[i]));
-				}
-				item.transform.parent = transform;
-				distance = 0;
+			position = spline.GetPoint(linearizedArray[i]);
+			item = Instantiate(inputItem) as Transform;
+			item.transform.localPosition = position;
+			if (lookForward)
+			{
+				item.transform.LookAt(position + spline.GetDirection(linearizedArray[i]));
 			}
+			item.transform.parent = transform;
 		}
-		//item.GetComponent<Renderer>().material.color = new Color(255, 0, 0);
 	}
 }
