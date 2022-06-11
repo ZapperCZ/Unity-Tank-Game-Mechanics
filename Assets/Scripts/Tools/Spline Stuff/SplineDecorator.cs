@@ -15,10 +15,13 @@ public class SplineDecorator : MonoBehaviour
 	[SerializeField] bool lookForward = true;				//Whether the items should point along the spline or not
 	[SerializeField] BezierSpline spline;					//The spline to be decorated
 	[SerializeField] Transform inputItem;					//The item for the spline to be decorated with
+	[SerializeField] bool debugConsoleOutput = false;       //Whether the debug info should be output to console or not
 
 	//------------ Internal properties ------------//
 	bool inputChanged = false;	//Detects an interaction of the user with values accessible through the Inspector window
-	float[] linearizedArray;	//Stores points along the spline with linear spacing between them
+	float[] linearizedArray;    //Stores points along the spline with linear spacing between them
+	List<float> debug_SpacingDeviationList;
+	float debug_LastToFirstItemDistance;
 
 	private void Awake()
 	{
@@ -74,25 +77,28 @@ public class SplineDecorator : MonoBehaviour
 	}
 	private float[] LinearizeSpline(BezierSpline inputSpline, int precision, float spacing)	//Returns an array of linearly spaced points along the input spline, higher precision >> more points
     {
-		int steps = precision * inputSpline.CurveCount;	//Better tuned precision value, ensures that precision stays the same no matter the size of the spline
-		List<float> resultList = new List<float>();		
-		Vector3 lastPosition;
-		Vector3 currentPosition = spline.GetPoint(0);
-		float calc;
-		float distance = spacing;
+		int steps = precision * inputSpline.CurveCount;	//Amount of steps, ensures that precision stays the same, independent from the amount of curves on the spline
+		List<float> resultList = new List<float>();		//List of linearly spaced points on the spline. Is a List because the amount of points isn't predictable
+		Vector3 lastPosition;							
+		Vector3 currentPosition = spline.GetPoint(0);	
+		float tempCalc;									//A temporary calculation that gets saved into the memory to offload work from the CPU
+		float distance = spacing;						//Distance between current and last position, increases with each iteration until it is larger than spacing value
 
 		for (int i = 0; i <= steps; i++)
 		{
-			calc = i / (float)steps;
+			tempCalc = i / (float)steps;
 			lastPosition = currentPosition;
-			currentPosition = spline.GetPoint(calc);
-			distance += Vector3.Distance(lastPosition, currentPosition);
-			if(distance >= spacing)
+			currentPosition = spline.GetPoint(tempCalc);
+			distance += Vector3.Distance(lastPosition, currentPosition);	//Adds distance between current and last position
+			//TODO: Make this more accurate by checking if the deviation of the previous smaller distance from spacing is smaller than the deviation of the current, larger distance
+			if (distance >= spacing)
             {
-				resultList.Add(calc);
+				resultList.Add(tempCalc);
+				debug_SpacingDeviationList.Add(distance - spacing);
 				distance = 0;
             }
 		}
+		debug_LastToFirstItemDistance = distance;
 		return resultList.ToArray();	//Returns an array for memory optimalization purposes
     }
 	void GenerateObjects()
@@ -131,6 +137,28 @@ public class SplineDecorator : MonoBehaviour
 			return;
 
 		linearizedArray = LinearizeSpline(spline, linearizationPrecision, itemSpacing);
+        if (debugConsoleOutput)
+        {
+			int pointAmount = linearizedArray.Length;
+			float minDeviation = float.MaxValue;
+			float maxDeviation = 0f;
+			float deviationSum = 0f;
+			for(int i = 1; i < debug_SpacingDeviationList.Count; i++)	//Starts from second element to avoid polluting the data with the first element which always gets generated properly
+			{
+				float f = debug_SpacingDeviationList[i];
+				minDeviation = f < minDeviation ? f : minDeviation;
+				maxDeviation = f > maxDeviation ? f : maxDeviation;
+				deviationSum += f;
+			}
+			float averageDeviation = deviationSum / (float)debug_SpacingDeviationList.Count;
+			Debug.Log("Amount of points >> " + pointAmount);
+			Debug.Log("Minimum spacing deviation >> " + minDeviation);
+			Debug.Log("Maximum spacing deviation >> " + maxDeviation);
+			Debug.Log("Average deviation >> " + averageDeviation);
+			Debug.Log("Distance from last to first item >> " + debug_LastToFirstItemDistance);
+
+			debug_SpacingDeviationList = new List<float>();
+		}
 
 		Vector3 position;
 		Transform item;
