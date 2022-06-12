@@ -16,6 +16,7 @@ public class SplineDecorator : MonoBehaviour
 	[SerializeField] BezierSpline spline;					//The spline to be decorated
 	[SerializeField] Transform inputItem;					//The item for the spline to be decorated with
 	[SerializeField] bool debugConsoleOutput = false;       //Whether the debug info should be output to console or not
+	[SerializeField] bool debugColorFirstAndLastItem = false;	//Whether the first and last items should be distinguished by color from others
 
 	//------------ Internal properties ------------//
 	bool inputChanged = false;	//Detects an interaction of the user with values accessible through the Inspector window
@@ -116,7 +117,7 @@ public class SplineDecorator : MonoBehaviour
 			stepSize = 1f / (stepSize - 1);
         }
 
-		Vector3 position = spline.GetPoint(0f);
+		Vector3 position;
 		Transform item;
 		int steps = frequency * spline.CurveCount;
 		for(int i = 1; i<= steps; i++)
@@ -129,7 +130,22 @@ public class SplineDecorator : MonoBehaviour
 				item.transform.LookAt(position + spline.GetDirection(i / (float)steps));
             }
 			item.transform.parent = transform;
-        }
+			if (debugColorFirstAndLastItem)
+			{
+				if (i == 1) //First item
+				{
+					Renderer itemRenderer = item.GetComponent<Renderer>();
+					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().sharedMaterial.shader);   //Create a new material for the item so that the sharedMaterial can be used to avoid instantiating new materials unexpectadly
+					itemRenderer.sharedMaterial.color = Color.green;
+				}
+				if (i == steps)    //Last item
+				{
+					Renderer itemRenderer = item.GetComponent<Renderer>();
+					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().sharedMaterial.shader);
+					itemRenderer.sharedMaterial.color = Color.red;
+				}
+			}
+		}
 
     }
 	void GenerateObjectsLinearly()	//Decorate spline with linear spacing between items
@@ -173,6 +189,21 @@ public class SplineDecorator : MonoBehaviour
 				item.transform.LookAt(position + spline.GetDirection(linearizedArray[i]));	//Look in the direction of the spline at the current position
 			}
 			item.transform.parent = transform;	//Set the decorator as the item parent
+			if(debugColorFirstAndLastItem)
+            {
+				if (i == 0)	//First item
+				{
+					Renderer itemRenderer = item.GetComponent<Renderer>();
+					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().material.shader);	//Create a new material for the item so that the sharedMaterial can be used to avoid instantiating new materials unexpectadly
+					itemRenderer.sharedMaterial.color = Color.green;
+				}
+                if (i == linearizedArray.Length - 1)	//Last item
+                {
+					Renderer itemRenderer = item.GetComponent<Renderer>();
+					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().material.shader);
+					itemRenderer.sharedMaterial.color = Color.red;
+				}
+            }
 		}
 	}
 }
