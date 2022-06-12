@@ -20,8 +20,8 @@ public class SplineDecorator : MonoBehaviour
 	//------------ Internal properties ------------//
 	bool inputChanged = false;	//Detects an interaction of the user with values accessible through the Inspector window
 	float[] linearizedArray;    //Stores points along the spline with linear spacing between them
-	List<float> debug_SpacingDeviationList;
-	float debug_LastToFirstItemDistance;
+	List<float> debug_SpacingDeviationList;	//List of all spacing deviations
+	float debug_LastToFirstItemDistance;	//Distance between the last and first item
 
 	private void Awake()
 	{
@@ -51,7 +51,7 @@ public class SplineDecorator : MonoBehaviour
     {
 		int childCount = transform.childCount;
 		Transform child = null;
-		for (int i = 0; i < childCount; i++)
+		for (int i = 0; i < childCount; i++)	//Iterate though all children transforms
 		{
 			if (Application.isPlaying)
 			{
@@ -77,6 +77,7 @@ public class SplineDecorator : MonoBehaviour
 	}
 	private float[] LinearizeSpline(BezierSpline inputSpline, int precision, float spacing)	//Returns an array of linearly spaced points along the input spline, higher precision >> more points
     {
+		debug_SpacingDeviationList = new List<float>();
 		int steps = precision * inputSpline.CurveCount;	//Amount of steps, ensures that precision stays the same, independent from the amount of curves on the spline
 		List<float> resultList = new List<float>();		//List of linearly spaced points on the spline. Is a List because the amount of points isn't predictable
 		Vector3 lastPosition;							
@@ -101,11 +102,11 @@ public class SplineDecorator : MonoBehaviour
 		debug_LastToFirstItemDistance = distance;
 		return resultList.ToArray();	//Returns an array for memory optimalization purposes
     }
-	void GenerateObjects()
+	void GenerateObjects()	//Decorate spline with spacing based on item frequency
     {
-		if (frequency <= 0 || inputItem == null)
+		if (frequency <= 0 || inputItem == null)	//Prevents input of undesired values
 			return;
-		float stepSize = frequency;
+		float stepSize = frequency;	
 		if(spline.Loop || stepSize == 1)
         {
 			stepSize = 1f / stepSize;
@@ -131,12 +132,13 @@ public class SplineDecorator : MonoBehaviour
         }
 
     }
-	void GenerateObjectsLinearly()
+	void GenerateObjectsLinearly()	//Decorate spline with linear spacing between items
     {
-		if (itemSpacing <= 0 || inputItem == null)
+		if (itemSpacing <= 0 || linearizationPrecision <= 0 || inputItem == null)	//Prevents input of undesired values
 			return;
 
 		linearizedArray = LinearizeSpline(spline, linearizationPrecision, itemSpacing);
+
         if (debugConsoleOutput)
         {
 			int pointAmount = linearizedArray.Length;
@@ -156,23 +158,21 @@ public class SplineDecorator : MonoBehaviour
 			Debug.Log("Maximum spacing deviation >> " + maxDeviation);
 			Debug.Log("Average deviation >> " + averageDeviation);
 			Debug.Log("Distance from last to first item >> " + debug_LastToFirstItemDistance);
+		}//Debug output logic
 
-			debug_SpacingDeviationList = new List<float>();
-		}
+		Vector3 position;	//Position of the item that is currently being generated
+		Transform item;		//Item to populate the spline with
 
-		Vector3 position;
-		Transform item;
-
-		for (int i = 0; i < linearizedArray.Length; i++)
+		for (int i = 0; i < linearizedArray.Length; i++)	//Iterate through all the linearly spaced points
 		{
 			position = spline.GetPoint(linearizedArray[i]);
 			item = Instantiate(inputItem) as Transform;
 			item.transform.localPosition = position;
 			if (lookForward)
 			{
-				item.transform.LookAt(position + spline.GetDirection(linearizedArray[i]));
+				item.transform.LookAt(position + spline.GetDirection(linearizedArray[i]));	//Look in the direction of the spline at the current position
 			}
-			item.transform.parent = transform;
+			item.transform.parent = transform;	//Set the decorator as the item parent
 		}
 	}
 }
