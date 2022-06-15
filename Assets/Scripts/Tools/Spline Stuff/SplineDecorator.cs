@@ -221,13 +221,13 @@ public class SplineDecorator : MonoBehaviour
 				if (i == 0)	//First item
 				{
 					Renderer itemRenderer = item.GetComponent<Renderer>();
-					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().material.shader);	//Create a new material for the item so that the sharedMaterial can be used to avoid instantiating new materials unexpectadly
+					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().sharedMaterial.shader);	//Create a new material for the item so that the sharedMaterial can be used to avoid instantiating new materials unexpectadly
 					itemRenderer.sharedMaterial.color = Color.green;
 				}
                 if (i == linearizedArray.Length - 1)	//Last item
                 {
 					Renderer itemRenderer = item.GetComponent<Renderer>();
-					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().material.shader);
+					itemRenderer.material = new Material(inputItem.GetComponent<Renderer>().sharedMaterial.shader);
 					itemRenderer.sharedMaterial.color = Color.red;
 				}
             }
