@@ -8,7 +8,9 @@ public class SplineDecorator : MonoBehaviour
 	[SerializeField] bool linearSpacing = false;			//Whether linear spacing should be enabled or not
 	[Header("Linear Settings")]
 	[SerializeField] int linearizationPrecision = 1000;		//The accuracy of spline linearization. Higher number >> Higher precision
-	[SerializeField] float itemSpacing = 0.5f;				//The linear spacing between items
+	[SerializeField] float itemSpacing = 0.5f;              //The linear spacing between items
+	[SerializeField] bool scaleItemsToFitAll = true;		//Toggles the spacing and scaling of all items in order to properly space the first and last item
+															//Enabling this option increases computational complexity by a factor of 2
 	[Header("Non-Linear settings")]
 	[SerializeField] int frequency = 10;					//The frequency of non-linear item generation
 	[Header("Misc")]
@@ -22,7 +24,7 @@ public class SplineDecorator : MonoBehaviour
 	bool inputChanged = false;	//Detects an interaction of the user with values accessible through the Inspector window
 	float[] linearizedArray;    //Stores points along the spline with linear spacing between them
 	List<float> debug_SpacingDeviationList;	//List of all spacing deviations
-	float debug_LastToFirstItemDistance;	//Distance between the last and first item
+	float debug_LastToFirstItemDistance;    //Distance between the last and first item
 
 	private void Awake()
 	{
@@ -79,28 +81,53 @@ public class SplineDecorator : MonoBehaviour
 	private float[] LinearizeSpline(BezierSpline inputSpline, int precision, float spacing)	//Returns an array of linearly spaced points along the input spline, higher precision >> more points
     {
 		debug_SpacingDeviationList = new List<float>();
+		List<float> resultList = new List<float>();     //List of linearly spaced points on the spline. Is a List because the amount of points isn't predictable
 		int steps = precision * inputSpline.CurveCount;	//Amount of steps, ensures that precision stays the same, independent from the amount of curves on the spline
-		List<float> resultList = new List<float>();		//List of linearly spaced points on the spline. Is a List because the amount of points isn't predictable
 		Vector3 lastPosition;							
 		Vector3 currentPosition = spline.GetPoint(0);	
 		float tempCalc;									//A temporary calculation that gets saved into the memory to offload work from the CPU
 		float distance = spacing;						//Distance between current and last position, increases with each iteration until it is larger than spacing value
 
-		for (int i = 0; i <= steps; i++)
+		for (int i = 0; i <= steps; i++)	//Point generation
 		{
 			tempCalc = i / (float)steps;
 			lastPosition = currentPosition;
 			currentPosition = spline.GetPoint(tempCalc);
 			distance += Vector3.Distance(lastPosition, currentPosition);	//Adds distance between current and last position
-			//TODO: Make this more accurate by checking if the deviation of the previous smaller distance from spacing is smaller than the deviation of the current, larger distance
-			if (distance >= spacing)
-            {
+
+			if (distance >= spacing)    //Current distance is equal or more than the desired item spacing > current point is desired
+			{							//TODO: Make this more accurate by checking if the deviation of the previous smaller distance from spacing is smaller than the deviation of the current, larger distance
 				resultList.Add(tempCalc);
 				debug_SpacingDeviationList.Add(distance - spacing);
 				distance = 0;
             }
 		}
 		debug_LastToFirstItemDistance = distance;
+        if (scaleItemsToFitAll)
+        {
+			spacing = spacing - ((spacing - debug_LastToFirstItemDistance) / (resultList.Count + 1));	//Get the distance that is missing between the first and last item
+																										//distribute it over all items and make the result spacing the default one
+			//Re-instantiate filled lists
+			debug_SpacingDeviationList = new List<float>();
+			resultList = new List<float>();
+			//Repeat point generation
+			currentPosition = spline.GetPoint(0);
+			distance = spacing;
+			for (int i = 0; i <= steps; i++)
+			{
+				tempCalc = i / (float)steps;
+				lastPosition = currentPosition;
+				currentPosition = spline.GetPoint(tempCalc);
+				distance += Vector3.Distance(lastPosition, currentPosition);
+				if (distance >= spacing)
+				{
+					resultList.Add(tempCalc);
+					debug_SpacingDeviationList.Add(distance - spacing);
+					distance = 0;
+				}
+			}
+			debug_LastToFirstItemDistance = distance;
+		}
 		return resultList.ToArray();	//Returns an array for memory optimalization purposes
     }
 	void GenerateObjects()	//Decorate spline with spacing based on item frequency
@@ -174,7 +201,7 @@ public class SplineDecorator : MonoBehaviour
 			Debug.Log("Maximum spacing deviation >> " + maxDeviation);
 			Debug.Log("Average deviation >> " + averageDeviation);
 			Debug.Log("Distance from last to first item >> " + debug_LastToFirstItemDistance);
-		}//Debug output logic
+		}	//Debug output logic
 
 		Vector3 position;	//Position of the item that is currently being generated
 		Transform item;		//Item to populate the spline with
