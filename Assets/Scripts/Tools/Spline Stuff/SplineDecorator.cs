@@ -86,19 +86,29 @@ public class SplineDecorator : MonoBehaviour
 		Vector3 lastPosition;							
 		Vector3 currentPosition = spline.GetPoint(0);	
 		float tempCalc;									//A temporary calculation that gets saved into the memory to offload work from the CPU
-		float distance = spacing;						//Distance between current and last position, increases with each iteration until it is larger than spacing value
+		float distance = spacing;                       //Distance between current and last position, increases with each iteration until it is larger than spacing value
+		float prevDistance;
 
 		for (int i = 0; i <= steps; i++)	//Point generation
 		{
 			tempCalc = i / (float)steps;
 			lastPosition = currentPosition;
 			currentPosition = spline.GetPoint(tempCalc);
+			prevDistance = distance;
 			distance += Vector3.Distance(lastPosition, currentPosition);	//Adds distance between current and last position
 
 			if (distance >= spacing)    //Current distance is equal or more than the desired item spacing > current point is desired
-			{							//TODO: Make this more accurate by checking if the deviation of the previous smaller distance from spacing is smaller than the deviation of the current, larger distance
-				resultList.Add(tempCalc);
-				debug_SpacingDeviationList.Add(distance - spacing);
+			{
+				if(Mathf.Abs(spacing - prevDistance) < Mathf.Abs(spacing - distance))	//Previous point was closer than the current point - previous point will be saved
+				{
+					resultList.Add((i - 1) / (float)steps);                 //Using the previous position on the spline instead of the current one
+					debug_SpacingDeviationList.Add(spacing - prevDistance);
+				}
+				else																	//Current point is closer than the previous point - current point will be saved
+				{
+					resultList.Add(tempCalc);
+					debug_SpacingDeviationList.Add(distance - spacing);
+				}
 				distance = 0;
             }
 		}
@@ -107,9 +117,11 @@ public class SplineDecorator : MonoBehaviour
         {
 			spacing = spacing - ((spacing - debug_LastToFirstItemDistance) / (resultList.Count + 1));	//Get the distance that is missing between the first and last item
 																										//distribute it over all items and make the result spacing the default one
+																										//FIX: Distance between first and last item can be 0 after the recalculation rendering it pointless
 			//Re-instantiate filled lists
 			debug_SpacingDeviationList = new List<float>();
 			resultList = new List<float>();
+
 			//Repeat point generation
 			currentPosition = spline.GetPoint(0);
 			distance = spacing;
@@ -118,11 +130,20 @@ public class SplineDecorator : MonoBehaviour
 				tempCalc = i / (float)steps;
 				lastPosition = currentPosition;
 				currentPosition = spline.GetPoint(tempCalc);
+				prevDistance = distance;
 				distance += Vector3.Distance(lastPosition, currentPosition);
 				if (distance >= spacing)
 				{
-					resultList.Add(tempCalc);
-					debug_SpacingDeviationList.Add(distance - spacing);
+					if (Mathf.Abs(spacing - prevDistance) < Mathf.Abs(spacing - distance))  //Previous point was closer than the current point - previous point will be saved
+					{
+						resultList.Add((i - 1) / (float)steps);					//Using the previous position on the spline instead of the current one
+						debug_SpacingDeviationList.Add(spacing - prevDistance);
+					}
+					else                                                                    //Current point is closer than the previous point - current point will be saved
+					{
+						resultList.Add(tempCalc);
+						debug_SpacingDeviationList.Add(distance - spacing);
+					}
 					distance = 0;
 				}
 			}
@@ -181,7 +202,6 @@ public class SplineDecorator : MonoBehaviour
 			return;
 
 		linearizedArray = LinearizeSpline(spline, linearizationPrecision, itemSpacing);
-
         if (debugConsoleOutput)
         {
 			int pointAmount = linearizedArray.Length;
@@ -202,7 +222,6 @@ public class SplineDecorator : MonoBehaviour
 			Debug.Log("Average deviation >> " + averageDeviation);
 			Debug.Log("Distance from last to first item >> " + debug_LastToFirstItemDistance);
 		}	//Debug output logic
-
 		Vector3 position;	//Position of the item that is currently being generated
 		Transform item;		//Item to populate the spline with
 
