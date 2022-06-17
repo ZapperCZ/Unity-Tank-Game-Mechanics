@@ -25,6 +25,7 @@ public class SplineDecorator : MonoBehaviour
 	float[] linearizedArray;    //Stores points along the spline with linear spacing between them
 	List<float> debug_SpacingDeviationList;	//List of all spacing deviations
 	float debug_LastToFirstItemDistance;    //Distance between the last and first item
+	float debug_ActualSpacing;
 
 	private void Awake()
 	{
@@ -112,10 +113,12 @@ public class SplineDecorator : MonoBehaviour
 				distance = 0;
             }
 		}
+
 		debug_LastToFirstItemDistance = distance;
-        if (scaleItemsToFitAll)
+
+		if (scaleItemsToFitAll)
         {
-			spacing = spacing - ((spacing - debug_LastToFirstItemDistance) / (resultList.Count + 1));	//Get the distance that is missing between the first and last item
+			spacing = spacing - ((spacing - debug_LastToFirstItemDistance) / (resultList.Count + 1));   //Get the distance that is missing between the first and last item
 																										//distribute it over all items and make the result spacing the default one
 																										//FIX: Distance between first and last item can be 0 after the recalculation rendering it pointless
 			//Re-instantiate filled lists
@@ -147,8 +150,13 @@ public class SplineDecorator : MonoBehaviour
 					distance = 0;
 				}
 			}
+			if (distance < spacing / 2)
+            {
+				resultList.Remove(resultList[resultList.Count-1]);
+            }
 			debug_LastToFirstItemDistance = distance;
 		}
+		debug_ActualSpacing = spacing;
 		return resultList.ToArray();	//Returns an array for memory optimalization purposes
     }
 	void GenerateObjects()	//Decorate spline with spacing based on item frequency
@@ -217,6 +225,7 @@ public class SplineDecorator : MonoBehaviour
 			}
 			float averageDeviation = deviationSum / (float)debug_SpacingDeviationList.Count;
 			Debug.Log("Amount of points >> " + pointAmount);
+			Debug.Log("Actual spacing used >> " + debug_ActualSpacing);
 			Debug.Log("Minimum spacing deviation >> " + minDeviation);
 			Debug.Log("Maximum spacing deviation >> " + maxDeviation);
 			Debug.Log("Average deviation >> " + averageDeviation);
