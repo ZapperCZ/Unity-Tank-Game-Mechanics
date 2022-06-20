@@ -35,6 +35,28 @@ public class BezierSplineInspector : Editor
 			Vector3 p2 = ShowPoint(i + 1);
 			Vector3 p3 = ShowPoint(i + 2);
 
+			Handles.color = Color.red;
+			Handles.DrawLine(p0, p1);
+			Handles.DrawLine(p2, p3);
+
+			Handles.color = Color.white;
+			Vector3 lineStart = spline.GetPoint(i/spline.ControlPointCount);
+            for (int j = 1; j <= stepsPerCurve; j++)
+            {
+				Vector3 lineEnd = spline.GetPoint(j/(float)stepsPerCurve);
+				Handles.DrawLine(lineStart, lineEnd);
+				lineStart = lineEnd;
+            }
+			p0 = p3;
+		}
+		/*
+		Vector3 p0 = ShowPoint(0);
+		for (int i = 1; i < spline.ControlPointCount; i += 3)
+		{
+			Vector3 p1 = ShowPoint(i);
+			Vector3 p2 = ShowPoint(i + 1);
+			Vector3 p3 = ShowPoint(i + 2);
+
 			Handles.color = Color.gray;
 			Handles.DrawLine(p0, p1);
 			Handles.DrawLine(p2, p3);
@@ -42,6 +64,7 @@ public class BezierSplineInspector : Editor
 			Handles.DrawBezier(p0, p3, p1, p2, Color.white, null, 2f);
 			p0 = p3;
 		}
+		*/
 		ShowDirections();
 	}
 	public override void OnInspectorGUI()
