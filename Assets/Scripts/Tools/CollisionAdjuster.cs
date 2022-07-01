@@ -19,20 +19,23 @@ public class CollisionAdjuster : MonoBehaviour
     [SerializeField] GameObject[] inputObjects;
     [SerializeField] LayerMask inputLayers;
 
-    void OnEnable()
-    {
-        CheckScriptRequirements();
-    }
-
     void OnValidate()
     {
         CheckScriptRequirements();
     }
 
-    void Awake()
+    void OnEnable()
     {
+        CheckScriptRequirements();
+
         LayerMask allLayers = ~0;                   //~ is the NOT binary operator in C# -> ~0 gets the inverse of 0 - which is an int's max value
         Collider[] SceneColliders;
+
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning(this.GetType().Name + " - " + this.name + " - Application isn't in playmode, stopping execution");
+            return;
+        }
 
         switch (TypeOfCollisionAdjustment)
         {
@@ -62,8 +65,8 @@ public class CollisionAdjuster : MonoBehaviour
                 break;
             case AdjustmentType.CollideOnlyWithObjects:             //Select all objects, disable collisions with them, enable collisions with input objects
 
-                //Gets all colliders within the scene
-                SceneColliders = (Collider[])FindObjectsOfType(typeof(Collider));
+                //Gets all colliders within the scene, including inactive
+                SceneColliders = (Collider[])FindObjectsOfType(typeof(Collider), true);
 
                 //Iterates through them and disables collisions with them
                 foreach (Collider colliderToAdjust in SceneColliders)
@@ -94,7 +97,7 @@ public class CollisionAdjuster : MonoBehaviour
 
     GameObject[] GetAllObjectsInLayer(string layerName)
     {
-        GameObject[] SceneObjects = (GameObject[]) FindObjectsOfType(typeof(GameObject));
+        GameObject[] SceneObjects = (GameObject[]) FindObjectsOfType(typeof(GameObject), true);
         List<GameObject> ResultList = new List<GameObject>();
 
         for(int i = 0; i < SceneObjects.Length; i++)
