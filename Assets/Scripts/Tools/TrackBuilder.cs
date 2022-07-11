@@ -6,9 +6,8 @@ public class TrackBuilder : MonoBehaviour
     enum TrackType
     {
         Basic,
-        Complicated
+        Complex
     }
-
 
     [Header ("Track Settings")]
     [Range(1,20)]

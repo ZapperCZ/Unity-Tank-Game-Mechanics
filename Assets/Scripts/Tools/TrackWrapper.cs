@@ -52,11 +52,11 @@ public class TrackWrapper : MonoBehaviour
 
             if (!hasReturnRollers)
             {
-                if (Wheels[i].GetComponent<Wheel>().WheelType == Wheel.TypeOfWheel.Sprocket)
+                if (Wheels[i].GetComponent<Wheel>().WheelType == WheelType.Sprocket)
                 {
                     NeighbouringWheels[i, 1] = Idler;
                 }
-                else if (Wheels[i].GetComponent<Wheel>().WheelType == Wheel.TypeOfWheel.Idler)
+                else if (Wheels[i].GetComponent<Wheel>().WheelType == WheelType.Idler)
                 {
                     NeighbouringWheels[i, 1] = Sprocket;
                 }
@@ -234,19 +234,19 @@ public class TrackWrapper : MonoBehaviour
         switch (firstWheel.WheelType)
         {
             //Ordered by the probability of the wheel being the corresponding type (highest to lowest)
-            case Wheel.TypeOfWheel.Roadwheel:
-                result = secondWheel.WheelType != Wheel.TypeOfWheel.ReturnRoller;
+            case WheelType.Roadwheel:
+                result = secondWheel.WheelType != WheelType.ReturnRoller;
                 break;
-            case Wheel.TypeOfWheel.ReturnRoller:
-                result = secondWheel.WheelType != Wheel.TypeOfWheel.Roadwheel;
+            case WheelType.ReturnRoller:
+                result = secondWheel.WheelType != WheelType.Roadwheel;
                 break;
-            case Wheel.TypeOfWheel.Sprocket:
+            case WheelType.Sprocket:
                 //Doesn't handle the special case where there are no return rollers, this is handled elsewhere
-                result = secondWheel.WheelType != Wheel.TypeOfWheel.Idler && secondWheel.WheelType != Wheel.TypeOfWheel.Sprocket;
+                result = secondWheel.WheelType != WheelType.Idler && secondWheel.WheelType != WheelType.Sprocket;
                 break;
-            case Wheel.TypeOfWheel.Idler:
+            case WheelType.Idler:
                 //Doesn't handle the special case where there are no return rollers, this is handled elsewhere
-                result = secondWheel.WheelType != Wheel.TypeOfWheel.Sprocket && secondWheel.WheelType != Wheel.TypeOfWheel.Idler;
+                result = secondWheel.WheelType != WheelType.Sprocket && secondWheel.WheelType != WheelType.Idler;
                 break;
         }
         return result;
