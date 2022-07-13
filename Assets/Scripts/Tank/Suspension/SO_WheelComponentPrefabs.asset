@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6a58f16c54864997d58031207eb7a, type: 3}
-  m_Name: New SO_Wheel Components
+  m_Name: SO_WheelComponentPrefabs
   m_EditorClassIdentifier: 
-  testA: 0
-  testB: 0
+  WheelTypeToModify: 0
+  WheelComponentPrefab: {fileID: 0}
+  WheelComponentPrefabArray: []
