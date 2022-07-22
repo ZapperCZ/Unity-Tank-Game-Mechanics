@@ -251,11 +251,4 @@ public class TrackWrapper : MonoBehaviour
         }
         return result;
     }
-
-    MathLine CreateOuterTangent(MathCircle circle_A, MathCircle circle_B, bool isUpper)     //isUpper determines whether the tangent should be made on the "upper" sides of the circles or on the "lower" sides
-    {
-        //TODO: Finish this
-        MathLine tangent = new MathLine();
-        return tangent;
-    }
 }
